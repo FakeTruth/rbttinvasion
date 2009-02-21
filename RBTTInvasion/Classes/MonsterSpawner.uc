@@ -134,7 +134,7 @@ state Spawning
 
 simulated function EndVortex()
 {
-	HurtRadius(250, 256, class'UTGame.UTDmgType_ShockCombo', 150000, Location);
+	HurtRadius(250, 256, class'VortexDamageType', 150000, Location);
 	Spawn(class'UTGame.UTEmit_ShockCombo',,,Location);
 	GotoState('');
 	Destroy();
@@ -190,15 +190,8 @@ state PhysicsVortex // Taken from UTGame.UTEmit_ShockCombo
 			if (FastTrace(Location, OtherLocation))
 			{
 				Dir = (Location + Vect(0,0,64) - OtherLocation);
-				if (VSize(Dir) < P.Mesh.Bounds.SphereRadius && Normal(P.Velocity) dot Dir > 0.0 && !class'GameInfo'.static.UseLowGore(WorldInfo) )
-				{
-					//P.SpawnGibs(class'UTGame.UTDmgType_ShockCombo', Location);
-				}
-				else
-				{
-					//P.Mesh.AddForce(Normal(Dir) * CurrentForce);
-					P.AddVelocity(((Dir * CurrentForce)*DeltaTime)/(VSize(Location - OtherLocation)*0.1), OtherLocation, None);
-				}
+				//P.Mesh.AddForce(Normal(Dir) * CurrentForce);
+				P.AddVelocity(((Dir * CurrentForce)*DeltaTime)/(VSize(Location - OtherLocation)*0.1), OtherLocation, None);
 			}
 		}
 	}

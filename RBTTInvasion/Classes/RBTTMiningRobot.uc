@@ -8,6 +8,32 @@ var() int monsterTeam;
 var() int MonsterScale;
 //var() string MonsterName;
 
+function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
+{
+	super.PerformDodge(DoubleClickMove, Dir, Cross);
+	
+	SetPhysics(PHYS_Flying);
+	return true;
+}
+
+function DropToGround()
+{
+	super.DropToGround();
+	SetPhysics(PHYS_Flying);
+}
+
+function AddVelocity( vector NewVelocity, vector HitLocation, class<DamageType> damageType, optional TraceHitInfo HitInfo )
+{
+	super.AddVelocity(NewVelocity, HitLocation, damageType, HitInfo );
+	SetPhysics(PHYS_Flying);
+}
+
+function SetMovementPhysics()
+{
+	SetPhysics(PHYS_Flying);
+}
+
+//function JumpOffPawn()
 
 defaultproperties
 {

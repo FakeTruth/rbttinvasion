@@ -254,7 +254,7 @@ defaultproperties
 
 	InstantHitDamage(0)=10
 	FireInterval(0)=+0.77
-	FireInterval(1)=+1.5
+	FireInterval(1)=+0.5
 	InstantHitDamageTypes(0)=class'UTDmgType_ImpactHammer'
 	InstantHitDamageTypes(1)=None
 

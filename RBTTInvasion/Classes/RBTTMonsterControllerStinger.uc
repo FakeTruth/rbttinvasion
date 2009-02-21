@@ -129,6 +129,8 @@ protected event ExecuteWhatToDoNext()
 		}
 
 		GoalString @= "- Wander or Camp at" @ WorldInfo.TimeSeconds;
+		//Destination = Pawn.Location + Vect(float(Rand(128)),float(Rand(128)),float(Rand(128)));
+		//GotoState('TacticalMove', 'DoMove');
 		bShortCamp = PlayerReplicationInfo.bHasFlag;
 		WanderOrCamp();
 	}

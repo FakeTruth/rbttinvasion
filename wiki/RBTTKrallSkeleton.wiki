@@ -1,0 +1,79 @@
+#summary RBTTKrallSkeleton Monster
+
+= Introduction =
+
+This is the monster that looks like a Krall Skeleton
+
+= Details =
+
+Core.Object
+|   
++-- Engine.Actor
+   |   
+   +-- Engine.Pawn
+      |   
+      +-- GameFramework.GamePawn
+         |   
+         +-- UTGame.UTPawn
+            |   
+            +-- RBTTMonsters.RBTTMonster
+               |   
+               +-- RBTTMonsters.RBTTKrallSkeleton
+
+
+{{{
+  0: b_Root
+  1:  b_IK_Hand_Root (ParentBoneID: 0)
+  2:   b_IK_Gun (ParentBoneID: 1)
+  3:    b_IK_Hand_R (ParentBoneID: 2)
+  4:    b_IK_Hand_L (ParentBoneID: 2)
+  5:  b_IK_Foot_Root (ParentBoneID: 0)
+  6:   b_IK_Foot_L (ParentBoneID: 5)
+  7:   b_IK_Foot_R (ParentBoneID: 5)
+  8:  b_Hips (ParentBoneID: 0)
+  9:   b_LeftLegUpper (ParentBoneID: 8)
+ 10:    b_LeftLeg (ParentBoneID: 9)
+ 11:     b_LeftLegCannon (ParentBoneID: 10)
+ 12:      b_LeftFoot (ParentBoneID: 11)
+ 13:   b_RightLegUpper (ParentBoneID: 8)
+ 14:    b_RightLeg (ParentBoneID: 13)
+ 15:     b_RightLegCannon (ParentBoneID: 14)
+ 16:      b_RightFoot (ParentBoneID: 15)
+ 17:   b_Spine (ParentBoneID: 8)
+ 18:    b_Spine1 (ParentBoneID: 17)
+ 19:     b_Spine2 (ParentBoneID: 18)
+ 20:      b_LeftClav (ParentBoneID: 19)
+ 21:       b_LeftArm (ParentBoneID: 20)
+ 22:        b_LeftForeArm (ParentBoneID: 21)
+ 23:         b_LeftHand (ParentBoneID: 22)
+ 24:          b_LeftMiddle1 (ParentBoneID: 23)
+ 25:           b_LeftMiddle2 (ParentBoneID: 24)
+ 26:          b_LeftIndex1 (ParentBoneID: 23)
+ 27:           b_LeftIndex2 (ParentBoneID: 26)
+ 28:          b_LeftWeapon (ParentBoneID: 23)
+ 29:          b_LeftRing1 (ParentBoneID: 23)
+ 30:           b_LeftRing2 (ParentBoneID: 29)
+ 31:          b_LeftPinky1 (ParentBoneID: 23)
+ 32:           b_LeftPinky2 (ParentBoneID: 31)
+ 33:          b_LeftThumb1 (ParentBoneID: 23)
+ 34:           b_LeftThumb2 (ParentBoneID: 33)
+ 35:      b_Neck (ParentBoneID: 19)
+ 36:       b_Head (ParentBoneID: 35)
+ 37:        b_jaw (ParentBoneID: 36)
+ 38:      b_RightClav (ParentBoneID: 19)
+ 39:       b_RightArm (ParentBoneID: 38)
+ 40:        b_RightForeArm (ParentBoneID: 39)
+ 41:         b_RightHand (ParentBoneID: 40)
+ 42:          b_RightMiddle1 (ParentBoneID: 41)
+ 43:           b_RightMiddle2 (ParentBoneID: 42)
+ 44:          b_RightIndex1 (ParentBoneID: 41)
+ 45:           b_RightIndex2 (ParentBoneID: 44)
+ 46:          b_RightWeapon (ParentBoneID: 41)
+ 47:          b_RightThumb1 (ParentBoneID: 41)
+ 48:           b_RightThumb2 (ParentBoneID: 47)
+ 49:          b_RightRing1 (ParentBoneID: 41)
+ 50:           b_RightRing2 (ParentBoneID: 49)
+ 51:          b_RightPinky1 (ParentBoneID: 41)
+ 52:           b_RightPinky2 (ParentBoneID: 51)
+}}}
+{{{

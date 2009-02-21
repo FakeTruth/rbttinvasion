@@ -224,6 +224,8 @@ simulated function AttachWeaponTo(SkeletalMeshComponent MeshCpnt, optional name 
 defaultproperties
 {
 	MeleeWeaponRange = 500
+	bDropOnDeath = False
+	DroppedPickupClass = None
 
 	// Weapon SkeletalMesh
 	Begin Object class=AnimNodeSequence Name=MeshSequenceA

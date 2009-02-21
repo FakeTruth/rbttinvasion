@@ -1,0 +1,34 @@
+#summary RBTTMiningRobot Monster
+
+= Introduction =
+
+This is the monster that looks like the Mining Robot
+
+= Class Tree =
+
+Core.Object
+|   
++-- Engine.Actor
+   |   
+   +-- Engine.Pawn
+      |   
+      +-- GameFramework.GamePawn
+         |   
+         +-- UTGame.UTPawn
+            |   
+            +-- RBTTMonsters.RBTTMonster
+               |   
+               +-- RBTTMonsters.RBTTMiningRobot
+
+= Bone Names =
+
+{{{
+  0: b_Root
+  1:  b_RootOffset (ParentBoneID: 0)
+  2:   b_RootAnimated (ParentBoneID: 1)
+  3:    b_SawArm (ParentBoneID: 2)
+  4:     b_SawBlade (ParentBoneID: 3)
+  5:     b_SawShield (ParentBoneID: 3)
+  6:    b_LightArm (ParentBoneID: 2)
+  7:     b_Light (ParentBoneID: 6)
+}}}

@@ -1,0 +1,11 @@
+#summary RBTTInvasion Mutator
+
+= Introduction =
+
+Invasion for UT3 as a mutator.
+Mutator class: RBTTMonsters.RBTTInvasionMutator
+
+
+= Details =
+
+[http://images.allprog.nl/img/6193_1233696424.jpg http://images.allprog.nl/thumb/6193_1233696424.jpg]

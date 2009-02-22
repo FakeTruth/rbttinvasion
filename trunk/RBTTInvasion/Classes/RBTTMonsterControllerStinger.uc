@@ -38,6 +38,17 @@ function DoRetreat()
 	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
+event WhatToDoNext()
+{
+	super.WhatToDoNext();
+	
+	if(Pawn.Velocity.Z < 128)
+	{
+		Pawn.Velocity.Z += 128;
+		LogInternal(">>Monster goes up!<<");
+	}
+}
+
 /** entry point for AI decision making
  * this gets executed during the physics tick so actions that could change the physics state (e.g. firing weapons) are not allowed
  */
@@ -50,6 +61,7 @@ protected event ExecuteWhatToDoNext()
 		// pawn got destroyed between WhatToDoNext() and now - abort
 		return;
 	}
+		
 	bHasFired = false;
 	bTranslocatorHop = false;
 	GoalString = "WhatToDoNext at "$WorldInfo.TimeSeconds;
@@ -114,26 +126,46 @@ protected event ExecuteWhatToDoNext()
 					Pawn.SetTimer(0.01, false, 'Suicide');
 					return;
 				}
-				else
-				{
-					// jump
-					NumRandomJumps++;
-					if (!Pawn.IsA('Vehicle') && Pawn.Physics != PHYS_Falling && Pawn.DoJump(false))
-					{
-						Pawn.SetPhysics(PHYS_Falling);
-						Pawn.Velocity = 0.5 * Pawn.GroundSpeed * VRand();
-						Pawn.Velocity.Z = Pawn.JumpZ;
-					}
-				}
 			}
 		}
 
 		GoalString @= "- Wander or Camp at" @ WorldInfo.TimeSeconds;
-		//Destination = Pawn.Location + Vect(float(Rand(128)),float(Rand(128)),float(Rand(128)));
+		//Destination.X = Pawn.Location.X + Rand(128)-64;
+		//Destination.Y = Pawn.Location.Y + Rand(128)-64;
+		//Destination.Z = Pawn.Location.Z + Rand(128)-64;
 		//GotoState('TacticalMove', 'DoMove');
 		bShortCamp = PlayerReplicationInfo.bHasFlag;
 		WanderOrCamp();
 	}
+}
+
+function WanderOrCamp()
+{
+	GotoState('Defending', 'Begin');
+}
+
+function bool FindRoamDest()
+{
+	return false;
+}
+
+state Defending
+{
+	function SetRouteGoal()
+	{
+		//local Actor NextMoveTarget;
+
+		if (DefensePoint == None || PlayerReplicationInfo.bHasFlag )
+		{
+			// if in good position, tend to stay there
+			if ( (WorldInfo.TimeSeconds - FMax(LastSeenTime, AcquireTime) < 5.0 || FRand() < 0.85))
+			{
+				CampTime = 3;
+				GotoState('Defending','Pausing');
+			}
+		}
+	}
+	
 }
 
 defaultproperties

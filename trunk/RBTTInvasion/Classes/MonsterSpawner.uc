@@ -91,19 +91,24 @@ function Destroyed()
 
 event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
-	super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
-	
-	Health-=DamageAmount;
-	if(Health < 0.3 * default.Health)
+	//if(PlayerController(UTPawn(DamageCauser).Controller) != None)
+	if(DamageCauser.Instigator.Controller.IsA('PlayerController'))
 	{
-		PortalEffect.SetTemplate(TeamPortalEffectTemplates[1]);
-	}
-
-	if(Health <= 0)
-	{
-		ClearTimer('StartSpawning');
-		ClearTimer('SpawnMonster');
-		GotoState('PhysicsVortex');
+		LogInternal(">>>DamageCauser == "@DamageCauser);
+		super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+		
+		Health-=DamageAmount;
+		if(Health < 0.3 * default.Health)
+		{
+			PortalEffect.SetTemplate(TeamPortalEffectTemplates[1]);
+		}
+		
+		if(Health <= 0)
+		{
+			ClearTimer('StartSpawning');
+			ClearTimer('SpawnMonster');
+			GotoState('PhysicsVortex');
+		}
 	}
 }
 

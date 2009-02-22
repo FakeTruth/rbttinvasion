@@ -432,16 +432,17 @@ state BetweenWaves
 	{
 		local UTPlayerController PC;
 		
-		if(BetweenWavesCountDown <= 0)
+		if(BetweenWavesCountDown <= 0) // Timer reached zero, let the wave begin.
 				GotoState('');
-		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-		{
-			PC.ClientPlayAnnouncement(class'UTTimerMessage',BetweenWavesCountdown);
-			//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
-		}	
+		if(BetweenWavesCountDown <= 10) // UTTimerMessage only handles numbers 10 and less.
+			foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+			{
+				PC.ClientPlayAnnouncement(class'UTTimerMessage',BetweenWavesCountdown);
+				//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
+			}	
 		
 		LogInternal(BetweenWavesCountDown@"Seconds before next wave!");
-		BetweenWavesCountdown--;
+		BetweenWavesCountdown--; // 1 second less left
 		//UTHUD(PlayerController(InvasionMut.Instigator.Controller).myHUD).DisplayHUDMessage("wutwutwut!"); //, optional float XOffsetPct = 0.05, optional float YOffsetPct = 0.05)
 		
 	}

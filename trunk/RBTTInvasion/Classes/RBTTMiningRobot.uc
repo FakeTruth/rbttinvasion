@@ -40,7 +40,7 @@ function JumpOffPawn()
 
 defaultproperties
 {
-	WeaponSpeedMultiplier = 1.500
+	WeaponSpeedMultiplier = 0.3
 
 	bEnableFootPlacement=False
 

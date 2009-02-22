@@ -29,6 +29,16 @@ struct WaveTable
 	var array<bool>				bPortalSpawned;		// Has the portal been spawned yet?
 	var int					WaveLength;		// How many monsters should be in this wave?
 	var int					WaveCountdown;		// Wave countdown per wave!
+	var class<UTLocalMessage >		WaveCountdownAnnouncer; // Handles the countdown messages/sounds
+	var float 				MonstersPerPlayer;	// Monster per player ratio
+	
+	structdefaultproperties
+	{
+		WaveLength = 10
+		WaveCountdown = 10
+		WaveCountdownAnnouncer = Class'RBTTTimerMessage'
+		MonstersPerPlayer = 3
+	}
 };
 var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
 
@@ -65,6 +75,7 @@ function PostBeginPlay()
 		LogInternal("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
 		MonsterTable[i].MonsterClass = class<UTPawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
 	}
+	WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
 }
 
 function MatchStarting()
@@ -84,9 +95,10 @@ function MatchStarting()
 	//Game = UTTeamGame(WorldInfo.Game);
 	//RBTTInvasionGameRules(Game.GameRulesModifiers).NumMonsters = 0; // lol? WTF? xD
 	CreateMonsterTeam();
-	SetTimer(1, true, 'InvasionTimer'); // InvasionTimer gets called once every second
-	LastPortalTime = WorldInfo.TimeSeconds; // Spawn portal after PortalSpawnInterval seconds
-	GotoState('BetweenWaves'); // Initially start counting down for the first wave.
+	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
+	LastPortalTime = WorldInfo.TimeSeconds;	 	// Spawn portal after PortalSpawnInterval seconds
+	//WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
+	GotoState('BetweenWaves'); 			// Initially start counting down for the first wave.
 }
 
 function InvasionTimer()
@@ -108,7 +120,7 @@ function InvasionTimer()
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
 	if (NumMonsters < MaxMonsters)
-		if ( NumMonsters < 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
+		if ( NumMonsters < WaveConfig[CurrentWave].MonstersPerPlayer * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
 		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
 			AddMonster();
 	
@@ -117,7 +129,6 @@ function InvasionTimer()
 		SpawnPortal();
 		LastPortalTime = WorldInfo.TimeSeconds;
 	}
-		
 }
 
 function SpawnPortal()
@@ -433,13 +444,14 @@ state BetweenWaves
 		local UTPlayerController PC;
 		
 		if(BetweenWavesCountDown <= 0) // Timer reached zero, let the wave begin.
-				GotoState('');
-		if(BetweenWavesCountDown <= 10) // UTTimerMessage only handles numbers 10 and less.
-			foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-			{
-				PC.ClientPlayAnnouncement(class'UTTimerMessage',BetweenWavesCountdown);
-				//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
-			}	
+		{	GotoState(''); return; 	}
+		
+		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+		{
+			//PC.ClientPlayAnnouncement(class'RBTTTimerMessage',BetweenWavesCountdown);
+			PC.ReceiveLocalizedMessage( WaveConfig[CurrentWave].WaveCountdownAnnouncer, BetweenWavesCountdown);
+			//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
+		}	
 		
 		LogInternal(BetweenWavesCountDown@"Seconds before next wave!");
 		BetweenWavesCountdown--; // 1 second less left
@@ -457,10 +469,6 @@ state BetweenWaves
 			C = GetPlayerFromQueue(i);
 			if(C != None)
 				RestartPlayer(C);
-			//if (C.PlayerReplicationInfo.Team != None)
-			//{
-			//	C.PlayerReplicationInfo.Team.Score = C.PlayerReplicationInfo.Score;
-			//}
 		}
 		
 		BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
@@ -524,7 +532,6 @@ defaultproperties
    
    
    MaxMonsters=16
-   BetweenWavesCountdown = 10
    Name="Default__RBTTInvasionGameRules"
    ObjectArchetype=GameRules'Engine.Default__GameRules'
 }

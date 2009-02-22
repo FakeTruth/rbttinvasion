@@ -33,7 +33,10 @@ function SetMovementPhysics()
 	SetPhysics(PHYS_Flying);
 }
 
-//function JumpOffPawn()
+function JumpOffPawn()
+{
+	SetPhysics(PHYS_Flying);
+}
 
 defaultproperties
 {
@@ -64,7 +67,8 @@ defaultproperties
    bCanJump=True
    bCanFly=True
    
-   GroundSpeed=200.000000
+   GroundSpeed=50.000000
+   AirSpeed=50.00000
    
    DefaultFamily=Class'RBTTMiningRobotFamilyInfo'
    

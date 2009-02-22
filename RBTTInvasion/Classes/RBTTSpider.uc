@@ -8,7 +8,7 @@ var() int monsterTeam;
 var() int MonsterScale;
 //var() string MonsterName;
 
-
+/*
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
 	local bool DiedReturn;
@@ -22,6 +22,7 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	return DiedReturn;
 }
+*/
 
 
 defaultproperties
@@ -60,8 +61,8 @@ defaultproperties
       SkeletalMesh=SkeletalMesh'RBTTSpiderPackage.Mesh.Spider'
       AnimTreeTemplate=AnimTree'RBTTSpiderPackage.Anims.SpiderAnimTree'
       AnimSets(0)=AnimSet'RBTTSpiderPackage.Anims.SpiderAnimSet'
-      bHasPhysicsAssetInstance=False
-      //PhysicsAsset=PhysicsAsset'RBTTSpiderPackage.Mesh.Spider_Physics'
+      bHasPhysicsAssetInstance=True
+      PhysicsAsset=PhysicsAsset'RBTTSpiderPackage.Mesh.Spider_Physics'
       Name="WPawnSkeletalMeshComponent"
 	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
    End Object

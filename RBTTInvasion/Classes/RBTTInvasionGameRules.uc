@@ -511,10 +511,10 @@ defaultproperties
 	MonsterTable(6)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
 	MonsterTable(7)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
    
-   WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,PortalNum=(0,0,0),WaveCountdown=10)
+   WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
    WaveConfig(1)=(MonsterNum=(0,5,0,6),WaveLength=15,WaveCountdown=15)
    WaveConfig(2)=(MonsterNum=(0,3,6),WaveLength=20,WaveCountdown=20)
-   WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=30,WaveCountdown=20)
+   WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=50,WaveCountdown=20,MonstersPerPlayer=10)
    
    //WaveConfig(0)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)
    //WaveConfig(1)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)

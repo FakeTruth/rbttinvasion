@@ -17,7 +17,8 @@ defaultproperties
 	TakeHitPhysicsFixedBones[1]=R_FrontFoot //b_RightAnkle
 	DefaultMeshScale=4.000000
    DeathMeshSkelMesh=SkeletalMesh'RBTTSpiderPackage.Mesh.Spider'
-   //DeathMeshPhysAsset=PhysicsAsset'RBTTSpiderPackage.Mesh.Spider_Physics'
+   DeathMeshPhysAsset=PhysicsAsset'RBTTSpiderPackage.Mesh.Spider_Physics'
+   PhysAsset=PhysicsAsset'RBTTSpiderPackage.Mesh.Spider_Physics'
    DeathMeshNumMaterialsToSetResident=1
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
    Name="Default__RBTTSpiderFamilyInfo"

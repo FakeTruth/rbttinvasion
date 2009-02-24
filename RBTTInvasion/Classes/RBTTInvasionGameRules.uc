@@ -31,7 +31,9 @@ struct WaveTable
 	var int					WaveCountdown;		// Wave countdown per wave!
 	var class<UTLocalMessage >		WaveCountdownAnnouncer; // Handles the countdown messages/sounds
 	var float 				MonstersPerPlayer;	// Monster per player ratio
+	var bool				bIgnoreMPP;		// Ignore monsters per player ratio
 	var bool				bIsQueue;		// If this is a queue, spawn the monsters in the given order
+	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
 	
 	structdefaultproperties
 	{
@@ -40,6 +42,7 @@ struct WaveTable
 		WaveCountdownAnnouncer = Class'RBTTTimerMessage'
 		MonstersPerPlayer = 3
 		bIsQueue = False
+		MaxMonsters = 16
 	}
 };
 var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
@@ -48,7 +51,6 @@ var array<int>					WaveConfigBuffer; 	// Fill this up, and drain it down when th
 var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
 var int 					NumMonsters;		// Current number of monsters
 var int						NumPortals;		// Current number of portals
-var int						MaxMonsters; 		// Maximum monsters in the level at the same time
 var int						CurrentWave;		// The current wave number
 var int 					WaveMonsters; 		// The ammount of monsters that have been killed in a wave
 var float					LastPortalTime;		// The last time a portal (monsterspawner) was spawned
@@ -106,8 +108,18 @@ function MatchStarting()
 
 function InvasionTimer()
 {
+	local int i;
+	local string ArrayString;
+
+	if( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue) )
+		LogInternal(">>>>>>>>>>>> Wave over in bIsQueue = False <<<<<<<<<");
+	if( (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length) )
+		LogInternal(">>>>>>>>>>>> Wave over in bIsQueue = TRUE <<<<<<<<<");
+		
+	LogInternal("WaveConfigBuffer.length: "@WaveConfigBuffer.length);
+
 	//#### END-OF-WAVE ####\\
-	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0)
+	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue)
 		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length)){
 		LogInternal("Wave "@CurrentWave@" over!!");
 		CurrentWave++;
@@ -123,13 +135,23 @@ function InvasionTimer()
 	}
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
-	if (NumMonsters < MaxMonsters && !WaveConfig[CurrentWave].bIsQueue)
-		if ( NumMonsters < WaveConfig[CurrentWave].MonstersPerPlayer * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
-		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
-			AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
-	
-	if(WaveConfigBuffer.length > 0 && WaveConfig[CurrentWave].bIsQueue && AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[WaveConfigBuffer[0]]].MonsterClass))
-		WaveConfigBuffer.Remove(0, 1);
+	if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters)
+		if( (NumMonsters < WaveConfig[CurrentWave].MonstersPerPlayer * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))
+			|| WaveConfig[CurrentWave].bIgnoreMPP )
+		{
+			if (!WaveConfig[CurrentWave].bIsQueue)
+				if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
+					AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
+			
+			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[WaveConfigBuffer[0]].MonsterClass))
+			{
+				for(i=WaveConfigBuffer.length-1; i >= 0; i--)
+					ArrayString $= ","@String(WaveConfigBuffer[i]);
+				LogInternal(">>> WaveConfigBuffer:"@ArrayString);
+				LogInternal(">>> WaveConfigBuffer[0]:"@WaveConfigBuffer[0]@" ||| Monster class: "@MonsterTable[WaveConfigBuffer[0]].MonsterClass);
+				WaveConfigBuffer.Remove(0, 1);
+			}
+		}
 	
 	if(LastPortalTime + PortalSpawnInterval < WorldInfo.TimeSeconds)
 	{
@@ -180,7 +202,7 @@ function bool AddMonster(class<UTPawn> UTP)
 function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
 {
 	if(!bIgnoreMaxMonsters
-	   && ((NumMonsters >= MaxMonsters)
+	   && ((NumMonsters >= WaveConfig[CurrentWave].MaxMonsters)
 	   || (NumMonsters >= 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))))
 		return False;
 
@@ -197,7 +219,7 @@ function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Ro
 // Do all the checks before spawning a monster
 function bool SafeSpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation)
 {
-	if (NumMonsters < MaxMonsters) 
+	if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters) 
 		if ( NumMonsters < 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
 		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
 			return SpawnMonster(UTP, SpawnLocation, SpawnRotation);
@@ -217,7 +239,7 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 	local string MonsterName;
 	
 	LogInternal(">>>>>>>>>>>>>>>>>> SPAWN MONSTER FROM SPAWNMONSTER <<<<<<<<<<<<<<<<<<<<<");
-	//LogInternal(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
+	//LogInternal(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
 	NewMonster = Spawn(UTP,,,SpawnLocation+(UTP.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 	
 	if (NewMonster != None)
@@ -542,8 +564,6 @@ defaultproperties
    End Object
    Components(0)=Sprite
    
-   
-   MaxMonsters=16
    Name="Default__RBTTInvasionGameRules"
    ObjectArchetype=GameRules'Engine.Default__GameRules'
 }

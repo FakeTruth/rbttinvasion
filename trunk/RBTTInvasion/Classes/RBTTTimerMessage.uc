@@ -47,7 +47,6 @@ static simulated function ClientReceive( PlayerController P, optional int Switch
 static function string GetString( optional int Switch, optional bool bPRI1HUD, optional PlayerReplicationInfo RelatedPRI_1,
 					optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
-	LogInternal(">>Switch:"@Switch);
 	if(default.Announcements[Switch].AnnouncementText != "")
 		return default.Announcements[Switch].AnnouncementText;
 		

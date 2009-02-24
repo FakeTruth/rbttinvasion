@@ -510,6 +510,7 @@ defaultproperties
 	MonsterTable(5)=(MonsterName="Spider",MonsterClassName="RBTTInvasion.RBTTSpider")
 	MonsterTable(6)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
 	MonsterTable(7)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
+	MonsterTable(8)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
    
    WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
    WaveConfig(1)=(MonsterNum=(0,5,0,6),WaveLength=15,WaveCountdown=15)

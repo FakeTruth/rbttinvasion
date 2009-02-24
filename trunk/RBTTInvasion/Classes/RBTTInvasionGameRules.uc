@@ -26,11 +26,12 @@ struct WaveTable
 {
 	var array<int> 				MonsterNum;		// MonsterTable[MonsterNum];
 	var array<int> 				PortalNum;		// PortalTable[PortalNum];
-	var array<bool>				bPortalSpawned;		// Has the portal been spawned yet?
+	//var array<bool>				bPortalSpawned;		// Has the portal been spawned yet?
 	var int					WaveLength;		// How many monsters should be in this wave?
 	var int					WaveCountdown;		// Wave countdown per wave!
 	var class<UTLocalMessage >		WaveCountdownAnnouncer; // Handles the countdown messages/sounds
 	var float 				MonstersPerPlayer;	// Monster per player ratio
+	var bool				bIsQueue;		// If this is a queue, spawn the monsters in the given order
 	
 	structdefaultproperties
 	{
@@ -38,9 +39,11 @@ struct WaveTable
 		WaveCountdown = 10
 		WaveCountdownAnnouncer = Class'RBTTTimerMessage'
 		MonstersPerPlayer = 3
+		bIsQueue = False
 	}
 };
 var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
+var array<int>					WaveConfigBuffer; 	// Fill this up, and drain it down when the monster list is a queue
 
 var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
 var int 					NumMonsters;		// Current number of monsters
@@ -104,7 +107,8 @@ function MatchStarting()
 function InvasionTimer()
 {
 	//#### END-OF-WAVE ####\\
-	if ( WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 ){
+	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0)
+		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length)){
 		LogInternal("Wave "@CurrentWave@" over!!");
 		CurrentWave++;
 		if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
@@ -119,10 +123,13 @@ function InvasionTimer()
 	}
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
-	if (NumMonsters < MaxMonsters)
+	if (NumMonsters < MaxMonsters && !WaveConfig[CurrentWave].bIsQueue)
 		if ( NumMonsters < WaveConfig[CurrentWave].MonstersPerPlayer * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
 		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
-			AddMonster();
+			AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
+	
+	if(WaveConfigBuffer.length > 0 && WaveConfig[CurrentWave].bIsQueue && AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[WaveConfigBuffer[0]]].MonsterClass))
+		WaveConfigBuffer.Remove(0, 1);
 	
 	if(LastPortalTime + PortalSpawnInterval < WorldInfo.TimeSeconds)
 	{
@@ -149,10 +156,10 @@ function SpawnPortal()
 	}
 }
 
-function AddMonster()
+function bool AddMonster(class<UTPawn> UTP)
 {
 	local NavigationPoint StartSpot;
-	local Class<UTPawn> NewMonsterPawnClass;
+	//local Class<UTPawn> NewMonsterPawnClass;
 		
 	LogInternal(">>>>>>>>>>>>>>>>>> ADD MONSTER FUNCTION CALLED <<<<<<<<<<<<<<<<<<<<<");
 	StartSpot = MonsterSpawnPoints[Rand(MonsterSpawnPoints.length)];
@@ -160,13 +167,13 @@ function AddMonster()
 	//StartSpot = ChooseMonsterStart();
 	
 	if ( StartSpot == None )
-		return;
+		return False;
 
 	
 	
-	NewMonsterPawnClass = MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass;
+	//NewMonsterPawnClass = MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass;
 	//NewMonsterPawnClass = MonsterTable[Rand(MonsterTable.Length)].MonsterClass;
-	SpawnMonster(NewMonsterPawnClass, StartSpot.Location, StartSpot.Rotation);
+	return SpawnMonster(UTP, StartSpot.Location, StartSpot.Rotation);
 }
 
 // This function will force a monster into the game
@@ -472,6 +479,9 @@ state BetweenWaves
 		}
 		
 		BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
+		
+		if(WaveConfig[CurrentWave].bIsQueue == True)
+			WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
 	}
 	
 	function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
@@ -512,7 +522,8 @@ defaultproperties
 	MonsterTable(7)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
 	MonsterTable(8)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
    
-   WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
+   //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
+   WaveConfig(0)=(MonsterNum=(8,8,8,8,8,0,0,3,8,8,8,7),bIsQueue=True)
    WaveConfig(1)=(MonsterNum=(0,5,0,6),WaveLength=15,WaveCountdown=15)
    WaveConfig(2)=(MonsterNum=(0,3,6),WaveLength=20,WaveCountdown=20)
    WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=50,WaveCountdown=20,MonstersPerPlayer=10)

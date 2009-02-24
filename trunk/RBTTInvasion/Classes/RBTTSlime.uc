@@ -11,7 +11,7 @@ var() int MonsterScale;
 
 defaultproperties
 {
-	health = 75
+	health = 65
 
 	bMeleeMonster = True;
 	JumpZ=644.0

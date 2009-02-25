@@ -7,11 +7,87 @@ var() class<UTWeapon> DefaultMonsterWeapon;
 var() int monsterTeam;
 var() int MonsterScale;
 //var() string MonsterName;
+var bool bMotherSlime;
+var RBTTInvasionGameRules InvasionGameRules;
 
+simulated function PostBeginPlay()
+{
+	super.PostBeginPlay();
+	if(bMotherSlime)
+		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+		
+	InitializeMonsterInfo();
+}
+
+function InitializeMonsterInfo()
+{
+	local UTTeamGame Game;
+	local CharacterInfo MonsterBotInfo;
+	local UTTeamInfo RBTTMonsterTeamInfo;
+	
+	Game = UTTeamGame(WorldInfo.Game);
+	
+	RBTTMonsterTeamInfo=UTTeamInfo(Game.GameReplicationInfo.teams[1]);
+	MonsterBotInfo = RBTTMonsterTeamInfo(RBTTMonsterTeamInfo).GetBotInfo(MonsterName);
+	RBTTMonsterController(Controller).Initialize(MonsterSkill, MonsterBotInfo);
+	PlayerReplicationInfo.PlayerName = MonsterName;
+	LogInternal("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+	
+	RBTTMonsterTeamInfo.AddToTeam(Controller);
+	RBTTMonsterTeamInfo.SetBotOrders(UTBot(Controller));
+}
+
+event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+{
+	local vector NewSize;
+	local RBTTSlime NewSlime;
+
+	super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+	
+	if(bMotherSlime)
+	{
+		if(DamageAmount > 60)
+		{
+			LogInternal(">>Gonan spawn now!<<");
+			NewSlime = self.Spawn(self.class,,,self.Location+Vect(0,0,128),self.Rotation);
+			InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+			if(NewSlime != None)
+			{
+				LogInternal(">>New Slime is: "@NewSlime);
+				InvasionGamerules.NumMonsters++;
+				NewSlime.bMotherSlime = False;
+				NewSlime.InitSize(Vect(8,8,8));
+				NewSlime.health = 65;
+			}else
+				InvasionGameRules.WaveMonsters++; //If the monster fails to spawn, it doesn't need to be killed
+				
+		}
+	
+		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
+		if(DamageAmount <= 10)
+			NewSize = Mesh.Scale3D*0.95;
+		else
+			NewSize = Mesh.Scale3D/((DamageAmount/100)+1);
+			
+		//LogInternal(DamageAmount);
+			
+		InitSize(NewSize);
+		
+		if(Mesh.Scale3D.X < 8)
+			Died(EventInstigator, DamageType, HitLocation);
+			//KilledBy(EventInstigator.Pawn);
+	}
+}
+
+function InitSize(vector NewSize)
+{
+	Mesh.SetScale3D(NewSize);
+}
 
 defaultproperties
 {
-	health = 65
+	health = 9999
+	bMotherSlime=True
 
 	bMeleeMonster = True;
 	JumpZ=644.0
@@ -50,7 +126,8 @@ defaultproperties
       AnimTreeTemplate=AnimTree'RBTTSlime.RBTTSlimeTree'
       AnimSets(0)=AnimSet'RBTTSlime.RBTTSlimeAnims'
       bHasPhysicsAssetInstance=True
-      Scale3D=(X=8,Y=8,Z=8)
+      //Scale=64
+      Scale3D=(X=32,Y=32,Z=32)
       Rotation=(Yaw=49149) //(65535 = 360 degrees) (16383 = 90 degrees) | Yaw, Roll, Pitch
       PhysicsAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
       Name="WPawnSkeletalMeshComponent"
@@ -59,7 +136,7 @@ defaultproperties
    Mesh=WPawnSkeletalMeshComponent
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=24.000000
+      CollisionHeight=30.000000
       CollisionRadius=24.000000
       Translation=(X=0,Y=0,Z=20)
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'

@@ -108,16 +108,6 @@ function MatchStarting()
 
 function InvasionTimer()
 {
-	local int i;
-	local string ArrayString;
-
-	if( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue) )
-		LogInternal(">>>>>>>>>>>> Wave over in bIsQueue = False <<<<<<<<<");
-	if( (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length) )
-		LogInternal(">>>>>>>>>>>> Wave over in bIsQueue = TRUE <<<<<<<<<");
-		
-	LogInternal("WaveConfigBuffer.length: "@WaveConfigBuffer.length);
-
 	//#### END-OF-WAVE ####\\
 	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue)
 		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length)){
@@ -145,10 +135,6 @@ function InvasionTimer()
 			
 			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[WaveConfigBuffer[0]].MonsterClass))
 			{
-				for(i=WaveConfigBuffer.length-1; i >= 0; i--)
-					ArrayString $= ","@String(WaveConfigBuffer[i]);
-				LogInternal(">>> WaveConfigBuffer:"@ArrayString);
-				LogInternal(">>> WaveConfigBuffer[0]:"@WaveConfigBuffer[0]@" ||| Monster class: "@MonsterTable[WaveConfigBuffer[0]].MonsterClass);
 				WaveConfigBuffer.Remove(0, 1);
 			}
 		}

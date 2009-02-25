@@ -5,10 +5,25 @@ var() class<UTWeapon> DefaultMonsterWeapon;
 
 //var() int MonsterSkill, 
 var() int monsterTeam;
-var() int MonsterScale;
 //var() string MonsterName;
 var bool bMotherSlime;
 var RBTTInvasionGameRules InvasionGameRules;
+
+var repnotify vector MonsterScale;
+
+replication
+{
+  if ( bNetDirty && Role == ROLE_Authority)
+    MonsterScale;
+}
+
+simulated event ReplicatedEvent(name VarName)
+{
+	if (VarName == 'MonsterScale')
+		ClientInitSize(MonsterScale);
+	else
+		Super.ReplicatedEvent(VarName);
+}
 
 simulated function PostBeginPlay()
 {
@@ -68,7 +83,7 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 			NewSize = Mesh.Scale3D*0.95;
 		else
 			NewSize = Mesh.Scale3D/((DamageAmount/100)+1);
-			
+						
 		//LogInternal(DamageAmount);
 			
 		InitSize(NewSize);
@@ -81,7 +96,16 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 
 function InitSize(vector NewSize)
 {
+	MonsterScale = NewSize;
+	ClientInitSize(NewSize); 	// run it on the server actually
+					// see ReplicatedEvent(name VarName) for client replication
+}
+
+simulated function ClientInitSize(vector NewSize)
+{
 	Mesh.SetScale3D(NewSize);
+	Mesh.SetMaterial(0, MaterialInterface'RBTTSlime.RBTTSlimeMaterial');
+	LogInternal(">> Size has been set<<");
 }
 
 defaultproperties

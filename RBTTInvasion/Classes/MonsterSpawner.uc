@@ -42,7 +42,7 @@ var float VortexRadius;
 /** duration in seconds of the physics effect, or zero for it to be the same as the emitter */
 var float VortexDuration;
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
 	//Get the game rules so we can make it summon monsters
 	InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);

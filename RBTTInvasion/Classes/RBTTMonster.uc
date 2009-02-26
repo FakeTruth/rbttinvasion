@@ -10,15 +10,22 @@ var bool bInvisibleWeapon;
 var bool bMeleeMonster;
 var bool bEmptyHanded;
 var bool bCanDrive;
+var MaterialInterface MonsterSkinMaterial;
 
 simulated function PostBeginPlay()
 {
-    
-
 	Super.PostBeginPlay();
 	SpawnDefaultController();
 	AddDefaultInventory();
 	DeactivateSpawnProtection(); // No spawn protection for this monster! :D
+}
+
+// Make sure the skin is applied on the client
+simulated function Tick(float DeltaTime)
+{
+	if(MonsterSkinMaterial != None)
+		if(Mesh.GetMaterial(0) != MonsterSkinMaterial)
+			Mesh.SetMaterial(0, MonsterSkinMaterial);
 }
 
 function SpawnDefaultController()
@@ -27,7 +34,6 @@ function SpawnDefaultController()
 	MonsterController = Controller;
 
 }
-
 
 
 simulated function class<UTFamilyInfo> GetFamilyInfo()

@@ -16,7 +16,7 @@ var vector MinMonsterScale;		// The smallest the slime mother can become
 replication
 {
   if ( bNetDirty && Role == ROLE_Authority)
-    MonsterScale;
+    MonsterScale, bChangeSkin;
 }
 
 simulated event ReplicatedEvent(name VarName)
@@ -83,10 +83,15 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 				InvasionGameRules.WaveMonsters++; //If the monster fails to spawn, it doesn't need to be killed
 				
 		}
+		
+		if( Class<UTDmgType_BioGoo>(DamageType) != None )
+			health+= DamageAmount*2;
 	
 		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
 		NewSize = ((default.MonsterScale-MinMonsterScale) / (float(default.health) / float(health))) + MinMonsterScale;
-		InitSize(NewSize);
+		
+		if(NewSize != MonsterScale)
+			InitSize(NewSize);
 		
 		//if(Mesh.Scale3D.X < 8)
 		//	Died(EventInstigator, DamageType, HitLocation);
@@ -121,6 +126,8 @@ simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocatio
 
 defaultproperties
 {
+	MonsterSkinMaterial = MaterialInterface'RBTTSlime.RBTTSlimeMaterial'
+	bAlwaysRelevant = True
 	MonsterScale=(X=32,Y=32,Z=32)
 	MinMonsterScale=(X=8,Y=8,Z=8)
 	health = 500

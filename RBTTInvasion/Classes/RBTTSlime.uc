@@ -9,7 +9,9 @@ var() int monsterTeam;
 var bool bMotherSlime;
 var RBTTInvasionGameRules InvasionGameRules;
 
-var repnotify vector MonsterScale;
+var repnotify bool bChangeSkin;		// Used for replication to apply the material to the mesh
+var repnotify vector MonsterScale;	// How big the slime monsters is right now, used for replication
+var vector MinMonsterScale;		// The smallest the slime mother can become
 
 replication
 {
@@ -20,7 +22,9 @@ replication
 simulated event ReplicatedEvent(name VarName)
 {
 	if (VarName == 'MonsterScale')
-		ClientInitSize(MonsterScale);
+		Mesh.SetScale3D(MonsterScale);
+	else if(VarName == 'bChangeSkin')
+		Mesh.SetMaterial(0, MaterialInterface'RBTTSlime.RBTTSlimeMaterial');
 	else
 		Super.ReplicatedEvent(VarName);
 }
@@ -28,9 +32,11 @@ simulated event ReplicatedEvent(name VarName)
 simulated function PostBeginPlay()
 {
 	super.PostBeginPlay();
+	
 	if(bMotherSlime)
 		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
 		
+	bChangeSkin = !bChangeSkin; // Alter it, so it gets replicated
 	InitializeMonsterInfo();
 }
 
@@ -79,38 +85,45 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 		}
 	
 		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
-		if(DamageAmount <= 10)
-			NewSize = Mesh.Scale3D*0.95;
-		else
-			NewSize = Mesh.Scale3D/((DamageAmount/100)+1);
-						
-		//LogInternal(DamageAmount);
-			
+		NewSize = ((default.MonsterScale-MinMonsterScale) / (float(default.health) / float(health))) + MinMonsterScale;
 		InitSize(NewSize);
 		
-		if(Mesh.Scale3D.X < 8)
-			Died(EventInstigator, DamageType, HitLocation);
+		//if(Mesh.Scale3D.X < 8)
+		//	Died(EventInstigator, DamageType, HitLocation);
 			//KilledBy(EventInstigator.Pawn);
 	}
 }
 
 function InitSize(vector NewSize)
 {
-	MonsterScale = NewSize;
-	ClientInitSize(NewSize); 	// run it on the server actually
-					// see ReplicatedEvent(name VarName) for client replication
+	MonsterScale = NewSize; // For replication
+	Mesh.SetScale3D(NewSize);
 }
 
-simulated function ClientInitSize(vector NewSize)
+simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocation)
 {
-	Mesh.SetScale3D(NewSize);
-	Mesh.SetMaterial(0, MaterialInterface'RBTTSlime.RBTTSlimeMaterial');
-	LogInternal(">> Size has been set<<");
+	local UTProj_BioGlob BioGlobSpawn;
+	local Vector VNorm;
+	
+	super.SpawnGibs(UTDamageType, HitLocation);
+
+	BioGlobSpawn = Spawn(Class'UTGameContent.UTProj_BioGlob',,,self.Location);
+	BioGlobSpawn.InitBio(None, 25); //make its strength 25
+	
+	BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
+	if (BioGlobSpawn.Physics == PHYS_Falling)
+	{
+		VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
+		BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;
+	}
+	
 }
 
 defaultproperties
 {
-	health = 9999
+	MonsterScale=(X=32,Y=32,Z=32)
+	MinMonsterScale=(X=8,Y=8,Z=8)
+	health = 500
 	bMotherSlime=True
 
 	bMeleeMonster = True;

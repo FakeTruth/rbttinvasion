@@ -15,6 +15,7 @@ defaultproperties
    Parts(3)=(ObjectName="CH_MiningBot.Mesh.SK_CH_MiningBot",FamilyID="MiningRobot")
    Parts(4)=(ObjectName="WeldingRobot.Mesh.SK_CH_WeldingRobot",FamilyID="WeldingRobot")
    Parts(5)=(ObjectName="RBTTSpiderPackage.Mesh.Spider",FamilyID="Spider")
+   Parts(6)=(ObjectName="RBTTScarySkull.ScarySkull",FamilyID="ScarySkull")
    
    Characters(0)=(CharName="SkullCrab",Faction="RBTTMonster",CharData=(FamilyID="SkullCrab",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=))
    Characters(1)=(CharName="HumanSkeleton",Faction="RBTTMonster",CharData=(FamilyID="HumanSkeleton",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=),AIData=(StrafingAbility=1.000000,Accuracy=0.500000,Aggressiveness=0.400000,CombatStyle=0.500000,FavoriteWeapon="UTGame.UTWeap_RocketLauncher"))
@@ -22,6 +23,7 @@ defaultproperties
    Characters(3)=(CharName="MiningRobot",Faction="RBTTMonster",CharData=(FamilyID="MiningRobot",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=),AIData=(Tactics=0.300000,Aggressiveness=0.600000,CombatStyle=0.300000,FavoriteWeapon="UTGame.UTWeap_Stinger"))
    Characters(4)=(CharName="MiningWelding",Faction="RBTTMonster",CharData=(FamilyID="WeldingRobot",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=))
    Characters(5)=(CharName="Spider",Faction="RBTTMonster",CharData=(FamilyID="Spider",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=),AIData=(StrafingAbility=0.000000,Accuracy=0.500000,Aggressiveness=1.00000,CombatStyle=0.900000,FavoriteWeapon="RBTTInvasion.RBTTSpider_Weapon"))
+   Characters(6)=(CharName="ScarySkull",Faction="RBTTMonster",CharData=(FamilyID="ScarySkull",TorsoID=,ShoPadID=,bHasLeftShoPad=False,bHasRightShoPad=False,ArmsID=,ThighsID=,BootsID=),AIData=(StrafingAbility=0.000000,Accuracy=0.500000,Aggressiveness=1.00000,CombatStyle=0.900000,FavoriteWeapon="RBTTInvasion.RBTTSpider_Weapon"))
 
 
 	Factions(0)=(Faction="RBTTMonster")
@@ -32,6 +34,7 @@ defaultproperties
    Families(3)=class'RBTTInvasion.RBTTMiningRobotFamilyInfo'
    Families(4)=class'RBTTInvasion.RBTTWeldingRobotFamilyInfo'
    Families(5)=class'RBTTInvasion.RBTTSpiderFamilyInfo'
+   Families(6)=class'RBTTInvasion.RBTTScarySkullFamilyInfo'
 
    Name="Default__RBTTCustomMonster_Data"
 

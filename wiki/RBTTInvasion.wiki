@@ -1,4 +1,4 @@
-#summary RBTTInvasion Mutator
+#summary UT3 Invasion Mutator by RBTT
 
 = Introduction =
 

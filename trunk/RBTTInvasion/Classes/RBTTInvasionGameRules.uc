@@ -529,10 +529,11 @@ defaultproperties
 	MonsterTable(6)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
 	MonsterTable(7)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
 	MonsterTable(8)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
+	MonsterTable(9)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
    
    //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
-   WaveConfig(0)=(MonsterNum=(8,8,8,8,8,0,0,3,8,8,8,7),bIsQueue=True)
-   WaveConfig(1)=(MonsterNum=(0,5,0,6),WaveLength=15,WaveCountdown=15)
+   WaveConfig(0)=(MonsterNum=(8,9,8,0,0,3,9,8,7),bIsQueue=True)
+   WaveConfig(1)=(MonsterNum=(0,5,0,9,6),WaveLength=15,WaveCountdown=15)
    WaveConfig(2)=(MonsterNum=(0,3,6),WaveLength=20,WaveCountdown=20)
    WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=50,WaveCountdown=20,MonstersPerPlayer=10)
    

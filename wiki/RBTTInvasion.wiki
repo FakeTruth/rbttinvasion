@@ -8,7 +8,9 @@ Mutator class: RBTTMonsters.RBTTInvasionMutator
 =what it actually does=
 
 1) spawns all players onto red team
+
 2) spawns the invasion game rules
+
 3) sets the invasion hud
 
 = Details =

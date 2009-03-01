@@ -64,6 +64,72 @@ simulated function class<UTFamilyInfo> GetFamilyInfo()
 	return FamilyInfo;
 }
 
+/* *************************************************************************************
+** // Weapon stuff!!!
+************************************************************************************* */
+ // Gets called from DummyWeapon.ProjectileFire()
+simulated function Projectile ProjectileFire()
+{
+	local vector		RealStartLoc;
+	local Projectile	SpawnedProjectile;
+
+	// tell remote clients that we fired, to trigger effects
+	Weapon.IncrementFlashCount();
+
+	if( Role == ROLE_Authority )
+	{
+		// this is the location where the projectile is spawned.
+		RealStartLoc = Weapon.GetPhysicalFireStartLoc();
+
+		// Spawn projectile
+		SpawnedProjectile = Spawn(Weapon.GetProjectileClass(),,, RealStartLoc);
+		if( SpawnedProjectile != None && !SpawnedProjectile.bDeleteMe )
+		{
+			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
+		}
+
+		// Return it up the line
+		return SpawnedProjectile;
+	}
+
+	return None;
+}
+
+/* BestMode()
+choose between regular or alt-fire
+*/
+function byte BestMode() // Can be used for switching from snipe to melee! 1 projectile 0 instant
+{
+	local float EnemyDist;
+	local UTBot B;
+
+	B = UTBot(Controller);
+	if ( B == None )
+	{
+		Weapon.bMeleeWeapon = False;
+		return 1;
+	}
+
+	if ( B.Enemy == None )
+	{
+		Weapon.bMeleeWeapon = False;
+		return 1;
+	}
+	
+	if(DummyWeapon(Weapon) != None)
+	{
+		EnemyDist = VSize(B.Enemy.Location - Location); // Player close > Melee, player not close > Fire
+		if ( EnemyDist > DummyWeapon(Weapon).MeleeWeaponRange )
+		{
+			Weapon.bMeleeWeapon = False;
+			return 1;
+		}
+	}
+	Weapon.bMeleeWeapon = True;
+	return 0;
+}
+
+//*******************************************************************
 
 
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)

@@ -1,17 +1,12 @@
-class RBTTScarySkull extends RBTTMonster;
+class RBTTGasbag extends RBTTMonster;
 
 var() skeletalMeshComponent DefaultMonsterMesh;
 var() class<UTWeapon> DefaultMonsterWeapon;
 
-
+//var() int MonsterSkill, 
 var() int monsterTeam;
 var() int MonsterScale;
-
-function AddDefaultInventory()
-{
-    Super.AddDefaultInventory();
-    CreateInventory(DefaultMonsterWeapon);
-}
+//var() string MonsterName;
 
 function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
 {
@@ -43,28 +38,61 @@ function JumpOffPawn()
 	SetPhysics(PHYS_Flying);
 }
 
+simulated function Projectile ProjectileFire()
+{
+	local vector		RealStartLoc;
+	local Projectile	SpawnedProjectile;
+	//local float		AnimLength; // for checking if animation works
+
+	// tell remote clients that we fired, to trigger effects
+	Weapon.IncrementFlashCount();
+
+	if( Role == ROLE_Authority )
+	{
+		// this is the location where the projectile is spawned.
+		RealStartLoc = Weapon.GetPhysicalFireStartLoc();
+
+		// Spawn projectile
+		SpawnedProjectile = Spawn(Class'RBTTGasBagBelch',,, RealStartLoc);
+		if( SpawnedProjectile != None && !SpawnedProjectile.bDeleteMe )
+		{
+			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
+		}
+		
+		/* // IT DOESN'T HAVE AN ANIM SLOT, GOTTO GET ONE FIRST BEFOR DOIN ANIMATIONS!
+		LogInternal(">>Doing animation! << FullBodyAnimSlot:"@FullBodyAnimSlot);
+		AnimLength = FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 1.0, 0.2, 0.2, FALSE, TRUE);
+		LogInternal(">>AnimLength is :"@AnimLength);
+		*/
+		
+		// Return it up the line
+		return SpawnedProjectile;
+	}
+
+	return None;
+}
+
+/* BestMode()
+choose between regular or alt-fire
+*/
+function byte BestMode() // Can be used for switching from snipe to melee! 1 projectile 0 instant
+{
+	return 1; // always do projectile
+}
+
 defaultproperties
 {
-	AccelRate=+500.000000
-
-	LeftFootControlName="LeftFrontFootControl"
- 
-	RightFootControlName="RightFrontFootControl"
-
-	MonsterName = "ScarySkull"
-	
-	//DefaultMonsterWeapon=class'UTGame.UTWeap_LinkGun'
-	
+	bEmptyHanded = True
+	bNeedWeapon = False
 	bCanPickupInventory = False
-	
-	bCanJump=False
-	bCanFly = True
-	
-	bCanWalk = False
-	
-	bInvisibleWeapon = True
+	InventoryManagerClass=class'RBTTInventoryManager'
+	health = 200
+
+	bEnableFootPlacement=False
+
+	MonsterName = "GasBag"
    
-	MonsterSkill=3
+	MonsterSkill=2
 
 	LightEnvironment=MyLightEnvironment
 
@@ -80,26 +108,25 @@ defaultproperties
    
    OverlayMesh=OverlayMeshComponent0
    
-   DefaultFamily=Class'RBTTScarySkullFamilyInfo'
+   bCanJump=True
+   bCanFly=True
    
-   DefaultMesh=SkeletalMesh'RBTTScarySkull.ScarySkull'
+   GroundSpeed=50.000000
+   AirSpeed=50.00000
    
-   WalkableFloorZ=1.00000
+   DefaultFamily=Class'RBTTGasBagFamilyInfo'
    
-   GroundSpeed=400.000000
-   
-   AirSpeed=400.00000
-   
+   DefaultMesh=SkeletalMesh'GasBag.GasBag'
    
    ControllerClass=Class'RBTTMonsterControllerStinger'
-   
-    // InventoryManagerClass=class'RBTTWRInvManager'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-      SkeletalMesh=SkeletalMesh'RBTTScarySkull.ScarySkull'
-      AnimTreeTemplate=AnimTree'RBTTScarySkull.RBTTScarySkullAnimTree'
-      AnimSets(0)=AnimSet'RBTTScarySkull.ScarySkullAnims'
-      PhysicsAsset=PhysicsAsset'RBTTScarySkull.ScarySkull_Physics'
+      //SkeletalMesh=SkeletalMesh'CH_MiningBot.Mesh.SK_CH_MiningBot'
+      Scale3D=(X=16,Y=16,Z=16)
+      SkeletalMesh=SkeletalMesh'GasBag.GasBag'
+      AnimTreeTemplate=AnimTree'GasBag.GasBag_Tree'
+      AnimSets(0)=AnimSet'GasBag.gasbaganims'
+      PhysicsAsset=PhysicsAsset'GasBag.GasBag_Physics'
       bHasPhysicsAssetInstance=True
       Name="WPawnSkeletalMeshComponent"
 	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
@@ -107,8 +134,8 @@ defaultproperties
    Mesh=WPawnSkeletalMeshComponent
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=44.000000
-      CollisionRadius=21.000000
+      CollisionHeight=64.000000
+      CollisionRadius=128.000000
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder
@@ -128,6 +155,6 @@ defaultproperties
    Components(6)=MyLightEnvironment
    Components(8)=CollisionCylinder
    CollisionComponent=CollisionCylinder
-   Name="Default__RBTTScarySkull"
+   Name="Default__RBTTGasBag"
    ObjectArchetype=UTPawn'UTGame.Default__UTPawn'
 }

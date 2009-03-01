@@ -44,7 +44,7 @@ event WhatToDoNext()
 	
 	if(Pawn.Velocity.Z < 128)
 	{
-		Pawn.Velocity.Z += 128;
+		Pawn.Velocity.Z += 50;
 		LogInternal(">>Monster goes up!<<");
 	}
 }

@@ -55,10 +55,10 @@ function SetupButtonBar()
 
 function OnBack()
 {
-	class'RBTTInvasion.RBTTInvasionMutator'.default.Speed = PlayerSpeed.GetValue();
-	class'RBTTInvasion.RBTTInvasionMutator'.default.JumpHeight = PlayerJumpHeight.GetValue();
-	class'RBTTInvasion.RBTTInvasionMutator'.default.StartHealth = PlayerStartHealth.GetValue();
-	class'RBTTInvasion.RBTTInvasionMutator'.default.MaxHealth = PlayerMaxHealth.GetValue();
+	//class'RBTTInvasion.RBTTInvasionMutator'.default.Speed = PlayerSpeed.GetValue();
+	//class'RBTTInvasion.RBTTInvasionMutator'.default.JumpHeight = PlayerJumpHeight.GetValue();
+	//class'RBTTInvasion.RBTTInvasionMutator'.default.StartHealth = PlayerStartHealth.GetValue();
+	//class'RBTTInvasion.RBTTInvasionMutator'.default.MaxHealth = PlayerMaxHealth.GetValue();
 
 	class'RBTTInvasion.RBTTInvasionMutator'.static.StaticSaveConfig();
 

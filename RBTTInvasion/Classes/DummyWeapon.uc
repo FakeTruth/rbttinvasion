@@ -34,9 +34,23 @@ function float GetAIRating()
 	return AIRating;
 }
 
+// Monster weapons always have ammo
 simulated function bool HasAnyAmmo()
 {
 	return true;
+}
+
+/**
+ * Fires a projectile.
+ * Spawns the projectile, but also increment the flash count for remote client effects.
+ * Network: Local Player and Server
+ */
+simulated function Projectile ProjectileFire()
+{
+	if(RBTTMonster(Instigator) != None)
+		return RBTTMonster(Instigator).ProjectileFire();
+		
+	return none;
 }
 
 /**
@@ -109,39 +123,10 @@ choose between regular or alt-fire
 */
 function byte BestMode() // Can be used for switching from snipe to melee! 1 projectile 0 instant
 {
-	local float EnemyDist;
-	local UTBot B;
-
-	B = UTBot(Instigator.Controller);
-	if ( B == None )
-	{
-		bMeleeWeapon = False;
-		return 1;
-	}
-
-	if ( B.Enemy == None )
-	{
-		bMeleeWeapon = False;
-		return 1;
-	}
-	
-	EnemyDist = VSize(B.Enemy.Location - Instigator.Location); // Player close > Melee, player not close > Fire
-	if ( EnemyDist > MeleeWeaponRange )
-	{
-		bMeleeWeapon = False;
-		return 1;
-	}
-	bMeleeWeapon = True;
+	if(RBTTMonster(Instigator) != None)
+		return RBTTMonster(Instigator).BestMode();
+		
 	return 0;
-}
-
-// for bot combos
-simulated function Projectile ProjectileFire()
-{
-	local Projectile p;
-
-	p = Super.ProjectileFire();
-	return p;
 }
 
 simulated function rotator GetAdjustedAim( vector StartFireLoc )

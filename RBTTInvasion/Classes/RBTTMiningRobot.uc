@@ -38,6 +38,11 @@ function JumpOffPawn()
 	SetPhysics(PHYS_Flying);
 }
 
+function byte BestMode() // Can be used for switching from snipe to melee! 1 projectile 0 instant
+{
+	return 1; // always do projectile
+}
+
 defaultproperties
 {
 	WeaponSpeedMultiplier = 0.3

@@ -11,6 +11,7 @@ var bool bMeleeMonster;
 var bool bEmptyHanded;
 var bool bCanDrive;
 var MaterialInterface MonsterSkinMaterial;
+var bool bShotAnim;
 
 simulated function PostBeginPlay()
 {
@@ -128,6 +129,36 @@ function byte BestMode() // Can be used for switching from snipe to melee! 1 pro
 	Weapon.bMeleeWeapon = True;
 	return 0;
 }
+
+simulated function float GetFireInterval( byte FireModeNum )
+{
+	return Weapon.FireInterval[FireModeNum] * FireRateMultiplier;
+}
+
+
+/*
+Event called when an AnimNodeSequence (in the animation tree of one of this Actors SkeletalMeshComponents) reaches the end and stops. Will not get called if bLooping is 'true' on the AnimNodeSequence. bCauseActorAnimEnd must be set 'true' on the AnimNodeSequence for this event to get generated.
+SeqNode - Node that finished playing. You can get to the SkeletalMeshComponent by looking at SeqNode->SkelComponent
+PlayedTime - Time played on this animation. (play rate independant).
+ExcessTime - how much time overlapped beyond end of animation. (play rate independant). 
+*/
+event OnAnimEnd (AnimNodeSequence SeqNode, float PlayedTime, float ExcessTime)
+{
+	//AnimAction = '';
+	//if ( bVictoryNext && (Physics != PHYS_Falling) )
+	//{
+	//	bVictoryNext = false;
+	//	PlayVictory();
+	//}
+	if ( bShotAnim )
+	{	
+		bShotAnim = false;
+		//Controller.bPreparingMove = false;
+	}
+	super.OnAnimEnd (SeqNode, PlayedTime, ExcessTime);
+}
+
+function RangedAttack(Actor A);
 
 //*******************************************************************
 

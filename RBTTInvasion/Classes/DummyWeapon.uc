@@ -129,6 +129,14 @@ function byte BestMode() // Can be used for switching from snipe to melee! 1 pro
 	return 0;
 }
 
+simulated function float GetFireInterval( byte FireModeNum )
+{
+	if(RBTTMonster(Instigator) != None)
+		return RBTTMonster(Instigator).GetFireInterval(FireModeNum);
+		
+	return FireInterval[FireModeNum] * ((UTPawn(Owner)!= None) ? UTPawn(Owner).FireRateMultiplier : 1.0);
+}
+
 simulated function rotator GetAdjustedAim( vector StartFireLoc )
 {
 	return Super.GetAdjustedAim(StartFireLoc);
@@ -238,8 +246,8 @@ defaultproperties
 	WeaponProjectiles(1)=class'UTProj_ShockBall'
 
 	InstantHitDamage(0)=10
-	FireInterval(0)=+0.77
-	FireInterval(1)=+0.5
+	FireInterval(0)=+1.0
+	FireInterval(1)=+1.0
 	InstantHitDamageTypes(0)=class'UTDmgType_ImpactHammer'
 	InstantHitDamageTypes(1)=None
 

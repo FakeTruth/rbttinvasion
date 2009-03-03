@@ -181,7 +181,7 @@ defaultproperties
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=30.000000
-      CollisionRadius=24.000000
+      CollisionRadius=30.000000
       Translation=(X=0,Y=0,Z=20)
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object

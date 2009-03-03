@@ -40,10 +40,23 @@ function JumpOffPawn()
 
 simulated function Projectile ProjectileFire()
 {
+
+	if( Role == ROLE_Authority )
+	{
+		//final native function float PlayCustomAnim (name AnimName, float Rate, optional float BlendInTime, optional float BlendOutTime, optional bool bLooping, optional bool bOverride)
+		FullBodyAnimSlot.PlayCustomAnim('belch', 0.5, 0.1, 0.1, FALSE, TRUE);
+	}
+
+	return None;
+}
+
+simulated event DoBelch()
+{
 	local vector		RealStartLoc;
 	local Projectile	SpawnedProjectile;
-	//local float		AnimLength; // for checking if animation works
 
+	LogInternal(">> DoBelch() called<<");
+	
 	// tell remote clients that we fired, to trigger effects
 	Weapon.IncrementFlashCount();
 
@@ -59,17 +72,13 @@ simulated function Projectile ProjectileFire()
 			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
 		}
 		
-		/* // IT DOESN'T HAVE AN ANIM SLOT, GOTTO GET ONE FIRST BEFOR DOIN ANIMATIONS!
-		LogInternal(">>Doing animation! << FullBodyAnimSlot:"@FullBodyAnimSlot);
-		AnimLength = FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 1.0, 0.2, 0.2, FALSE, TRUE);
-		LogInternal(">>AnimLength is :"@AnimLength);
-		*/
-		
-		// Return it up the line
-		return SpawnedProjectile;
+		LogInternal(">> SpawnedProjectile: "@SpawnedProjectile);
 	}
+}
 
-	return None;
+simulated function float GetFireInterval( byte FireModeNum )
+{
+	return 2.0;
 }
 
 /* BestMode()
@@ -78,6 +87,36 @@ choose between regular or alt-fire
 function byte BestMode() // Can be used for switching from snipe to melee! 1 projectile 0 instant
 {
 	return 1; // always do projectile
+}
+
+function RangedAttack(Actor A)
+{
+	local vector adjust;
+	local Pawn P;
+	
+	P = Pawn(A);
+	if(P == None)
+		return;
+	
+	if ( bShotAnim )
+		return;
+	if ( VSize(P.Location - Location) < 128 + GetCollisionRadius() + P.GetCollisionRadius() ) // 128 = MeleeRange
+	{
+		adjust = vect(0,0,0);
+		adjust.Z = Controller.Enemy.GetCollisionHeight();
+		Acceleration = AccelRate * Normal(Controller.Enemy.Location - Location + adjust);
+		//PlaySound(sound'twopunch1g',SLOT_Talk);
+		//if (FRand() < 0.5)
+			//SetAnimAction('TwoPunch');
+		//else
+			//SetAnimAction('Pound');
+	}
+	else
+	{
+		FullBodyAnimSlot.PlayCustomAnim('belch', 0.5, 0.1, 0.1, FALSE, TRUE);
+		FullBodyAnimSlot.SetActorAnimEndNotification(True);
+	}
+	bShotAnim = true;
 }
 
 defaultproperties
@@ -118,11 +157,11 @@ defaultproperties
    
    DefaultMesh=SkeletalMesh'GasBag.GasBag'
    
-   ControllerClass=Class'RBTTMonsterControllerStinger'
+   ControllerClass=Class'RBTTMonsterControllerGasBag'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       //SkeletalMesh=SkeletalMesh'CH_MiningBot.Mesh.SK_CH_MiningBot'
-      Scale3D=(X=16,Y=16,Z=16)
+      Scale3D=(X=8,Y=8,Z=8)
       SkeletalMesh=SkeletalMesh'GasBag.GasBag'
       AnimTreeTemplate=AnimTree'GasBag.GasBag_Tree'
       AnimSets(0)=AnimSet'GasBag.gasbaganims'

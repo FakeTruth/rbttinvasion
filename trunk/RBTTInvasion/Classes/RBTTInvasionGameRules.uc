@@ -59,7 +59,7 @@ var int						PortalSpawnInterval;	// How many second between each portal spawn
 var array<NavigationPoint> 			MonsterSpawnPoints;	// Holds the spots where monsters can spawn
 
 var array<UTPlayerReplicationInfo> 		Queue; 			// This array holds dead players for ressurecting them
-var Mutator 					InvasionMut; 		// The mutator, might be handy to cache it
+var RBTTInvasionMutator 			InvasionMut; 		// The mutator, might be handy to cache it
 
 var class<UTTeamAI> 				MonsterTeamAIType;	// decides the squads and spawns the squad ai i believe
 var class<UTTeamInfo> 				MonsterEnemyRosterClass;// The monsters team info responsible for spawning the team ai
@@ -97,6 +97,8 @@ function MatchStarting()
 		i++;
 	}
 	
+	CurrentWave = InvasionMut.CurrentWave;
+	
 	//Game = UTTeamGame(WorldInfo.Game);
 	//RBTTInvasionGameRules(Game.GameRulesModifiers).NumMonsters = 0; // lol? WTF? xD
 	CreateMonsterTeam();
@@ -110,18 +112,9 @@ function InvasionTimer()
 {
 	//#### END-OF-WAVE ####\\
 	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue)
-		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length)){
-		LogInternal("Wave "@CurrentWave@" over!!");
-		CurrentWave++;
-		if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
-		{
-			ClearTimer('InvasionTimer'); // Stop this timer, game's over anyway...
-			EndInvasionGame("triggered"); // Game's over, end the game.
-			return;
-		}	
-		WaveMonsters=0;
-		LogInternal("In Wave "@CurrentWave@" Now!");
-		GotoState('BetweenWaves'); return;
+		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length))
+	{
+		EndWave(); return;
 	}
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
@@ -144,6 +137,41 @@ function InvasionTimer()
 		SpawnPortal();
 		LastPortalTime = WorldInfo.TimeSeconds;
 	}
+}
+
+function EndWave()
+{
+	LogInternal("Wave "@CurrentWave@" over!!");
+	CurrentWave++;
+	RespawnPlayersFromQueue();
+	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
+	{
+		ClearTimer('InvasionTimer'); // Stop this timer, game's over anyway...
+		EndInvasionGame("triggered"); // Game's over, end the game.
+		return;
+	}	
+	WaveMonsters=0;
+	LogInternal("In Wave "@CurrentWave@" Now!");
+	GotoState('BetweenWaves'); 
+	if(WaveConfig[CurrentWave].bIsQueue == True)
+		WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
+	InvasionMut.EndWave(self);
+	return;
+}
+
+function RespawnPlayersFromQueue()
+{
+	local Controller C;
+	local int i;
+	
+	for(i = Queue.length-1; i >= 0; i--)
+	{
+		C = GetPlayerFromQueue(i);
+		if(C != None)
+			RestartPlayer(C);
+	}
+	
+	BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
 }
 
 function SpawnPortal()
@@ -531,9 +559,10 @@ defaultproperties
 	MonsterTable(8)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
 	MonsterTable(9)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
 	MonsterTable(10)=(MonsterName="GasBag",MonsterClassName="RBTTInvasion.RBTTGasBag")
+	MonsterTable(11)=(MonsterName="Skaarj GasBag",MonsterClassName="RBTTSkaarjPack.GasBag")
    
    //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
-   WaveConfig(0)=(MonsterNum=(8,9,8,10,0,10,9,8,7),bIsQueue=True)
+   WaveConfig(0)=(MonsterNum=(11,11,11,11,11,11,11),bIsQueue=True)
    WaveConfig(1)=(MonsterNum=(0,5,0,9,6),WaveLength=15,WaveCountdown=15)
    WaveConfig(2)=(MonsterNum=(0,3,6),WaveLength=20,WaveCountdown=20)
    WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=50,WaveCountdown=20,MonstersPerPlayer=10)

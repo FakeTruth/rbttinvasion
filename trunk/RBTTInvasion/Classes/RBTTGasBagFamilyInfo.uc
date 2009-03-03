@@ -15,6 +15,7 @@ defaultproperties
    Faction="RBTTMonster"
    MasterSkeleton=SkeletalMesh'GasBag.GasBag'
    PhysAsset=PhysicsAsset'GasBag.GasBag_Physics'
+   AnimSets(0)=AnimSet'GasBag.gasbaganims'
 
    //DeathMeshSkelMesh=SkeletalMesh'CH_MiningBot.Mesh.SK_CH_MiningBot'
    DeathMeshSkelMesh=SkeletalMesh'GasBag.GasBag'

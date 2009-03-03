@@ -2,15 +2,31 @@
  * Copyright 1998-2008 Epic Games, Inc. All Rights Reserved.
  */
 class RBTTInvasionMutator extends UTMutator
-	
 	config(RBTTInvasion);
+	
+var int CurrentWave; 		//Current wave we're in
+var bool bMatchHasStarted;
 
 function InitMutator(string Options, out string ErrorMessage)
 {
+	Super.InitMutator(Options, ErrorMessage);
+	SpawnNewGameRules();
+}
+
+function EndWave(GameRules G)
+{
+	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;
+	G.Destroy();
+	
+	CurrentWave++; //Move on to the next wave
+	
+	SpawnNewGameRules();
+}
+
+function SpawnNewGameRules()
+{
 	local UTTeamGame Game;
 	local RBTTInvasionGameRules G;
-
-	Super.InitMutator(Options, ErrorMessage);
 
 	Game = UTTeamGame(WorldInfo.Game);				// Get the GameType
 	if (Game == None)
@@ -27,7 +43,18 @@ function InitMutator(string Options, out string ErrorMessage)
 		if (Game.GameRulesModifiers != None)		// Put the rules in the rules list
 		G.NextGameRules = Game.GameRulesModifiers;
 		Game.GameRulesModifiers = G;
+		
+		if(bMatchHasStarted)
+			G.MatchStarting();
 	}
+}
+
+
+function MatchStarting()
+{
+	//SpawnNewGameRules(); // Spawn before super, in case it needs to do something fancy..
+	bMatchHasStarted = True;
+	super.MatchStarting();
 }
 
 /*
@@ -36,14 +63,9 @@ function PostBeginPlay()
 	Super.PostBeginPlay();
 	LogInternal(">>>>>>>>>>>>>>>>>>RBTTInvasionGameMutator<<<<<<<<<<<<<<<<<<<<");
 }
-
-function MatchStarting()
-{
-	local UTTeamGame Game;
-	Game = UTTeamGame(WorldInfo.Game);
-	RBTTInvasionGameRules(Game.GameRulesModifiers).NumMonsters = 0;
-}
 */
+
+
 
 defaultproperties
 {

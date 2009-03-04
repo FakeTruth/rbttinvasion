@@ -120,7 +120,8 @@ function DisplayTeamScore()
 				else
 					PulseBrightness = 255 - 255*Abs(Dist*0.00033 - RadarPulse - 1);
 				
-				PRI = UTPlayerReplicationInfo(UTPawn(P).Controller.PlayerReplicationInfo);
+				if(UTPawn(P).Controller != None)
+					PRI = UTPlayerReplicationInfo(UTPawn(P).Controller.PlayerReplicationInfo);
 				
 				if ( UTPawn(P) != None && PRI != none)
 				{

@@ -44,6 +44,8 @@ var float VortexDuration;
 
 simulated function PostBeginPlay()
 {
+	super.PostBeginPlay();
+
 	//Get the game rules so we can make it summon monsters
 	InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
 

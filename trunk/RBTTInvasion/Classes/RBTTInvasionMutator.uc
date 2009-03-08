@@ -1,134 +1,135 @@
-/**
- * Copyright 1998-2008 Epic Games, Inc. All Rights Reserved.
- */
 class RBTTInvasionMutator extends UTMutator
-	config(RBTTInvasion);
+	config(RBTTInvasion); // Our config ini, UT gets put in front of it, so it's "UTRBTTInvasion.ini" in your settings folder
 	
-var int CurrentWave; 		//Current wave we're in
-var bool bMatchHasStarted;
-var string InitMutatorOptionsString; // For sending the game options to other mutators/gameinfo's spawned by us
+var int CurrentWave; 			// Current wave we're in
+var bool bMatchHasStarted;		// A check to see if the match has actually started before we send MatchStarting to the gamerules
+var string InitMutatorOptionsString; 	// For sending the game options to other mutators/gameinfo's spawned by us
 
 struct MutatorList
 {
-	var class<Mutator> 			MutatorClass;		// The dynamically loaded class of the corresponding MonsterClassName
-	var bool				bSpawned;		// Only remove the mutator if it's been spawned by our mutator
-	var int 				BeginWave;
-	var int					EndWave;
+	var class<Mutator> 			MutatorClass;		// The class of the mutator you want in the game
+	var bool				bSpawned;		// Be sure it's spawned by us, and not something else
+	var int 				BeginWave;		// The wave the mutator will be spawned
+	var int					EndWave;		// The wave in which beginning the mutator will be removed
 };
-var Array<MutatorList> 				MutatorConfig;		// Hold all monsternames and classes
+var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configuration
 
 
 function InitMutator(string Options, out string ErrorMessage)
 {
-	InitMutatorOptionsString = Options; // Save it for when initializing other gameinfo/mutators
+	InitMutatorOptionsString = Options; 		// Save it for when initializing other gameinfo/mutators
 
 	Super.InitMutator(Options, ErrorMessage);
-	SpawnNewGameRules();
-	UpdateMutators();
+	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
+	UpdateMutators();				// Set the mutators up for the first wave
 }
 
+// Wave has ended, probably gets called by the gamerules
 function EndWave(GameRules G)
 {
-	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;
-	G.Destroy();
+	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
+	G.Destroy();						// Destroy the gamerules
 	
-	CurrentWave++; //Move on to the next wave
+	CurrentWave++;		 				// Move on to the next wave
 	
-	SpawnNewGameRules();
-	UpdateMutators();
+	SpawnNewGameRules();					// Spawn the new gamerules
+	UpdateMutators();					// Update the mutators
 }
 
+// Spawn the mutators that need spawning and remove which has to be removed
 function UpdateMutators()
 {
-	local int i;
-	local Mutator mut;
-	local bool bMutRemoved;
-	local string ErrorMessage; // for initializing mutators
+	local int i;			// The first letter of... integer! Wewt! ^_^;
+	local Mutator mut;		// The mutator we will spawn/initialize/remove
+	local bool bMutRemoved;		// True if we just removed this mutator;
+	local string ErrorMessage; 	// for initializing mutators
 	
-	for(i = MutatorConfig.length; i >= 0; i--)
-	{
-		if((MutatorConfig[i].BeginWave == CurrentWave) || (MutatorConfig[i].EndWave == CurrentWave)) 
+	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
+		if((MutatorConfig[i].BeginWave == CurrentWave) || (MutatorConfig[i].EndWave == CurrentWave)) // Only get relevant mutators
 		{
-			mut = FindMutatorByClass(MutatorConfig[i].MutatorClass);
+			mut = FindMutatorByClass(MutatorConfig[i].MutatorClass);	// Find the mutator so we can see if it exists or remove it
 			
-			if(MutatorConfig[i].EndWave == CurrentWave)
-				if(MutatorConfig[i].bSpawned) // Don't remove it if it wasn't spawned by us
-					if(mut != None)
+			if(MutatorConfig[i].EndWave == CurrentWave)			// Remove the mutator if it's his time...
+				if(MutatorConfig[i].bSpawned) 				// Don't remove it if it wasn't spawned by us
+					if(mut != None)					// Make sure the mutator actually exists
 					{
-						WorldInfo.Game.RemoveMutator( mut );
-						bMutRemoved = True;
-						MutatorConfig[i].bSpawned = False; // It's removed, so not spawned
-						LogInternal(">>Mutator Removed<<");
+						WorldInfo.Game.RemoveMutator( mut );	// Remove the mutator (takes it out of the chain)
+						mut.Destroy();				// Destroy the mutator
+						bMutRemoved = True;			// Set the flag that we just removed this mutator
+						MutatorConfig[i].bSpawned = False; 	// It's removed, so not spawned
+						`log(">>Mutator Removed<<");
 					}
 			
-			if(MutatorConfig[i].BeginWave == CurrentWave)
-			{
-				if(!MutatorConfig[i].bSpawned && mut == None && !bMutRemoved)
+			if(MutatorConfig[i].BeginWave == CurrentWave)				// Spawn the mutator if we're in it's begin wave
+				if(!MutatorConfig[i].bSpawned && mut == None && !bMutRemoved)	// See if WE spawned it, and the mutator isn't spawned already, and we didn't just remove it
 				{
-					WorldInfo.Game.AddMutator(String(MutatorConfig[i].MutatorClass), False);
-					MutatorConfig[i].bSpawned = True; // It's spawned by us
-					LogInternal(">>Mutator Added<<");
+					WorldInfo.Game.AddMutator(String(MutatorConfig[i].MutatorClass.default.name), False);	// Add the mutator //FIXME! String() removes the package in front of class
+					//WorldInfo.Game.AddMutator("RBTTInvasion.UTMutator_LowGrav_RBTT", False);
+					MutatorConfig[i].bSpawned = True; 						// It's spawned by us
+					`log(">>Mutator Added<<");
 				}
-			}
 			
 			if(mut == None) // mut =! none only when not spawned by us
 			{
-				mut = FindMutatorByClass(MutatorConfig[i].MutatorClass); // It just got added, so find it
-				if(mut != None)
-					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);
+				mut = FindMutatorByClass(MutatorConfig[i].MutatorClass); 	// It just got added, so find it
+				if(mut != None)							// See if it was actually found
+					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);// Initialize the mutator
 			}
 		}
-	}
 }
 
+// Find a mutator by it's class
 function Mutator FindMutatorByClass(Class<Mutator> MutClass)
 {
 	local Mutator mut;
 
-	for ( mut=WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator )
-		if ( mut.Class == MutClass )
-			return mut;
+	for ( mut=WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
+		if ( mut.Class == MutClass )					// We found the mutator if the classes match
+			return mut;						// Return the mutator we were looking for, for further handling
+
+	return None; 	// We couldn't find anything, so return None
 }
 
+// Spawn the gamerules for a wave
 function SpawnNewGameRules()
 {
-	local UTTeamGame Game;
-	local RBTTInvasionGameRules G;
+	local UTTeamGame Game;			// Quick reference
+	local RBTTInvasionGameRules G;		// We're gonna spawn this, yes
 
-	Game = UTTeamGame(WorldInfo.Game);				// Get the GameType
-	if (Game == None)
+	Game = UTTeamGame(WorldInfo.Game);	// Get the GameType
+	if (Game == None)			// If it's not a teamgame, our monsters won't work! (yet)
 	{
 		WarnInternal("RBTTInvasion Mutator Only Works With Team Games");
-		Destroy();
+		Destroy();			// Destroy this mutator, because it would only result in lotsa errors!
 	}
 	else
 	{
-		Game.bForceAllRed=true;						// Make sure all players are on one team
+		//Game.bForceAllRed=true;			// This is done in the GameRules itself now
 		G = spawn(class'RBTTInvasionGameRules');	// Spawn the Invasion rules
-		G.InvasionMut = self;
-		Game.HUDType=Class'RBTTInvasionHUD';
+		G.InvasionMut = self;				// Quick reference to our mutator
+		//Game.HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 		if (Game.GameRulesModifiers != None)		// Put the rules in the rules list
-		G.NextGameRules = Game.GameRulesModifiers;
-		Game.GameRulesModifiers = G;
+		G.NextGameRules = Game.GameRulesModifiers;	// Complete the chain
+		Game.GameRulesModifiers = G;			// Set our GameRules as head of the chain
 		
-		if(bMatchHasStarted)
-			G.MatchStarting();
+		if(bMatchHasStarted)				// See if the match has actually started
+			G.MatchStarting();			// If so, send MatchStarting() to the GameRules
 	}
 }
 
-
+// This function gets called when the match starts, that's when the players actually spawn.
 function MatchStarting()
 {
-	//SpawnNewGameRules(); // Spawn before super, in case it needs to do something fancy..
-	bMatchHasStarted = True;
-	super.MatchStarting();
+	bMatchHasStarted = True;	// The match has started, so set the flag
+	SpawnNewGameRules(); // Spawn before super, in case it needs to do something fancy..
+	super.MatchStarting();		// Let the super handle the rest of the function
 }
 
 /*
 function PostBeginPlay()
 {
 	Super.PostBeginPlay();
-	LogInternal(">>>>>>>>>>>>>>>>>>RBTTInvasionGameMutator<<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameMutator<<<<<<<<<<<<<<<<<<<<");
 }
 */
 
@@ -136,7 +137,7 @@ function PostBeginPlay()
 
 defaultproperties
 {
-   MutatorConfig(0)=(MutatorClass=Class'UTGame.UTMutator_LowGrav', BeginWave=1, EndWave=2)
+   MutatorConfig(0)=(MutatorClass=Class'RBTTInvasion.UTMutator_LowGrav_RBTT', BeginWave=1, EndWave=2)
 
 
    GroupNames(0)="RBTTINVASION"  

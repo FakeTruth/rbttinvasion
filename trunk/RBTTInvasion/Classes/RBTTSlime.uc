@@ -38,6 +38,7 @@ simulated function PostBeginPlay()
 		
 	bChangeSkin = !bChangeSkin; // Alter it, so it gets replicated
 	InitializeMonsterInfo();
+	InitSize(Mesh.Scale3D);
 }
 
 function InitializeMonsterInfo()
@@ -52,7 +53,7 @@ function InitializeMonsterInfo()
 	MonsterBotInfo = RBTTMonsterTeamInfo(RBTTMonsterTeamInfo).GetBotInfo(MonsterName);
 	RBTTMonsterController(Controller).Initialize(MonsterSkill, MonsterBotInfo);
 	PlayerReplicationInfo.PlayerName = MonsterName;
-	LogInternal("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+	`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 	
 	RBTTMonsterTeamInfo.AddToTeam(Controller);
 	RBTTMonsterTeamInfo.SetBotOrders(UTBot(Controller));
@@ -67,14 +68,14 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 	
 	if(bMotherSlime)
 	{
-		if(DamageAmount > 60)
+		if(DamageAmount > 60 && health > 0)
 		{
-			LogInternal(">>Gonan spawn now!<<");
+			`log(">>Gonan spawn now!<<");
 			NewSlime = self.Spawn(self.class,,,self.Location+Vect(0,0,128),self.Rotation);
 			InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
 			if(NewSlime != None)
 			{
-				LogInternal(">>New Slime is: "@NewSlime);
+				`log(">>New Slime is: "@NewSlime);
 				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
 				NewSlime.InitSize(Vect(8,8,8));
@@ -101,8 +102,11 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 
 function InitSize(vector NewSize)
 {
+	`log(">>NewSize:"@NewSize);
 	MonsterScale = NewSize; // For replication
 	Mesh.SetScale3D(NewSize);
+	SetCollisionSize( CylinderComponent.default.CollisionRadius * NewSize.X * 2, CylinderComponent.default.CollisionHeight * NewSize.Z * 2 );
+	//native(283) final function SetCollisionSize( float NewRadius, float NewHeight );
 }
 
 simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocation)
@@ -180,9 +184,9 @@ defaultproperties
    Mesh=WPawnSkeletalMeshComponent
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=30.000000
-      CollisionRadius=30.000000
-      Translation=(X=0,Y=0,Z=20)
+      CollisionHeight=2.000000
+      CollisionRadius=2.000000
+      //Translation=(X=0,Y=0,Z=64)
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder

@@ -340,6 +340,8 @@ simulated function StopFireEffects(byte FireModeNum);
 
 defaultproperties
 {
+	bExportMenuData=False // dont have data on this weapon! >_<
+
 	WeaponColor=(R=255,G=255,B=128,A=255)
 	PlayerViewOffset=(X=0,Y=0.0,Z=0)
 	SmallWeaponsOffset=(X=12.0,Y=6.0,Z=-6.0)

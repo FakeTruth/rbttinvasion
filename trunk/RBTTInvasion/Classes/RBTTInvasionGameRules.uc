@@ -1,8 +1,4 @@
-/**
- * Copyright 1998-2008 Epic Games, Inc. All Rights Reserved.
- */
 class RBTTInvasionGameRules extends GameRules
-
 	config(RBTTInvasion);
 
 struct MonsterNames
@@ -11,7 +7,7 @@ struct MonsterNames
 	var string 				MonsterClassName;	// The class of the monster as a string
 	var class<UTPawn> 			MonsterClass;		// The dynamically loaded class of the corresponding MonsterClassName
 };
-var Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
+var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
 
 struct PortalStruct
 {
@@ -34,8 +30,9 @@ struct WaveTable
 	var bool				bIgnoreMPP;		// Ignore monsters per player ratio
 	var bool				bIsQueue;		// If this is a queue, spawn the monsters in the given order
 	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
+	var bool				bAllowPortals;		// Should this wave have portals
 	
-	structdefaultproperties
+	structdefaultproperties			// Set the defaultproperties for the struct
 	{
 		WaveLength = 10
 		WaveCountdown = 10
@@ -43,18 +40,19 @@ struct WaveTable
 		MonstersPerPlayer = 3
 		bIsQueue = False
 		MaxMonsters = 16
+		bAllowPortals = False
 	}
 };
-var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
+var config array<WaveTable>			WaveConfig;		// Wave configuration. When to spawn what monsters/portals
 var array<int>					WaveConfigBuffer; 	// Fill this up, and drain it down when the monster list is a queue
 
-var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
+//var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
 var int 					NumMonsters;		// Current number of monsters
 var int						NumPortals;		// Current number of portals
 var int						CurrentWave;		// The current wave number
 var int 					WaveMonsters; 		// The ammount of monsters that have been killed in a wave
 var float					LastPortalTime;		// The last time a portal (monsterspawner) was spawned
-var int						PortalSpawnInterval;	// How many second between each portal spawn
+var config int					PortalSpawnInterval;	// How many second between each portal spawn
 
 var array<NavigationPoint> 			MonsterSpawnPoints;	// Holds the spots where monsters can spawn
 
@@ -72,21 +70,29 @@ function PostBeginPlay()
 	local int i;
 
 	Super.PostBeginPlay();
-	LogInternal(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules Spawned<<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules Spawned<<<<<<<<<<<<<<<<<<<<");
 
-	LogInternal(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
+	`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
 	for(i=0;i < MonsterTable.length;i++)
 	{
-		LogInternal("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
+		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
 		MonsterTable[i].MonsterClass = class<UTPawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
 	}
 	WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
+	
+	//#### SET GAME INFORMATION ####\\
+	if(UTTeamGame(WorldInfo.Game) != None)
+		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
 }
 
 function MatchStarting()
 {
 	//local UTTeamGame Game;
 	local PathNode NavPoint;
+	local UTPlayerController PC;
+	local UTProfileSettings Profile;
+	local int OutIntValue;
+	local Controller C;
 	local int i;
 	
 	//#### GET SPAWNPOINTS FOR MONSTERS ####\\
@@ -97,6 +103,66 @@ function MatchStarting()
 		i++;
 	}
 	
+	//#### SET THE HUD ####\\
+	//FIXME! ISN'T WORKING YET
+	WorldInfo.Game.HUDType=class'UTGame.UTCTFHUD'; //Class'RBTTInvasionHUD';
+	foreach WorldInfo.AllControllers(class'Controller', C)
+	{
+		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
+			UTTeamGame(WorldInfo.Game).SetTeam(C, UTTeamGame(WorldInfo.Game).Teams[0], False);
+		
+		if(UTPlayerController(C) != None)
+		{
+			PC = UTPlayerController(C);
+		
+			PC.ClientSetHUD( Class'RBTTInvasionHUD', WorldInfo.Game.ScoreboardType );
+			
+			Profile = UTProfileSettings(PC.OnlinePlayerData.ProfileProvider.Profile);
+			if(Profile.GetProfileSettingValueIntByName('MouseSmoothingStrength', OutIntValue))
+			{
+				// Fix up non-patch values
+				if ( OutIntValue < 2 )
+				{
+					OutIntValue = 10;
+					Profile.SetProfileSettingValueInt(425, OutIntValue); // UTPID_MouseSmoothingStrength = 425
+				}
+				UTHUD(PC.myHUD).ConfiguredCrosshairScaling = 0.1 * OutIntValue;
+			}
+			
+			if(Profile.GetProfileSettingValueIdByName('DisplayWeaponBar', OutIntValue))
+				if(UTHUD(PC.myHUD) != None)
+					UTHUD(PC.myHUD).bShowWeaponbar = (OutIntValue==UTPID_VALUE_YES);
+			
+			
+
+			//PC.bRetrieveSettingsFromProfileOnNextTick = TRUE;
+			//PC.LoadSettingsFromProfile(False);
+			
+			//PC.bSimpleCrosshair=false;
+			//PC.bNoCrosshair=false;
+			//UTHUD(PC.myHUD).bShowMap = True;
+			//UTHUD(PC.myHUD).bShowClock = True;
+			//PC.bHideObjectivePaths = True;
+			//UTHUD(PC.myHUD).bShowScoring = True;
+			//UTHUD(PC.myHUD).bShowLeaderboard = True;
+			//UTHUD(PC.myHUD).bShowVehicleArmorCount = True;
+			//PC.bRotateMinimap = True;
+			//UTHUD(PC.myHUD).bCrosshairShow = True;
+		}
+	}
+	
+	/*
+	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+	{
+		PC.ClientSetHUD( Class'RBTTInvasionHUD', WorldInfo.Game.ScoreboardType );
+		//UTHUD(PC.myHUD).bCrosshairShow = true;
+		//UTHUD(PC.myHUD).bShowHUD = true;
+		PC.bRetrieveSettingsFromProfileOnNextTick = TRUE;
+		//`log(">>>> bCrosshairShow = "@UTHUD(PC.myHUD).bCrosshairShow@"<<<");
+	}
+	*/
+	
+	//#### GET CURRENT WAVE FROM MUTATOR ####\\
 	CurrentWave = InvasionMut.CurrentWave;
 	
 	//Game = UTTeamGame(WorldInfo.Game);
@@ -133,15 +199,16 @@ function InvasionTimer()
 		}
 	
 	if(LastPortalTime + PortalSpawnInterval < WorldInfo.TimeSeconds)
-	{
-		SpawnPortal();
-		LastPortalTime = WorldInfo.TimeSeconds;
-	}
+		if(WaveConfig[CurrentWave].bAllowPortals)
+		{
+			SpawnPortal();
+			LastPortalTime = WorldInfo.TimeSeconds;
+		}
 }
 
 function EndWave()
 {
-	LogInternal("Wave "@CurrentWave@" over!!");
+	`log("Wave "@CurrentWave@" over!!");
 	CurrentWave++;
 	RespawnPlayersFromQueue();
 	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
@@ -151,7 +218,7 @@ function EndWave()
 		return;
 	}	
 	WaveMonsters=0;
-	LogInternal("In Wave "@CurrentWave@" Now!");
+	`log("In Wave "@CurrentWave@" Now!");
 	GotoState('BetweenWaves'); 
 	if(WaveConfig[CurrentWave].bIsQueue == True)
 		WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
@@ -197,7 +264,7 @@ function bool AddMonster(class<UTPawn> UTP)
 	local NavigationPoint StartSpot;
 	//local Class<UTPawn> NewMonsterPawnClass;
 		
-	LogInternal(">>>>>>>>>>>>>>>>>> ADD MONSTER FUNCTION CALLED <<<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>> ADD MONSTER FUNCTION CALLED <<<<<<<<<<<<<<<<<<<<<");
 	StartSpot = MonsterSpawnPoints[Rand(MonsterSpawnPoints.length)];
 	//StartSpot = WorldInfo.Game.FindPlayerStart(None,1);
 	//StartSpot = ChooseMonsterStart();
@@ -252,8 +319,8 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 	local PlayerReplicationInfo PRI;
 	local string MonsterName;
 	
-	LogInternal(">>>>>>>>>>>>>>>>>> SPAWN MONSTER FROM SPAWNMONSTER <<<<<<<<<<<<<<<<<<<<<");
-	//LogInternal(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>> SPAWN MONSTER FROM SPAWNMONSTER <<<<<<<<<<<<<<<<<<<<<");
+	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
 	NewMonster = Spawn(UTP,,,SpawnLocation+(UTP.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 	
 	if (NewMonster != None)
@@ -274,20 +341,20 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 			MonsterBotInfo = RBTTMonsterTeamInfo(Game.GameReplicationInfo.teams[1]).GetBotInfo(MonsterName);
 			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
 			PRI.PlayerName = MonsterName;
-			LogInternal("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 		}
 		
 		if(PRI != None)
 		{
 			RBTTMonsterTeamInfo=UTTeamInfo(Game.GameReplicationInfo.teams[1]);
 			RBTTMonsterTeamInfo.AddToTeam(Bot);
-			LogInternal("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
+			`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
 			RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
 		}
 		
 		NumMonsters++;
 		NewMonster.SpawnTransEffect(0);
-		LogInternal("This many monsters in the game now:"@NumMonsters);
+		`log("This many monsters in the game now:"@NumMonsters);
 		return True;
 	}
 	else
@@ -302,7 +369,7 @@ function CreateMonsterTeam()
 	Game.Teams[1].Destroy();
 
 	RosterClass = MonsterEnemyRosterClass;
-	LogInternal(">>>>>>>>>>>>>>>> RosterClass = " @RosterClass@ " <<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>> RosterClass = " @RosterClass@ " <<<<<<<<<<<<<<<<<");
 	Teams[1] = spawn(RosterClass);
 	//Teams[1].Faction = TeamFactions[1];//this is somthing i have in mind for later
 	Teams[1].Initialize(1);
@@ -323,7 +390,7 @@ function ScoreKill(Controller Killer, Controller Other)
 	
 	PRI = UTPlayerReplicationInfo(Other.PlayerReplicationInfo);
 
-	LogInternal(">>>>>>>>>>>>>>> SCOREKILL CALLED <<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>> SCOREKILL CALLED <<<<<<<<<<<<<<<<");
 
 	if(PRI != None && PRI.Team.TeamIndex != 1)
 	{
@@ -341,27 +408,27 @@ function ScoreKill(Controller Killer, Controller Other)
 				AlivePlayerCount++;
 			}
 				
-		LogInternal(">>>>>>AlivePlayerCount="@AlivePlayerCount@"<<<<<<<");
+		`log(">>>>>>AlivePlayerCount="@AlivePlayerCount@"<<<<<<<");
 		if(AlivePlayerCount <= 0)
 		{
 			EndInvasionGame("TimeLimit"); // you lost actually..
 		}
 		
-		LogInternal(">>>>>>>>>>>>>> ADDING PLAYER TO QUEUE <<<<<<<<<<<<<");
+		`log(">>>>>>>>>>>>>> ADDING PLAYER TO QUEUE <<<<<<<<<<<<<");
 		AddToQueue(PRI);
 	}	
 	else
 	{
 		NumMonsters--;
 		WaveMonsters++;
-		LogInternal(">>>>>>>>>>>>>>>>>>>>> MONSTER KILLED <<<<<<<<<<<<<<<<<<<<<<<");
+		`log(">>>>>>>>>>>>>>>>>>>>> MONSTER KILLED <<<<<<<<<<<<<<<<<<<<<<<");
 		if(Rand(2) == 1)
 			DropItemFrom(Other.Pawn, class'Pickup_Health', 10);
 		else
 			DropItemFrom(Other.Pawn, class'Pickup_Armor', 10, 1);
-		LogInternal("Monster was killed, number of monsters now:"@NumMonsters);
-		LogInternal("This wave's max monsters:"@WaveConfig[CurrentWave].WaveLength);
-		LogInternal("WaveMonsters = "@WaveMonsters);		
+		`log("Monster was killed, number of monsters now:"@NumMonsters);
+		`log("This wave's max monsters:"@WaveConfig[CurrentWave].WaveLength);
+		`log("WaveMonsters = "@WaveMonsters);		
 	}
 }
 
@@ -454,11 +521,11 @@ function AddToQueue(UTPlayerReplicationInfo Who)
 
 	// Add the player to the end of the queue
 	i = Queue.Length;
-	LogInternal(">>>>>>>>>>Queue.Length = "@i@"<<<<<<<<<<<");
+	`log(">>>>>>>>>>Queue.Length = "@i@"<<<<<<<<<<<");
 	//Queue.Length = i + 1;
 	Queue.AddItem(Who);
-	LogInternal(">>>>>>>>>>>>Player"@Who@" Added to Queue[]<<<<<<<<<<");
-	LogInternal(">>>>>>>>>>>Queue["@i@"] = "@Queue[i]@"<<<<<<<<<<");
+	`log(">>>>>>>>>>>>Player"@Who@" Added to Queue[]<<<<<<<<<<");
+	`log(">>>>>>>>>>>Queue["@i@"] = "@Queue[i]@"<<<<<<<<<<");
 	//Queue[i].QueuePosition = i;
 
 	//WorldInfo.Game.GameReplicationInfo.SetTeam(Controller(Who.Owner), None, false);
@@ -496,7 +563,7 @@ state BetweenWaves
 			//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
 		}	
 		
-		LogInternal(BetweenWavesCountDown@"Seconds before next wave!");
+		`log(BetweenWavesCountDown@"Seconds before next wave!");
 		BetweenWavesCountdown--; // 1 second less left
 		//UTHUD(PlayerController(InvasionMut.Instigator.Controller).myHUD).DisplayHUDMessage("wutwutwut!"); //, optional float XOffsetPct = 0.05, optional float YOffsetPct = 0.05)
 		
@@ -554,18 +621,24 @@ defaultproperties
 	MonsterTable(3)=(MonsterName="MiningRobot",MonsterClassName="RBTTInvasion.RBTTMiningRobot")
 	MonsterTable(4)=(MonsterName="WeldingRobot",MonsterClassName="RBTTInvasion.RBTTWeldingRobot")
 	MonsterTable(5)=(MonsterName="Spider",MonsterClassName="RBTTInvasion.RBTTSpider")
-	MonsterTable(6)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
-	MonsterTable(7)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
-	MonsterTable(8)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
-	MonsterTable(9)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
-	MonsterTable(10)=(MonsterName="GasBag",MonsterClassName="RBTTInvasion.RBTTGasBag")
-	MonsterTable(11)=(MonsterName="Skaarj GasBag",MonsterClassName="RBTTSkaarjPack.GasBag")
+	MonsterTable(6)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
+	MonsterTable(7)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
+	
+	//MonsterTable(8)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
+	//MonsterTable(9)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
+	//MonsterTable(10)=(MonsterName="GasBag",MonsterClassName="RBTTInvasion.RBTTGasBag")
+	//MonsterTable(11)=(MonsterName="Skaarj GasBag",MonsterClassName="RBTTSkaarjPack.GasBag")
+	//MonsterTable(12)=(MonsterName="Skaarj Pupae",MonsterClassName="RBTTSkaarjPack.SkaarjPupae")
    
    //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
-   WaveConfig(0)=(MonsterNum=(11,11,11,11,11,11,11),bIsQueue=True)
-   WaveConfig(1)=(MonsterNum=(0,5,0,9,6),WaveLength=15,WaveCountdown=15)
-   WaveConfig(2)=(MonsterNum=(0,3,6),WaveLength=20,WaveCountdown=20)
-   WaveConfig(3)=(MonsterNum=(0,1,2,3,4,5),WaveLength=50,WaveCountdown=20,MonstersPerPlayer=10)
+   WaveConfig(0)=(MonsterNum=(6,6,7,6,6,7,6,6,7,6,6,7),MonstersPerPlayer=2,bIsQueue=True)
+   WaveConfig(1)=(MonsterNum=(7,7,7,0,0,0,6),WaveLength=15,WaveCountdown=15)
+   WaveConfig(2)=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,bAllowPortals=True)
+   WaveConfig(3)=(MonsterNum=(1,2,4),WaveLength=10,WaveCountdown=10)
+   WaveConfig(4)=(MonsterNum=(6,7),WaveLength=30,MonstersPerPlayer=6,WaveCountDown=15,bAllowPortals=True)
+   WaveConfig(5)=(MonsterNum=(0,7),WaveLength=20,MonstersPerPlayer=4,bAllowPortals=True)
+   WaveConfig(6)=(MonsterNum=(5),WaveLength=15,MonstersPerPlayer=4,bAllowPortals=False,bAllowPortals=True)
+   WaveConfig(7)=(MonsterNum=(0,1,3,4,5,6,7),WaveLength=60,WaveCountdown=60,MonstersPerPlayer=20,bAllowPortals=True)
    
    //WaveConfig(0)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)
    //WaveConfig(1)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)

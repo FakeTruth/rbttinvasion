@@ -216,6 +216,8 @@ simulated function AttachWeaponTo(SkeletalMeshComponent MeshCpnt, optional name 
 
 defaultproperties
 {
+	bExportMenuData=False // dont have data on this weapon! >_<
+
 	MeleeWeaponRange = 500
 	bDropOnDeath = False
 	DroppedPickupClass = None

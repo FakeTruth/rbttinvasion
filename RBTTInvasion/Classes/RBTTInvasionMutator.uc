@@ -7,10 +7,15 @@ var string InitMutatorOptionsString; 	// For sending the game options to other m
 
 struct MutatorList
 {
-	var class<Mutator> 			MutatorClass;		// The class of the mutator you want in the game
+	var string	 			MutatorClass;		// The class of the mutator you want in the game
 	var bool				bSpawned;		// Be sure it's spawned by us, and not something else
 	var int 				BeginWave;		// The wave the mutator will be spawned
 	var int					EndWave;		// The wave in which beginning the mutator will be removed
+	
+	structdefaultproperties	
+	{
+		bSpawned = False
+	}
 };
 var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configuration
 
@@ -22,6 +27,7 @@ function InitMutator(string Options, out string ErrorMessage)
 	Super.InitMutator(Options, ErrorMessage);
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	UpdateMutators();				// Set the mutators up for the first wave
+	SaveConfig();
 }
 
 // Wave has ended, probably gets called by the gamerules
@@ -41,13 +47,17 @@ function UpdateMutators()
 {
 	local int i;			// The first letter of... integer! Wewt! ^_^;
 	local Mutator mut;		// The mutator we will spawn/initialize/remove
+	local class<Mutator> MutClass;	// The class of the mutator
 	local bool bMutRemoved;		// True if we just removed this mutator;
 	local string ErrorMessage; 	// for initializing mutators
 	
 	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
 		if((MutatorConfig[i].BeginWave == CurrentWave) || (MutatorConfig[i].EndWave == CurrentWave)) // Only get relevant mutators
 		{
-			mut = FindMutatorByClass(MutatorConfig[i].MutatorClass);	// Find the mutator so we can see if it exists or remove it
+			MutClass = class<Mutator>(DynamicLoadObject(MutatorConfig[i].MutatorClass,class'Class'));
+			mut = FindMutatorByClass(MutClass);				// Find the mutator so we can see if it exists or remove it
+			`log(MutClass);
+			`log(mut);
 			
 			if(MutatorConfig[i].EndWave == CurrentWave)			// Remove the mutator if it's his time...
 				if(MutatorConfig[i].bSpawned) 				// Don't remove it if it wasn't spawned by us
@@ -61,17 +71,24 @@ function UpdateMutators()
 					}
 			
 			if(MutatorConfig[i].BeginWave == CurrentWave)				// Spawn the mutator if we're in it's begin wave
+			{
+				`log(">> Beginwave == Currentwave <<");
+				`log(">> bSpawned =="@MutatorConfig[i].bSpawned);
+				`log(">> mut =="@mut);
+				`log(">> bMutRemoved =="@bMutRemoved);
 				if(!MutatorConfig[i].bSpawned && mut == None && !bMutRemoved)	// See if WE spawned it, and the mutator isn't spawned already, and we didn't just remove it
 				{
-					WorldInfo.Game.AddMutator(String(MutatorConfig[i].MutatorClass.default.name), False);	// Add the mutator //FIXME! String() removes the package in front of class
+					`log(MutatorConfig[i].MutatorClass);
+					WorldInfo.Game.AddMutator(MutatorConfig[i].MutatorClass, False);		// Add the mutator
 					//WorldInfo.Game.AddMutator("RBTTInvasion.UTMutator_LowGrav_RBTT", False);
 					MutatorConfig[i].bSpawned = True; 						// It's spawned by us
 					`log(">>Mutator Added<<");
 				}
+			}
 			
 			if(mut == None) // mut =! none only when not spawned by us
 			{
-				mut = FindMutatorByClass(MutatorConfig[i].MutatorClass); 	// It just got added, so find it
+				mut = FindMutatorByClass(MutClass); 				// It just got added, so find it
 				if(mut != None)							// See if it was actually found
 					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);// Initialize the mutator
 			}
@@ -137,10 +154,10 @@ function PostBeginPlay()
 
 defaultproperties
 {
-   MutatorConfig(0)=(MutatorClass=Class'RBTTInvasion.UTMutator_LowGrav_RBTT', BeginWave=1, EndWave=2)
+   MutatorConfig(0)=(MutatorClass="RBTTInvasion.UTMutator_LowGrav_RBTT", BeginWave=1, EndWave=2)
 
 
-   GroupNames(0)="RBTTINVASION"  
+   GroupNames(0)="INVASION"  
    bExportMenuData=True
    Begin Object Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTMutator:Sprite'
       ObjectArchetype=SpriteComponent'UTGame.Default__UTMutator:Sprite'

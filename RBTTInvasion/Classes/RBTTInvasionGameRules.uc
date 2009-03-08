@@ -83,6 +83,8 @@ function PostBeginPlay()
 	//#### SET GAME INFORMATION ####\\
 	if(UTTeamGame(WorldInfo.Game) != None)
 		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
+		
+	SaveConfig();
 }
 
 function MatchStarting()
@@ -517,15 +519,15 @@ function Controller GetPlayerFromQueue(int Index)
 function AddToQueue(UTPlayerReplicationInfo Who)
 {
 	local PlayerController PC;
-	local int i;
+	//local int i;
 
 	// Add the player to the end of the queue
-	i = Queue.Length;
-	`log(">>>>>>>>>>Queue.Length = "@i@"<<<<<<<<<<<");
+	//i = Queue.Length;
+	//`log(">>>>>>>>>>Queue.Length = "@i@"<<<<<<<<<<<");
 	//Queue.Length = i + 1;
 	Queue.AddItem(Who);
 	`log(">>>>>>>>>>>>Player"@Who@" Added to Queue[]<<<<<<<<<<");
-	`log(">>>>>>>>>>>Queue["@i@"] = "@Queue[i]@"<<<<<<<<<<");
+	//`log(">>>>>>>>>>>Queue["@i@"] = "@Queue[i]@"<<<<<<<<<<");
 	//Queue[i].QueuePosition = i;
 
 	//WorldInfo.Game.GameReplicationInfo.SetTeam(Controller(Who.Owner), None, false);

@@ -39,6 +39,8 @@ simulated function PostBeginPlay()
 	bChangeSkin = !bChangeSkin; // Alter it, so it gets replicated
 	InitializeMonsterInfo();
 	InitSize(Mesh.Scale3D);
+	SetLocation(Location + (GetCollisionHeight() * Vect(0,0,1)));
+	SetPhysics(PHYS_Falling);
 }
 
 function InitializeMonsterInfo()

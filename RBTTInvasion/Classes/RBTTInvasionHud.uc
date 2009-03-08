@@ -1,4 +1,5 @@
-class RBTTInvasionHud extends UTTeamHud config(RBTTMonsters);
+class RBTTInvasionHud extends UTTeamHud 
+		config(RBTTMonsters);
 
 
 var float RadarPulse,RadarScale;
@@ -15,6 +16,17 @@ var array<PostProcessChain> OldPostProcessChain;
 var bool bScreenBlurred;
 var bool bBlurInitialized;
 var float LastBlurTime;
+
+var config bool bEnableLowHealthBlur;
+var config float BlurBelowHealthRatio;
+
+/* // Only do this when new default values need to be in the INI file
+simulated function PostBeginPlay()
+{
+SaveConfig; // Save the config to the INI
+super.PostBeginPlay();
+}
+*/
 
 function DisplayTeamScore()
 {
@@ -176,9 +188,7 @@ function int GetTeamScore(byte TeamIndex)
 
 simulated function Tick(float DeltaTime)
 {
-	local UberPostProcessEffect BlurryBlur;
 	//local MotionBlurEffect MotionBlur;
-	local int i;
 
 	Super.Tick(DeltaTime);
 	RadarPulse = RadarPulse + 0.5 * DeltaTime;
@@ -195,9 +205,26 @@ simulated function Tick(float DeltaTime)
 	//	InsideCameraEffect = None;
 	//}
 	
+	if(bEnableLowHealthBlur) // Don't do blur on server
+		HandleBlur(DeltaTime);
 	
+	//DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance += 1.00;
+	//if(DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance > 800.00)
+	//	DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance = 0.00;
+		
+	//for (i=0;i < LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects.length; i++)
+	//	LogInternal(">>>>> Idx:"@i@" class:"@LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[i].class@"<<<<<");
 	
-	if(!bBlurInitialized)
+	//BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur'));
+
+	
+}
+
+simulated function HandleBlur(float DeltaTime)
+{
+	local UberPostProcessEffect BlurryBlur;
+
+	if(!bBlurInitialized) // Set some PostProcessEffects settings so we can use it to add blur
 	{
 		bBlurInitialized = True;
 		
@@ -208,7 +235,7 @@ simulated function Tick(float DeltaTime)
 		BlurryBlur.FocusDistance = 0.0000;
 	}
 	
-	if(PlayerOwner.Pawn != None && PlayerOwner.Pawn.health < (PlayerOwner.Pawn.HealthMax * 0.3))
+	if(PlayerOwner.Pawn != None && PlayerOwner.Pawn.health < (PlayerOwner.Pawn.HealthMax * BlurBelowHealthRatio)) // If the player has low health, blur his screen
 	{
 		
 		//LocalPlayer(PlayerOwner.Player).RemoveAllPostProcessingChains();
@@ -237,7 +264,7 @@ simulated function Tick(float DeltaTime)
 			bScreenBlurred = True;
 		}
 	}
-	else if(bScreenBlurred)
+	else if(bScreenBlurred) // Fade the blur out if screen is blurred but player has enough health
 	{
 		if(BlurryBlur == None)
 			BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
@@ -267,19 +294,6 @@ simulated function Tick(float DeltaTime)
 			//UTPlayerController(PlayerOwner).ClearCameraEffect(); // Remove some ugly effect
 		}
 	}
-
-
-	
-	//DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance += 1.00;
-	//if(DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance > 800.00)
-	//	DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance = 0.00;
-		
-	//for (i=0;i < LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects.length; i++)
-	//	LogInternal(">>>>> Idx:"@i@" class:"@LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[i].class@"<<<<<");
-	
-	//BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur'));
-
-	
 }
 
 defaultproperties
@@ -298,6 +312,8 @@ defaultproperties
     RadarPosX=0.900000
     RadarPosY=0.250000
 
+    BlurBelowHealthRatio=0.3
+    bEnableLowHealthBlur=True;
     InsideCameraEffect=class'UTEmitCameraEffect_SlowVolume'
     //EntryPostProcessChain=PostProcessChain'FX_HitEffects.UTPostProcess'
     EntryPostProcessChain=PostProcessChain'RBTTInvasionTex.PostProcessEffect'

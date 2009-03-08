@@ -1,4 +1,4 @@
-class RBTTSkullCrab extends RBTTMonster;
+class RBTTSkullCrab extends RBTTMonster placeable;
 
 var() skeletalMeshComponent DefaultMonsterMesh;
 var() class<UTWeapon> DefaultMonsterWeapon;

@@ -45,6 +45,7 @@ function JumpOffPawn()
 
 defaultproperties
 {
+	bMeleeMonster = True;
 	AccelRate=+500.000000
 
 	LeftFootControlName="LeftFrontFootControl"

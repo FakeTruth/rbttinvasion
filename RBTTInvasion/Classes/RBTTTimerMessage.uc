@@ -81,7 +81,7 @@ defaultproperties
 	//bBeep=false
 	DrawColor=(R=255,G=255,B=64,A=255)
 
-	Announcements[1]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_01',AnnouncementText="Yo mama...")
+	Announcements[1]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_01') //,AnnouncementText="Yo mama...")
 	Announcements[2]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_02')
 	Announcements[3]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_03')
 	Announcements[4]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_04')

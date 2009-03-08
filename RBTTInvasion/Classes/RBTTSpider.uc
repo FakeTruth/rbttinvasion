@@ -27,6 +27,7 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 defaultproperties
 {
+	bMeleeMonster = True;
 	JumpZ=644.0
 	bCanStrafe=False
 	bCanSwim=False

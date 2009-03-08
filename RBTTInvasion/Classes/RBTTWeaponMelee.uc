@@ -269,6 +269,8 @@ simulated function StopFireEffects(byte FireModeNum);
 
 defaultproperties
 {
+	bExportMenuData=False // dont have data on this weapon! >_<
+
 	Begin Object class=AnimNodeSequence Name=MeshSequenceA
 	End Object
 
@@ -278,12 +280,12 @@ defaultproperties
 
 	Components.Remove(PickupMesh)
 
-	WeaponChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireLoop_Cue'
-	WeaponEMPChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFireLoop_Cue'
-	WeaponFireSnd[0]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFire_Cue'
-	WeaponFireSnd[1]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltImpact_Cue'
-	WeaponPutDownSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Lower_Cue'
-	WeaponEquipSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Raise_Cue'
+	//WeaponChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireLoop_Cue'
+	//WeaponEMPChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFireLoop_Cue'
+	//WeaponFireSnd[0]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFire_Cue'
+	//WeaponFireSnd[1]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltImpact_Cue'
+	//WeaponPutDownSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Lower_Cue'
+	//WeaponEquipSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Raise_Cue'
 
 	WeaponFireTypes(0)=EWFT_InstantHit
 	Spread(2)=0.0
@@ -340,7 +342,7 @@ defaultproperties
 	ArmFireAnim(2)=WeaponFire
 	ArmFireAnim(3)=WeaponFire
 
-	MinDamage=20.0
+	MinDamage=15.0
 	MinForce=20000.0
 
 	ImpactKillCameraAnim=CameraAnim'Camera_FX.Gameplay.C_Impact_CharacterGib_Near'

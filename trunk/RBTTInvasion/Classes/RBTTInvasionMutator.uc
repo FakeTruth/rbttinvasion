@@ -22,12 +22,37 @@ var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configurati
 
 function InitMutator(string Options, out string ErrorMessage)
 {
+	local int i;
 	InitMutatorOptionsString = Options; 		// Save it for when initializing other gameinfo/mutators
 
 	Super.InitMutator(Options, ErrorMessage);
+	//SaveConfig();
+	
+	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
+	{
+		//change the classnames of the original mutators to ours, since they work better
+		switch(MutatorConfig[i].MutatorClass)
+		{
+			case "UTGame.UTMutator_LowGrav":
+			case "UTMutator_LowGrav":
+				MutatorConfig[i].MutatorClass = "RBTTInvasion.UTMutator_LowGrav_RBTT";
+				break;
+			case "UTGame.UTMutator_FriendlyFire":
+			case "UTMutator_FriendlyFire":
+				MutatorConfig[i].MutatorClass = "RBTTInvasion.UTMutator_FriendlyFire_RBTT";
+				break;
+			case "UTGame.UTMutator_SpeedFreak":
+			case "UTMutator_SpeedFreak":
+				MutatorConfig[i].MutatorClass = "RBTTInvasion.UTMutator_SpeedFreak_RBTT";
+				break;
+		
+		}
+		//if(MutatorConfig[i].MutatorClass == "UTGame.UTMutator_LowGrav" || MutatorConfig[i].MutatorClass == "UTMutator_LowGrav")
+		//	MutatorConfig[i].MutatorClass
+	}
+	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	UpdateMutators();				// Set the mutators up for the first wave
-	SaveConfig();
 }
 
 // Wave has ended, probably gets called by the gamerules
@@ -56,8 +81,6 @@ function UpdateMutators()
 		{
 			MutClass = class<Mutator>(DynamicLoadObject(MutatorConfig[i].MutatorClass,class'Class'));
 			mut = FindMutatorByClass(MutClass);				// Find the mutator so we can see if it exists or remove it
-			`log(MutClass);
-			`log(mut);
 			
 			if(MutatorConfig[i].EndWave == CurrentWave)			// Remove the mutator if it's his time...
 				if(MutatorConfig[i].bSpawned) 				// Don't remove it if it wasn't spawned by us
@@ -72,10 +95,6 @@ function UpdateMutators()
 			
 			if(MutatorConfig[i].BeginWave == CurrentWave)				// Spawn the mutator if we're in it's begin wave
 			{
-				`log(">> Beginwave == Currentwave <<");
-				`log(">> bSpawned =="@MutatorConfig[i].bSpawned);
-				`log(">> mut =="@mut);
-				`log(">> bMutRemoved =="@bMutRemoved);
 				if(!MutatorConfig[i].bSpawned && mut == None && !bMutRemoved)	// See if WE spawned it, and the mutator isn't spawned already, and we didn't just remove it
 				{
 					`log(MutatorConfig[i].MutatorClass);
@@ -100,9 +119,10 @@ function Mutator FindMutatorByClass(Class<Mutator> MutClass)
 {
 	local Mutator mut;
 
-	for ( mut=WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
-		if ( mut.Class == MutClass )					// We found the mutator if the classes match
-			return mut;						// Return the mutator we were looking for, for further handling
+	if(MutClass != None)
+		for ( mut=WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
+			if ( mut.Class == MutClass )					// We found the mutator if the classes match
+				return mut;						// Return the mutator we were looking for, for further handling
 
 	return None; 	// We couldn't find anything, so return None
 }
@@ -154,7 +174,7 @@ function PostBeginPlay()
 
 defaultproperties
 {
-   MutatorConfig(0)=(MutatorClass="RBTTInvasion.UTMutator_LowGrav_RBTT", BeginWave=1, EndWave=2)
+   MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
 
 
    GroupNames(0)="INVASION"  

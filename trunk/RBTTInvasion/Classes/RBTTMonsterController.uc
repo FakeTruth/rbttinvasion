@@ -2,13 +2,13 @@ Class RBTTMonsterController Extends UTBot;
 
 var bool bNeedWeapon;
 
-function PostBeginPlay()
+event PostBeginPlay()
 {
 	
 	Super.PostBeginPlay();
 	
 	//InitPlayerReplicationInfo();
-	bNeedWeapon = RBTTMonster(Pawn).bNeedWeapon;
+	//bNeedWeapon = RBTTMonster(Pawn).bNeedWeapon; // Pawn doesn't exist yet..
 	//GotoState('Roaming', 'Begin');
 	
 
@@ -22,7 +22,7 @@ function InitPlayerReplicationInfo() {
 	//	{
 	//		BotCharData.BasedOnCharID = BotInfo.CharID;
 	//	}
-		
+
 	PlayerReplicationInfo = Spawn(class'MonsterReplicationInfo', self,, vect(0,0,0), rot(0,0,0));
 	
 	if (PlayerReplicationInfo.PlayerName == "") {

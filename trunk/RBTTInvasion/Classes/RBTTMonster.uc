@@ -10,7 +10,6 @@ var bool bInvisibleWeapon;
 var bool bMeleeMonster;
 var bool bEmptyHanded;
 var bool bCanDrive;
-var MaterialInterface MonsterSkinMaterial;
 var bool bShotAnim;
 
 simulated function PostBeginPlay()
@@ -19,14 +18,8 @@ simulated function PostBeginPlay()
 	SpawnDefaultController();
 	AddDefaultInventory();
 	DeactivateSpawnProtection(); // No spawn protection for this monster! :D
-}
-
-// Make sure the skin is applied on the client
-simulated function Tick(float DeltaTime)
-{
-	if(MonsterSkinMaterial != None)
-		if(Mesh.GetMaterial(0) != MonsterSkinMaterial)
-			Mesh.SetMaterial(0, MonsterSkinMaterial);
+	UTPlayerReplicationInfo(Controller.PlayerReplicationInfo).SetCharacterMesh(Mesh.SkeletalMesh, True);
+	RBTTMonsterController(Controller).bNeedWeapon = bNeedWeapon;
 }
 
 function SpawnDefaultController()
@@ -175,6 +168,65 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	return DiedReturn;
 }
+
+simulated function NotifyTeamChanged()
+{
+	local UTPlayerReplicationInfo PRI;
+	local int i;
+	local class<UTFamilyInfo> Family;
+
+	// set mesh to the one in the PRI, or default for this team if not found
+	PRI = UTPlayerReplicationInfo(PlayerReplicationInfo);
+	if (PRI == None && DrivenVehicle != None)
+	{
+		PRI = UTPlayerReplicationInfo(DrivenVehicle.PlayerReplicationInfo);
+	}
+	if (PRI != None)
+	{
+		if ( (PRI.Team != None) && !IsHumanControlled() || !IsLocallyControlled()  )
+		{
+			LightEnvironment.LightDesaturation = 1.0;
+		}
+		Family = class'UTCustomChar_Data'.static.FindFamilyInfo(PRI.CharacterData.FamilyID);
+		if (PRI.CharacterMesh != None && PRI.CharacterMesh != DefaultMesh)
+		{
+			SetInfoFromFamily(Family, PRI.CharacterMesh);
+
+			if (OverlayMesh != None)
+			{
+				OverlayMesh.SetSkeletalMesh(PRI.CharacterMesh);
+			}
+		}
+		else
+		{
+			// force proper LOD levels for default mesh (hack code fix)
+			for ( i=0; i<DefaultMesh.LODInfo.Length; i++ )
+			{
+				DefaultMesh.LODInfo[i].DisplayFactor = FMax(0.0, 0.6 - 0.2*i);
+			}
+
+			//bMeshChanged = (DefaultMesh != Mesh.SkeletalMesh);
+
+			SetInfoFromFamily(DefaultFamily, DefaultMesh);
+			// exception: always use the sounds for the intended character
+			// so that even if the server doesn't construct the mesh, the owning client still gets the correct sounds
+			// (of course, players who see the default character will then have wrong sounds,
+			// but this is both less likely to happen and less likely to be noticed when it does)
+
+			// JG: actually - we always want the soundgroup to match the mesh - your own effects are not replicated from server
+			//if (Family != None)
+			//{
+			//	SoundGroupClass = Family.default.SoundGroupClass;
+			//}
+
+			if (OverlayMesh != None)
+			{
+				OverlayMesh.SetSkeletalMesh(DefaultMesh);
+			}
+		}
+	}
+}
+
 
 defaultproperties
 {

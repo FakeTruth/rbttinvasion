@@ -1,14 +1,5 @@
 Class RBTTMonsterControllerNoWeapon Extends RBTTMonsterController;
 
-function InitPlayerReplicationInfo() 
-{
-	PlayerReplicationInfo = Spawn(class'MonsterReplicationInfo', self,, vect(0,0,0), rot(0,0,0));
-	
-	if (PlayerReplicationInfo.PlayerName == "") {
-		PlayerReplicationInfo.SetPlayerName("RBTTMonster");
-	}
-}
-
 function name GetOrders()
 {
 		return 'Attack'; // It doesn't have to do anything else!

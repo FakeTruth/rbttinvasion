@@ -9,22 +9,22 @@ var() int monsterTeam;
 var bool bMotherSlime;
 var RBTTInvasionGameRules InvasionGameRules;
 
-var repnotify bool bChangeSkin;		// Used for replication to apply the material to the mesh
 var repnotify vector MonsterScale;	// How big the slime monsters is right now, used for replication
 var vector MinMonsterScale;		// The smallest the slime mother can become
 
 replication
 {
   if ( bNetDirty && Role == ROLE_Authority)
-    MonsterScale, bChangeSkin;
+    MonsterScale;
 }
 
 simulated event ReplicatedEvent(name VarName)
 {
 	if (VarName == 'MonsterScale')
+	{
 		Mesh.SetScale3D(MonsterScale);
-	else if(VarName == 'bChangeSkin')
-		Mesh.SetMaterial(0, MaterialInterface'RBTTSlime.RBTTSlimeMaterial');
+		SetCollisionSize( CylinderComponent.default.CollisionRadius * MonsterScale.X * 2, CylinderComponent.default.CollisionHeight * MonsterScale.Z * 2 );
+	}
 	else
 		Super.ReplicatedEvent(VarName);
 }
@@ -36,7 +36,6 @@ simulated function PostBeginPlay()
 	if(bMotherSlime)
 		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
 		
-	bChangeSkin = !bChangeSkin; // Alter it, so it gets replicated
 	InitializeMonsterInfo();
 	InitSize(Mesh.Scale3D);
 	SetLocation(Location + (GetCollisionHeight() * Vect(0,0,1)));
@@ -132,7 +131,6 @@ simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocatio
 
 defaultproperties
 {
-	MonsterSkinMaterial = MaterialInterface'RBTTSlime.RBTTSlimeMaterial'
 	bAlwaysRelevant = True
 	MonsterScale=(X=32,Y=32,Z=32)
 	MinMonsterScale=(X=8,Y=8,Z=8)

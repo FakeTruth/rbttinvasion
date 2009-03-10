@@ -15,7 +15,7 @@ simulated function Tick( float DeltaTime )
 		return;
 
 	VeryOldGoalString = GoalString;
-	LogInternal(GoalString);
+	`log(GoalString);
 }
 
 /* ChooseAttackMode()
@@ -35,7 +35,7 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 event WhatToDoNext()
@@ -45,7 +45,7 @@ event WhatToDoNext()
 	if(Pawn.Velocity.Z < 128)
 	{
 		Pawn.Velocity.Z += 50;
-		LogInternal(">>Monster goes up!<<");
+		`log(">>Monster goes up!<<");
 	}
 }
 

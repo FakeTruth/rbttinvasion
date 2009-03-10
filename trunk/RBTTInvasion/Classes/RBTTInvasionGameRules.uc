@@ -104,8 +104,7 @@ function MatchStarting()
 	}
 	
 	//#### SET THE HUD ####\\
-	//FIXME! ISN'T WORKING YET ONLINE
-	WorldInfo.Game.HUDType=class'UTGame.UTCTFHUD'; //Class'RBTTInvasionHUD';
+	WorldInfo.Game.HUDType=Class'RBTTInvasionHUD';
 	foreach WorldInfo.AllControllers(class'Controller', C)
 	{
 		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
@@ -115,6 +114,8 @@ function MatchStarting()
 		{
 			ClientReplicator = C.Spawn(Class'RBTTClientReplicator');
 			ClientReplicator.OwnerController = C;
+			if(WorldInfo.NetMode != NM_DedicatedServer)
+				ClientReplicator.UpdateClientHUD(C);	
 		}
 		
 		/*

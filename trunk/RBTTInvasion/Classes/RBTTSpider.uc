@@ -15,9 +15,9 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	DiedReturn = Super.Died(Killer, damageType, HitLocation);
 	
-	LogInternal(">>>>>>>>>>>>>>>>>>>Pawn Destroyed!<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>>>Pawn Destroyed!<<<<<<<<<<<<<<<<<<<");
 	MonsterController.Destroy();
-	LogInternal(">>>>>>>>>>>>>> CONTROLLER DESTROYED <<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>> CONTROLLER DESTROYED <<<<<<<<<<<<<<<");
 	Destroy();
 
 	return DiedReturn;

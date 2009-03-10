@@ -8,7 +8,6 @@ event PostBeginPlay()
 	Super.PostBeginPlay();
 	
 	//InitPlayerReplicationInfo();
-	//bNeedWeapon = RBTTMonster(Pawn).bNeedWeapon; // Pawn doesn't exist yet..
 	//GotoState('Roaming', 'Begin');
 	
 
@@ -72,8 +71,8 @@ function Initialize(float InSkill, const out CharacterInfo BotInfo)
 		//PRI.SetCharacterData(BotCharData);
 		//GRI.ProcessCharacterData(self);
 		//InitPlayerReplicationInfo();
-		//LogInternal(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		//LogInternal(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		//`log(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		//`log(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
 	
 	//}
 	if (PRI != None)
@@ -205,11 +204,11 @@ function Destroyed()
 {
 	// Don't let monsters respawn into the game. Just remove them.
 	bIsPlayer = false;
-	LogInternal(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	PlayerReplicationInfo.Destroy();
-	LogInternal(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	super.Destroyed();
 }
 

@@ -15,7 +15,7 @@ simulated function Tick( float DeltaTime )
 		return;
 
 	VeryOldGoalString = GoalString;
-	LogInternal(GoalString);
+	`log(GoalString);
 }
 
 
@@ -36,18 +36,18 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 function Destroyed() 
 {
 	// Don't let monsters respawn into the game. Just remove them.
 	bIsPlayer = false;
-	LogInternal(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	PlayerReplicationInfo.Destroy();
-	LogInternal(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	super.Destroyed();
 }
 
@@ -66,7 +66,6 @@ protected event ExecuteWhatToDoNext()
 	bHasFired = false;
 	bTranslocatorHop = false;
 	GoalString = "WhatToDoNext at "$WorldInfo.TimeSeconds;
-	// We dont want to be in squad, so remove if in any
 	if (Squad == None && PlayerReplicationInfo != None && UTTeamInfo(PlayerReplicationInfo.Team) != None)
 	{
 		UTTeamInfo(PlayerReplicationInfo.Team).SetBotOrders(self);

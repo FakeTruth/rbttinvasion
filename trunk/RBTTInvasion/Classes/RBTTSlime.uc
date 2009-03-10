@@ -32,14 +32,47 @@ simulated event ReplicatedEvent(name VarName)
 simulated function PostBeginPlay()
 {
 	super.PostBeginPlay();
+
 	
-	if(bMotherSlime)
-		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+	InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+	
+	SetTimer(1, False, 'SpawnBabySlimes');
 		
 	InitializeMonsterInfo();
 	InitSize(Mesh.Scale3D);
 	SetLocation(Location + (GetCollisionHeight() * Vect(0,0,1)));
 	SetPhysics(PHYS_Falling);
+}
+
+function SpawnBabySlimes()
+{
+	local int i;
+	local RBTTSlime NewSlime;
+	
+	if(bMotherSlime)
+		for(i=0; i<4; i++)
+		{
+			if(i == 0)
+				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(1,1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			if(i == 1)
+				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(1,-1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			if(i == 2)
+				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(-1,1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			if(i == 3)
+				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(-1,-1,0)*(GetCollisionRadius()+16)),self.Rotation);
+				
+			if(NewSlime != None)
+			{
+				`log(">>New Slime is: "@NewSlime);
+				InvasionGamerules.NumMonsters++;
+				NewSlime.bMotherSlime = False;
+				NewSlime.health = 65;
+				NewSlime.InitSize(Vect(8,8,8));
+				NewSlime.SpawnTransEffect(0);
+				InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+				NewSlime = None;
+			}
+		}
 }
 
 function InitializeMonsterInfo()
@@ -72,8 +105,7 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 		if(DamageAmount > 60 && health > 0)
 		{
 			`log(">>Gonan spawn now!<<");
-			NewSlime = self.Spawn(self.class,,,self.Location+Vect(0,0,128),self.Rotation);
-			InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+			NewSlime = self.Spawn(self.class,,,self.Location+(Vect(0,0,1)*(GetCollisionHeight()+16)),self.Rotation);
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
@@ -81,9 +113,8 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 				NewSlime.bMotherSlime = False;
 				NewSlime.InitSize(Vect(8,8,8));
 				NewSlime.health = 65;
-			}else
-				InvasionGameRules.WaveMonsters++; //If the monster fails to spawn, it doesn't need to be killed
-				
+				InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+			}
 		}
 		
 		if( Class<UTDmgType_BioGoo>(DamageType) != None )
@@ -129,21 +160,45 @@ simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocatio
 	
 }
 
+// /////////// WEAPON STUFZZZ ///////////////////////////////// //
+function byte BestMode(){	return 0;	}
+
+simulated function float GetFireInterval( byte FireModeNum ){	return 0.5;	}
+
+simulated function float GetTraceRange()
+{
+	return GetCollisionRadius() + 64;
+}
+
+function float SuggestAttackStyle() {	return 1.00;	}
+
+simulated function InstantFire()
+{
+	if(VSize(Controller.Enemy.Location - Location) > GetCollisionRadius() + 64)
+	{
+		return; // enemy too far away to punch it in teh face!
+	}
+		
+	super.InstantFire();
+}
+
 defaultproperties
 {
-	bAlwaysRelevant = True
 	MonsterScale=(X=32,Y=32,Z=32)
 	MinMonsterScale=(X=8,Y=8,Z=8)
 	health = 500
 	bMotherSlime=True
 
-	bMeleeMonster = True;
-	JumpZ=644.0
-	bCanStrafe=False
+	bMeleeMonster = True
+	bEmptyHanded = True
+	bInvisibleWeapon = True
+	
+	//bCanStrafe=False // This screws things up!!!!!!!!!!!!
 	bCanSwim=False
-	bCanClimbCeilings=true
-	bInvisibleWeapon = True;
-	bCanPickupInventory = False;
+	bCanCrouch=False
+	bCanDoubleJump=False // If it doublejumps it looks silly! :P
+	MaxMultiJump = 0
+	
 	TorsoBoneName="Spine"
 	HeadBone="Head"
 	bEnableFootPlacement=False
@@ -153,17 +208,19 @@ defaultproperties
 	MonsterSkill=5
 	LightEnvironment=MyLightEnvironment
 	BioBurnAway=GooDeath
-	ArmsMesh(0)=FirstPersonArms
-	ArmsMesh(1)=FirstPersonArms2
+	ArmsMesh(0)=None
+	ArmsMesh(1)=None
 	PawnAmbientSound=AmbientSoundComponent
 	WeaponAmbientSound=AmbientSoundComponent2
 	GroundSpeed=200.000000
-   OverlayMesh=OverlayMeshComponent0
+	
+	OverlayMesh=OverlayMeshComponent0
+	
    DefaultFamily=Class'RBTTSlimeFamilyInfo'
    
    DefaultMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
    
-   WalkableFloorZ=0.300000
+   WalkableFloorZ=0.800000
    
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'
@@ -174,7 +231,6 @@ defaultproperties
       AnimTreeTemplate=AnimTree'RBTTSlime.RBTTSlimeTree'
       AnimSets(0)=AnimSet'RBTTSlime.RBTTSlimeAnims'
       bHasPhysicsAssetInstance=True
-      //Scale=64
       Scale3D=(X=32,Y=32,Z=32)
       Rotation=(Yaw=49149) //(65535 = 360 degrees) (16383 = 90 degrees) | Yaw, Roll, Pitch
       PhysicsAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
@@ -186,7 +242,6 @@ defaultproperties
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=2.000000
       CollisionRadius=2.000000
-      //Translation=(X=0,Y=0,Z=64)
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder

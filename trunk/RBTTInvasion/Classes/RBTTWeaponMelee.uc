@@ -173,22 +173,14 @@ simulated event float GetPowerPerc()
 	return 0;
 }
 
-simulated function AttachWeaponTo(SkeletalMeshComponent MeshCpnt, optional name SocketName)
-{
-	Super.AttachWeaponTo(MeshCpnt, SocketName);
-
-	// so replication is guaranteed to happen when we start charging and set it to 0 or 1
-	SetCurrentFireMode(2);
-}
-
 // not needed, so clear it!
-event ImpactAutoFire(){ LogInternal(">>> ImpactAutoFire() <<<"); }
-simulated function ImpactFire(){ LogInternal(">>> ImpactFire() <<<"); }
-reliable client function ClientAutoFire(){ LogInternal(">>> ClientAutoFire() <<<"); }
+event ImpactAutoFire(){ `log(">>> ImpactAutoFire() <<<"); }
+simulated function ImpactFire(){ `log(">>> ImpactFire() <<<"); }
+reliable client function ClientAutoFire(){ `log(">>> ClientAutoFire() <<<"); }
 
 simulated function FireAmmunition()
 {
-	LogInternal(">>>FireAmmunition()<<<");
+	`log(">>>FireAmmunition()<<<");
 	
 	// Use ammunition to fire
 	ConsumeAmmo( CurrentFireMode );
@@ -221,7 +213,7 @@ simulated function InstantFire()
 	local ImpactInfo RealImpact, NearImpact;
 	local int i, FinalImpactIndex;
 
-	LogInternal(">>>>>>>>>>InstantFire()<<<<<<<<<");
+	`log(">>>>>>>>>>InstantFire()<<<<<<<<<");
 	
 	// define range to use for CalcWeaponFire()
 	StartTrace = InstantFireStartTrace();
@@ -266,6 +258,15 @@ simulated function InstantFire()
 }
 
 simulated function StopFireEffects(byte FireModeNum);
+
+simulated function SetupArmsAnim(); // Arms animations..
+
+ /**
+ * Attach Weapon Mesh, Weapon MuzzleFlash and Muzzle Flash Dynamic Light to a SkeletalMesh
+ *
+ * @param	who is the pawn to attach to
+ */
+simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name SocketName ); // Melee weapon doesn't want to be attached!
 
 defaultproperties
 {

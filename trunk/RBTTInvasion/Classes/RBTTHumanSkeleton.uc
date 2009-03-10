@@ -20,11 +20,11 @@ simulated function PostBeginPlay()
 
 simulated function EmoteTimer()
 {
-	local float AnimLength;
-	LogInternal(">>Doing animation! << FullBodyAnimSlot:"@FullBodyAnimSlot);
+	//local float AnimLength;
+	//`log(">>Doing animation! << FullBodyAnimSlot:"@FullBodyAnimSlot);
 	//AnimLength = FullBodyAnimSlot.PlayCustomAnim(Class'UTGame.UTFamilyInfo'.default.FamilyEmotes[0].EmoteAnim, 1.0, 0.2, 0.2, FALSE, TRUE);
-	AnimLength = FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 1.0, 0.2, 0.2, FALSE, TRUE);
-	LogInternal(">>AnimLength is :"@AnimLength);
+	//AnimLength = FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 1.0, 0.2, 0.2, FALSE, TRUE);
+	//`log(">>AnimLength is :"@AnimLength);
 	//PlayEmote('TauntA', 0);
 }
 

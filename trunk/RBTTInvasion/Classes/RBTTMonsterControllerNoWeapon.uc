@@ -22,7 +22,7 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 function Initialize(float InSkill, const out CharacterInfo BotInfo)

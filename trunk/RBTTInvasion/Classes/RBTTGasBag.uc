@@ -55,7 +55,7 @@ simulated event DoBelch()
 	local vector		RealStartLoc;
 	local Projectile	SpawnedProjectile;
 
-	LogInternal(">> DoBelch() called<<");
+	`log(">> DoBelch() called<<");
 	
 	// tell remote clients that we fired, to trigger effects
 	Weapon.IncrementFlashCount();
@@ -72,7 +72,7 @@ simulated event DoBelch()
 			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
 		}
 		
-		LogInternal(">> SpawnedProjectile: "@SpawnedProjectile);
+		`log(">> SpawnedProjectile: "@SpawnedProjectile);
 	}
 }
 

@@ -12,6 +12,8 @@ var int MeleeWeaponRange;
 // AI Interface
 function float GetAIRating()
 {
+	return 9.f;
+/*
 	local UTBot B;
 
 	B = UTBot(Instigator.Controller);
@@ -32,6 +34,12 @@ function float GetAIRating()
 		return (AIRating + 0.15);
 
 	return AIRating;
+*/
+}
+
+function float RelativeStrengthVersus(Pawn P, float Dist)
+{
+	return 1.0000;
 }
 
 // Monster weapons always have ammo
@@ -71,13 +79,8 @@ simulated function vector InstantFireStartTrace()
  */
 simulated function InstantFire()
 {
-	if(VSize(Instigator.Controller.Enemy.Location - Owner.Location) > 64)
-		return; // enemy too far away to punch it in teh face!
-	
-	super.InstantFire();
-	
-	// Do an animation
-	UTPawn(Instigator).FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 2.5, 0.2, 0.2, FALSE, TRUE);
+	if(RBTTMonster(Instigator) != None)
+		RBTTMonster(Instigator).InstantFire();
 }
 
 function float RangedAttackTime()
@@ -93,23 +96,10 @@ function float RangedAttackTime()
 
 function float SuggestAttackStyle() // -1 to 1, low = stay off/snipe, high = charge/melee
 {
-	local float EnemyDist;
+	if(RBTTMonster(Instigator) != None)
+		return RBTTMonster(Instigator).SuggestAttackStyle();
 
-	if (Instigator.Controller.Enemy != None)
-	{
-		// recommend backing off if target is too close
-		EnemyDist = VSize(Instigator.Controller.Enemy.Location - Owner.Location);
-		if ( EnemyDist < 750 )
-		{
-			return (EnemyDist < 500) ? 1.0 : 0.5;
-		}
-		else if (EnemyDist > 1600)
-		{
-			return 0.5;
-		}
-	}
-
-	return -0.1;
+	return 0.00;
 }
 
 simulated function StartFire(byte FireModeNum)
@@ -209,15 +199,63 @@ simulated function SetSkin(Material NewMaterial)
 	Super(UTWeapon).SetSkin(NewMaterial);
 }
 
-simulated function AttachWeaponTo(SkeletalMeshComponent MeshCpnt, optional name SocketName)
+simulated function float GetTraceRange()
 {
-	Super(UTWeapon).AttachWeaponTo(MeshCpnt, SocketName);
+	if(RBTTMonster(Instigator) != None)
+		return RBTTMonster(Instigator).GetTraceRange();
+		
+	return WeaponRange;
 }
+
+simulated function FireAmmunition()
+{
+	// Use ammunition to fire
+	ConsumeAmmo( CurrentFireMode );
+
+	// if this is the local player, play the firing effects
+	// I rather play the sound from the pawn -FakeTruth
+	// PlayFiringSound(); 
+
+	// Handle the different fire types
+	switch( WeaponFireTypes[CurrentFireMode] )
+	{
+		case EWFT_InstantHit:
+			InstantFire();
+			break;
+
+		case EWFT_Projectile:
+			ProjectileFire();
+			break;
+
+		case EWFT_Custom:
+			CustomFire();
+			break;
+	}
+
+	if( ( Instigator != None)
+		&& ( AIController(Instigator.Controller) != None )
+		)
+	{
+		AIController(Instigator.Controller).NotifyWeaponFired(self,CurrentFireMode);
+	}
+}
+
+simulated function StopFireEffects(byte FireModeNum);
+
+simulated function SetupArmsAnim(); // Arms animations..
+
+ /**
+ * Attach Weapon Mesh, Weapon MuzzleFlash and Muzzle Flash Dynamic Light to a SkeletalMesh
+ *
+ * @param	who is the pawn to attach to
+ */
+simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name SocketName ); // This weapon doesn't want to be attached! (I hope)
 
 defaultproperties
 {
 	bExportMenuData=False // dont have data on this weapon! >_<
 
+	WeaponRange=22000
 	MeleeWeaponRange = 500
 	bDropOnDeath = False
 	DroppedPickupClass = None

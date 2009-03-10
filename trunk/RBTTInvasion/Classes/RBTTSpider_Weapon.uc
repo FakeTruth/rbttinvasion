@@ -181,8 +181,7 @@ simulated function InstantFire()
 
 simulated function ProcessInstantHit( byte FiringMode, ImpactInfo Impact )
 {
-	local float Damage, SelfDamage, Force, Scale, Aim, EnemyAim;
-	local UTInventoryManager UTInvManager;
+	local float Damage, SelfDamage, Force, Scale;
 	local UTPawn P;
 	local UTVehicle_Hoverboard H;
 	local class<UTEmitCameraEffect> CameraEffect;

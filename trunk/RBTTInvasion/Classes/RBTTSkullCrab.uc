@@ -1,22 +1,13 @@
 class RBTTSkullCrab extends RBTTMonster placeable;
 
-var() skeletalMeshComponent DefaultMonsterMesh;
 var() class<UTWeapon> DefaultMonsterWeapon;
-
-//var() int MonsterSkill, 
-var() int monsterTeam;
-var() int MonsterScale;
-//var() string MonsterName;
-
-
-
 
 
 defaultproperties
 {
 	bMeleeMonster = True;
 	bInvisibleWeapon = True;
-	bCanPickupInventory = False;
+
 	TorsoBoneName="Spine"
 	HeadBone="Head"
 	bEnableFootPlacement=False

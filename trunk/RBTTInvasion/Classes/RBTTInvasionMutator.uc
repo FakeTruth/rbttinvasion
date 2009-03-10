@@ -47,8 +47,6 @@ function InitMutator(string Options, out string ErrorMessage)
 				break;
 		
 		}
-		//if(MutatorConfig[i].MutatorClass == "UTGame.UTMutator_LowGrav" || MutatorConfig[i].MutatorClass == "UTMutator_LowGrav")
-		//	MutatorConfig[i].MutatorClass
 	}
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things

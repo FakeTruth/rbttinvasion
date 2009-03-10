@@ -170,7 +170,11 @@ function string GetLeftMisc(UTPlayerReplicationInfo PRI)
 {
 	if ( PRI != None )
 	{
-		if(PRI.Owner.IsInState('InQueue'))
+		if(PRI.Owner != None && PRI.Owner.IsInState('InQueue'))
+		{
+			return "is OUT!";
+		}
+		if(PRI.bIsSpectator)
 		{
 			return "is OUT!";
 		}

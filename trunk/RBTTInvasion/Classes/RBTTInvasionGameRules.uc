@@ -65,7 +65,7 @@ var UTTeamInfo 					Teams[2];		// an array of team infos held within UTGame
 
 var int 					BetweenWavesCountdown;	// Goes from 10 to 0 every wave begin
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
 	local int i;
 
@@ -91,11 +91,9 @@ function MatchStarting()
 {
 	//local UTTeamGame Game;
 	local PathNode NavPoint;
-	local UTPlayerController PC;
-	local UTProfileSettings Profile;
-	local int OutIntValue;
 	local Controller C;
 	local int i;
+	local RBTTClientReplicator ClientReplicator;
 	
 	//#### GET SPAWNPOINTS FOR MONSTERS ####\\
 	i = 0;
@@ -106,13 +104,20 @@ function MatchStarting()
 	}
 	
 	//#### SET THE HUD ####\\
-	//FIXME! ISN'T WORKING YET
+	//FIXME! ISN'T WORKING YET ONLINE
 	WorldInfo.Game.HUDType=class'UTGame.UTCTFHUD'; //Class'RBTTInvasionHUD';
 	foreach WorldInfo.AllControllers(class'Controller', C)
 	{
 		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
 			UTTeamGame(WorldInfo.Game).SetTeam(C, UTTeamGame(WorldInfo.Game).Teams[0], False);
 		
+		if(UTPlayerController(C) != None)
+		{
+			ClientReplicator = C.Spawn(Class'RBTTClientReplicator');
+			ClientReplicator.OwnerController = C;
+		}
+		
+		/*
 		if(UTPlayerController(C) != None)
 		{
 			PC = UTPlayerController(C);
@@ -134,23 +139,8 @@ function MatchStarting()
 			if(Profile.GetProfileSettingValueIdByName('DisplayWeaponBar', OutIntValue))
 				if(UTHUD(PC.myHUD) != None)
 					UTHUD(PC.myHUD).bShowWeaponbar = (OutIntValue==UTPID_VALUE_YES);
-			
-			
-
-			//PC.bRetrieveSettingsFromProfileOnNextTick = TRUE;
-			//PC.LoadSettingsFromProfile(False);
-			
-			//PC.bSimpleCrosshair=false;
-			//PC.bNoCrosshair=false;
-			//UTHUD(PC.myHUD).bShowMap = True;
-			//UTHUD(PC.myHUD).bShowClock = True;
-			//PC.bHideObjectivePaths = True;
-			//UTHUD(PC.myHUD).bShowScoring = True;
-			//UTHUD(PC.myHUD).bShowLeaderboard = True;
-			//UTHUD(PC.myHUD).bShowVehicleArmorCount = True;
-			//PC.bRotateMinimap = True;
-			//UTHUD(PC.myHUD).bCrosshairShow = True;
 		}
+		*/
 	}
 	
 	/*

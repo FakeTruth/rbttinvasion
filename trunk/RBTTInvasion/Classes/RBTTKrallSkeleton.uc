@@ -9,9 +9,40 @@ var() int MonsterScale;
 //var() string MonsterName;
 
 
+simulated function Projectile ProjectileFire()
+{
+	local vector		RealStartLoc;
+	local Projectile	SpawnedProjectile;
+
+	// tell remote clients that we fired, to trigger effects
+	Weapon.IncrementFlashCount();
+
+	if( Role == ROLE_Authority )
+	{
+		// this is the location where the projectile is spawned.
+		RealStartLoc = Weapon.GetPhysicalFireStartLoc();
+
+		// Spawn projectile
+		SpawnedProjectile = Spawn(Class'UTGame.UTProj_Rocket',,, RealStartLoc);
+		if( SpawnedProjectile != None && !SpawnedProjectile.bDeleteMe )
+		{
+			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
+		}
+
+		// Return it up the line
+		return SpawnedProjectile;
+	}
+
+	return None;
+}
+
 
 defaultproperties
 {
+	bEmptyHanded = True
+	bNeedWeapon = False
+	bCanPickupInventory = False
+	ControllerClass=Class'RBTTMonsterControllerNoWeapon'
 
 	HeadBone="Head"
 
@@ -42,8 +73,6 @@ defaultproperties
    DefaultMesh=SkeletalMesh'CH_Skeletons.Mesh.SK_CH_Skeleton_Krall_Male'
    
    WalkableFloorZ=0.800000
-   
-   ControllerClass=Class'RBTTMonsterController'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'CH_Skeletons.Mesh.SK_CH_Skeleton_Krall_Male'

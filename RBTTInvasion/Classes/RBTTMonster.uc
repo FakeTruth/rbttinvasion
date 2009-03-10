@@ -16,17 +16,18 @@ simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 	SpawnDefaultController();
-	AddDefaultInventory();
+	//AddDefaultInventory();
 	DeactivateSpawnProtection(); // No spawn protection for this monster! :D
-	UTPlayerReplicationInfo(Controller.PlayerReplicationInfo).SetCharacterMesh(Mesh.SkeletalMesh, True);
-	RBTTMonsterController(Controller).bNeedWeapon = bNeedWeapon;
+
 }
 
 function SpawnDefaultController()
 {
 	Super(Pawn).SpawnDefaultController();
 	MonsterController = Controller;
-
+	
+	UTPlayerReplicationInfo(Controller.PlayerReplicationInfo).SetCharacterMesh(Mesh.SkeletalMesh, True);
+	RBTTMonsterController(Controller).bNeedWeapon = bNeedWeapon;
 }
 
 
@@ -262,7 +263,7 @@ defaultproperties
 	bStasis=false
 	bCanCrouch=true
 	bCanClimbLadders=True
-	bCanPickupInventory=True
+	bCanPickupInventory=False
 	bCanDoubleJump=true
 	SightRadius=+12000.0
 }

@@ -91,12 +91,12 @@ function Destroyed()
 	Super.Destroyed();
 }
 
-event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+simulated event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
 	//if(PlayerController(UTPawn(DamageCauser).Controller) != None)
 	if(DamageCauser.Instigator.Controller.IsA('PlayerController'))
 	{
-		LogInternal(">>>DamageCauser == "@DamageCauser);
+		`log(">>>DamageCauser == "@DamageCauser);
 		super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 		
 		Health-=DamageAmount;

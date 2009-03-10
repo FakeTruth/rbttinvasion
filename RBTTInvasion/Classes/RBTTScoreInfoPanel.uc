@@ -111,7 +111,7 @@ event DrawPanel()
 		if ( GIC != none )
 		{
 			//Work = GIC.default.GameName;
-			Work = "RBTTInvasion";
+			Work = "Invasion";
 		}
 		else
 		{

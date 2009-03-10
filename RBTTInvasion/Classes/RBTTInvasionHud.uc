@@ -132,10 +132,9 @@ function DisplayTeamScore()
 				else
 					PulseBrightness = 255 - 255*Abs(Dist*0.00033 - RadarPulse - 1);
 				
-				if(UTPawn(P).Controller != None)
-					PRI = UTPlayerReplicationInfo(UTPawn(P).Controller.PlayerReplicationInfo);
+				PRI = UTPlayerReplicationInfo(P.PlayerReplicationInfo);
 				
-				if ( UTPawn(P) != None && PRI != none)
+				if ( PRI != none)
 				{
 					
 					if ( PRI.Team.TeamIndex == 0)
@@ -150,7 +149,7 @@ function DisplayTeamScore()
 					{
 						MinEnemyDist = FMin(MinEnemyDist, Dist);
 						Canvas.DrawColor.R = PulseBrightness;
-						Canvas.DrawColor.G = PulseBrightness;
+						Canvas.DrawColor.G = 0;
 						Canvas.DrawColor.B = 0;
 						Canvas.DrawColor.A = PulseBrightness;
 					}
@@ -205,7 +204,7 @@ simulated function Tick(float DeltaTime)
 	//	InsideCameraEffect = None;
 	//}
 	
-	if(bEnableLowHealthBlur) // Don't do blur on server
+	if(bEnableLowHealthBlur) // Don't do blur if server dont want blur..
 		HandleBlur(DeltaTime);
 	
 	//DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance += 1.00;

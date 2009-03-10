@@ -33,7 +33,6 @@ defaultproperties
 	bEmptyHanded = True
 	bNeedWeapon = False
 	bCanPickupInventory = False
-	InventoryManagerClass=class'RBTTInventoryManager'
 	
 	LeftFootControlName="LeftFrontFootControl"
  

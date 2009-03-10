@@ -17,7 +17,11 @@ event PostBeginPlay()
 	if(RBTTMonster(Instigator).MonsterWeaponClass != None)
 		NewWeapon = Instigator.Spawn(RBTTMonster(Instigator).MonsterWeaponClass);
 	else if(RBTTMonster(Instigator).bEmptyHanded)
+	{
 		NewWeapon = Instigator.Spawn(class'DummyWeapon');
+		if(RBTTMonster(Instigator).bMeleeMonster)
+			UTWeapon(NewWeapon).bMeleeWeapon=true;
+	}
 	else if(RBTTMonster(Instigator).bMeleeMonster)
 		NewWeapon = Instigator.Spawn(class'RBTTWeaponMelee');
 	else
@@ -64,7 +68,7 @@ simulated function SwitchToBestWeapon( optional bool bForceADifferentWeapon )
 		return;
 	}
 
-	//LogInternal(">>>>>>>>>>>>>>>>>>>>>>>>>>SWITCH TO BEST WEAPON<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+	//`log(">>>>>>>>>>>>>>>>>>>>>>>>>>SWITCH TO BEST WEAPON<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
 
 	BestWeapon = Weapon(MonsterWeapon);

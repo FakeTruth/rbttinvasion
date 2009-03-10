@@ -129,6 +129,82 @@ simulated function float GetFireInterval( byte FireModeNum )
 	return Weapon.FireInterval[FireModeNum] * FireRateMultiplier;
 }
 
+simulated function float GetTraceRange()
+{
+	return Weapon.WeaponRange;
+}
+
+function float SuggestAttackStyle() // -1 to 1, low = stay off/snipe, high = charge/melee
+{
+	local float EnemyDist;
+
+	if (Controller.Enemy != None)
+	{
+		// recommend backing off if target is too close
+		EnemyDist = VSize(Controller.Enemy.Location - Location);
+		if ( EnemyDist < 750 )
+		{
+			return (EnemyDist < 500) ? 1.0 : 0.5;
+		}
+		else if (EnemyDist > 1600)
+		{
+			return 0.5;
+		}
+	}
+
+	return -0.1;
+}
+
+simulated function InstantFire()
+{
+	local vector StartTrace, EndTrace;
+	local Array<ImpactInfo>	ImpactList;
+	local ImpactInfo RealImpact, NearImpact;
+	local int i, FinalImpactIndex;
+	local UTWeapon UTWeap;
+	
+	UTWeap = UTWeapon(Weapon);
+
+	// define range to use for CalcWeaponFire()
+	StartTrace = UTWeap.InstantFireStartTrace();
+	EndTrace = UTWeap.InstantFireEndTrace(StartTrace);
+	// Perform shot
+	RealImpact = UTWeap.CalcWeaponFire(StartTrace, EndTrace, ImpactList);
+	FinalImpactIndex = ImpactList.length - 1;
+
+	if (FinalImpactIndex >= 0 && (ImpactList[FinalImpactIndex].HitActor == None || !ImpactList[FinalImpactIndex].HitActor.bProjTarget))
+	{
+		// console aiming help
+		NearImpact = UTWeap.InstantAimHelp(StartTrace, EndTrace, RealImpact);
+		if ( NearImpact.HitActor != None )
+		{
+			ImpactList[FinalImpactIndex] = NearImpact;
+		}
+	}
+
+	for (i = 0; i < ImpactList.length; i++)
+	{
+		UTWeap.ProcessInstantHit(UTWeap.CurrentFireMode, ImpactList[i]);
+	}
+
+	if (Role == ROLE_Authority)
+	{
+		// Set flash location to trigger client side effects.
+		// if HitActor == None, then HitLocation represents the end of the trace (maxrange)
+		// Remote clients perform another trace to retrieve the remaining Hit Information (HitActor, HitNormal, HitInfo...)
+		// Here, The final impact is replicated. More complex bullet physics (bounce, penetration...)
+		// would probably have to run a full simulation on remote clients.
+		if ( NearImpact.HitActor != None )
+		{
+			UTWeap.SetFlashLocation(NearImpact.HitLocation);
+		}
+		else
+		{
+			UTWeap.SetFlashLocation(RealImpact.HitLocation);
+		}
+	}
+}
+
 
 /*
 Event called when an AnimNodeSequence (in the animation tree of one of this Actors SkeletalMeshComponents) reaches the end and stops. Will not get called if bLooping is 'true' on the AnimNodeSequence. bCauseActorAnimEnd must be set 'true' on the AnimNodeSequence for this event to get generated.
@@ -153,6 +229,8 @@ event OnAnimEnd (AnimNodeSequence SeqNode, float PlayedTime, float ExcessTime)
 }
 
 function RangedAttack(Actor A);
+
+
 
 //*******************************************************************
 
@@ -228,6 +306,11 @@ simulated function NotifyTeamChanged()
 	}
 }
 
+/**
+ * Called when a weapon is changed and is responsible for making sure
+ * the new weapon respects the current pawns states/etc.
+ */
+simulated function WeaponChanged(UTWeapon NewWeapon); // This function only does animations and sheet.. we don't need that for monsters
 
 defaultproperties
 {

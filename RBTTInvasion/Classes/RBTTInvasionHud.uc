@@ -212,7 +212,7 @@ simulated function Tick(float DeltaTime)
 	//	DOFEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur')).FocusDistance = 0.00;
 		
 	//for (i=0;i < LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects.length; i++)
-	//	LogInternal(">>>>> Idx:"@i@" class:"@LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[i].class@"<<<<<");
+	//	`log(">>>>> Idx:"@i@" class:"@LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[i].class@"<<<<<");
 	
 	//BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur'));
 

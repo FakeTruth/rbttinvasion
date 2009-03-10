@@ -39,7 +39,7 @@ simulated function SwitchToBestWeapon( optional bool bForceADifferentWeapon )
 {
 	local Weapon BestWeapon;
 
-	//LogInternal(">>>>>>>>>>>>>>>>>>>>>>>>>>SWITCH TO BEST WEAPON<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+	//`log(">>>>>>>>>>>>>>>>>>>>>>>>>>SWITCH TO BEST WEAPON<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
 
 	BestWeapon = Weapon(LinkGun); //None;

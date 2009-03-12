@@ -84,7 +84,7 @@ simulated function PostBeginPlay()
 	if(UTTeamGame(WorldInfo.Game) != None)
 		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
 		
-	SaveConfig();
+	//SaveConfig();
 }
 
 function MatchStarting()

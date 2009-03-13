@@ -37,6 +37,8 @@ simulated function UpdateClientHUD(Controller C)
 	if(UTPlayerController(C) != None)
 	{
 		PC = UTPlayerController(C);
+		if(PC.myHUD.class == Class'RBTTInvasionHUD')
+			return;
 		
 		PC.ClientSetHUD( Class'RBTTInvasionHUD', None );
 		

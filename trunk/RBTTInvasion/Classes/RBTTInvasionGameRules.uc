@@ -78,6 +78,7 @@ simulated function PostBeginPlay()
 		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
 		MonsterTable[i].MonsterClass = class<UTPawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
 	}
+	
 	WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
 	
 	//#### SET GAME INFORMATION ####\\
@@ -85,6 +86,22 @@ simulated function PostBeginPlay()
 		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
 		
 	//SaveConfig();
+}
+
+function NotifyLogin(Controller NewPlayer)
+{
+	local RBTTClientReplicator ClientReplicator;
+	
+	`log(">> RBTTInvasionGameRules.NotifyLogin <<");
+
+	if(NewPlayer.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
+		UTTeamGame(WorldInfo.Game).SetTeam(NewPlayer, UTTeamGame(WorldInfo.Game).Teams[0], False);
+	
+	if(UTPlayerController(NewPlayer) != None)
+	{
+		ClientReplicator = NewPlayer.Spawn(Class'RBTTClientReplicator');
+		ClientReplicator.OwnerController = NewPlayer;
+	}
 }
 
 function MatchStarting()
@@ -110,11 +127,11 @@ function MatchStarting()
 		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
 			UTTeamGame(WorldInfo.Game).SetTeam(C, UTTeamGame(WorldInfo.Game).Teams[0], False);
 		
-		if(UTPlayerController(C) != None)
+		if(UTPlayerController(C) != None && UTPlayerController(C).myHUD.class != Class'RBTTInvasionHUD')
 		{
 			ClientReplicator = C.Spawn(Class'RBTTClientReplicator');
 			ClientReplicator.OwnerController = C;
-			if(WorldInfo.NetMode != NM_DedicatedServer)
+			if(WorldInfo.NetMode != NM_DedicatedServer)	// For offline play
 				ClientReplicator.UpdateClientHUD(C);	
 		}
 		
@@ -148,18 +165,13 @@ function MatchStarting()
 	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
 	{
 		PC.ClientSetHUD( Class'RBTTInvasionHUD', WorldInfo.Game.ScoreboardType );
-		//UTHUD(PC.myHUD).bCrosshairShow = true;
-		//UTHUD(PC.myHUD).bShowHUD = true;
 		PC.bRetrieveSettingsFromProfileOnNextTick = TRUE;
-		//`log(">>>> bCrosshairShow = "@UTHUD(PC.myHUD).bCrosshairShow@"<<<");
 	}
 	*/
 	
 	//#### GET CURRENT WAVE FROM MUTATOR ####\\
 	CurrentWave = InvasionMut.CurrentWave;
 	
-	//Game = UTTeamGame(WorldInfo.Game);
-	//RBTTInvasionGameRules(Game.GameRulesModifiers).NumMonsters = 0; // lol? WTF? xD
 	CreateMonsterTeam();
 	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
 	LastPortalTime = WorldInfo.TimeSeconds;	 	// Spawn portal after PortalSpawnInterval seconds

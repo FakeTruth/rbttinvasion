@@ -254,7 +254,8 @@ simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name
 defaultproperties
 {
 	bExportMenuData=False // dont have data on this weapon! >_<
-
+	bCanThrow=false
+	
 	WeaponRange=22000
 	MeleeWeaponRange = 500
 	bDropOnDeath = False
@@ -265,6 +266,7 @@ defaultproperties
 	End Object
 
 	// Weapon SkeletalMesh
+	/*
 	Begin Object Name=FirstPersonMesh
 		SkeletalMesh=SkeletalMesh'WP_ShockRifle.Mesh.SK_WP_ShockRifle_1P'
 		AnimSets(0)=AnimSet'WP_ShockRifle.Anim.K_WP_ShockRifle_1P_Base'
@@ -272,12 +274,15 @@ defaultproperties
 		Rotation=(Yaw=-16384)
 		FOV=60.0
 	End Object
+	*/
 
 	//AttachmentClass=class'UTGame.UTAttachment_ShockRifle'
 
+	/*
 	Begin Object Name=PickupMesh
 		SkeletalMesh=SkeletalMesh'WP_ShockRifle.Mesh.SK_WP_ShockRifle_3P'
 	End Object
+	*/
 
 	InstantHitMomentum(0)=+20000.0
 
@@ -288,7 +293,7 @@ defaultproperties
 	InstantHitDamage(0)=10
 	FireInterval(0)=+1.0
 	FireInterval(1)=+1.0
-	InstantHitDamageTypes(0)=class'UTDmgType_ImpactHammer'
+	InstantHitDamageTypes(0)=class'RBTTInvasion.MeleeDamage'
 	InstantHitDamageTypes(1)=None
 
 	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'

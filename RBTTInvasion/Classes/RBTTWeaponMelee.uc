@@ -298,7 +298,7 @@ defaultproperties
 
 	FireOffset=(X=20)
 
-	InstantHitDamageTypes(0)=class'UTDmgType_ImpactHammer'
+	InstantHitDamageTypes(0)=class'RBTTInvasion.MeleeDamage'
 	InstantHitDamage(0)=10
 	InstantHitDamageTypes(1)=none
 	InstantHitDamageTypes(2)=none

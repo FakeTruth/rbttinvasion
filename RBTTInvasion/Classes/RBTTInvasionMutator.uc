@@ -4,6 +4,8 @@ class RBTTInvasionMutator extends UTMutator
 var int CurrentWave; 			// Current wave we're in
 var bool bMatchHasStarted;		// A check to see if the match has actually started before we send MatchStarting to the gamerules
 var string InitMutatorOptionsString; 	// For sending the game options to other mutators/gameinfo's spawned by us
+var string InvasionVersion;		// Version of the invasion mutator, added in the serverdetails when querying server
+var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 
 struct MutatorList
 {
@@ -141,6 +143,7 @@ function SpawnNewGameRules()
 	{
 		//Game.bForceAllRed=true;			// This is done in the GameRules itself now
 		G = spawn(class'RBTTInvasionGameRules');	// Spawn the Invasion rules
+		CurrentRules = G;				// Cache it to a global variable
 		G.InvasionMut = self;				// Quick reference to our mutator
 		//Game.HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 		if (Game.GameRulesModifiers != None)		// Put the rules in the rules list
@@ -156,8 +159,19 @@ function SpawnNewGameRules()
 function MatchStarting()
 {
 	bMatchHasStarted = True;	// The match has started, so set the flag
-	SpawnNewGameRules(); // Spawn before super, in case it needs to do something fancy..
+	SpawnNewGameRules(); 	// Spawn before super, in case it needs to do something fancy..
 	super.MatchStarting();		// Let the super handle the rest of the function
+}
+
+
+// Use this function to send NotifyLogin to the Invasion GameRules
+// This is used to spawn the HUD when a player joins mid-game
+function NotifyLogin(Controller NewPlayer)
+{
+	super.NotifyLogin(NewPlayer);
+	`log(">> RBTTInvasionMutator.NotifyLogin <<");
+	if(CurrentRules != None)
+		RBTTInvasionGameRules(CurrentRules).NotifyLogin(NewPlayer);
 }
 
 /*
@@ -168,12 +182,24 @@ function PostBeginPlay()
 }
 */
 
-
+//
+// server querying
+//
+function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
+{
+	// append the mutator name.
+	local int i;
+	i = ServerState.ServerInfo.Length;
+	ServerState.ServerInfo.Length = i+1;
+	ServerState.ServerInfo[i].Key = "Mutator";
+	ServerState.ServerInfo[i].Value = "UT3 Invasion"@InvasionVersion;
+}
 
 defaultproperties
 {
    MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
 
+   InvasionVersion="Rev 39"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

@@ -4,7 +4,7 @@
  */
 class RBTTCustomMonster_Data extends UTCustomChar_Data
 	
-	config(RBTTCustomMonster_Data);
+	config(RBTTInvasion);
 	
 
 defaultproperties

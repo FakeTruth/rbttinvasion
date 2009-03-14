@@ -1,5 +1,5 @@
 class RBTTInvasionHud extends UTTeamHud 
-		config(RBTTMonsters);
+		config(RBTTInvasion);
 
 
 var float RadarPulse,RadarScale;

@@ -30,6 +30,13 @@ function InitMutator(string Options, out string ErrorMessage)
 	Super.InitMutator(Options, ErrorMessage);
 	//SaveConfig();
 	
+	if(UTTeamGame(WorldInfo.Game) == None)
+	{
+		WarnInternal("RBTTInvasion Mutator Only Works With Team Games");
+		Destroy();
+		return;
+	}
+	
 	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
 	{
 		//change the classnames of the original mutators to ours, since they work better
@@ -53,6 +60,7 @@ function InitMutator(string Options, out string ErrorMessage)
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	UpdateMutators();				// Set the mutators up for the first wave
+	UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 }
 
 // Wave has ended, probably gets called by the gamerules
@@ -166,6 +174,7 @@ function MatchStarting()
 
 // Use this function to send NotifyLogin to the Invasion GameRules
 // This is used to spawn the HUD when a player joins mid-game
+/*
 function NotifyLogin(Controller NewPlayer)
 {
 	super.NotifyLogin(NewPlayer);
@@ -173,6 +182,7 @@ function NotifyLogin(Controller NewPlayer)
 	if(CurrentRules != None)
 		RBTTInvasionGameRules(CurrentRules).NotifyLogin(NewPlayer);
 }
+*/
 
 /*
 function PostBeginPlay()

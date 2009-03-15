@@ -88,6 +88,8 @@ simulated function PostBeginPlay()
 	//SaveConfig();
 }
 
+// FIXME - HUD ISN'T ALWAYS WORKING LIKE THIS!
+/*
 function NotifyLogin(Controller NewPlayer)
 {
 	local RBTTClientReplicator ClientReplicator;
@@ -103,14 +105,15 @@ function NotifyLogin(Controller NewPlayer)
 		ClientReplicator.OwnerController = NewPlayer;
 	}
 }
+*/
 
 function MatchStarting()
 {
 	//local UTTeamGame Game;
 	local PathNode NavPoint;
-	local Controller C;
+	//local Controller C;
 	local int i;
-	local RBTTClientReplicator ClientReplicator;
+	//local RBTTClientReplicator ClientReplicator;
 	
 	//#### GET SPAWNPOINTS FOR MONSTERS ####\\
 	i = 0;
@@ -121,6 +124,8 @@ function MatchStarting()
 	}
 	
 	//#### SET THE HUD ####\\
+	// FIXME - NOT WORKING YET!!!
+	/*
 	WorldInfo.Game.HUDType=Class'RBTTInvasionHUD';
 	foreach WorldInfo.AllControllers(class'Controller', C)
 	{
@@ -134,32 +139,8 @@ function MatchStarting()
 			if(WorldInfo.NetMode != NM_DedicatedServer)	// For offline play
 				ClientReplicator.UpdateClientHUD(C);	
 		}
-		
-		/*
-		if(UTPlayerController(C) != None)
-		{
-			PC = UTPlayerController(C);
-		
-			PC.ClientSetHUD( Class'RBTTInvasionHUD', WorldInfo.Game.ScoreboardType );
-			
-			Profile = UTProfileSettings(PC.OnlinePlayerData.ProfileProvider.Profile);
-			if(Profile.GetProfileSettingValueIntByName('MouseSmoothingStrength', OutIntValue))
-			{
-				// Fix up non-patch values
-				if ( OutIntValue < 2 )
-				{
-					OutIntValue = 10;
-					Profile.SetProfileSettingValueInt(425, OutIntValue); // UTPID_MouseSmoothingStrength = 425
-				}
-				UTHUD(PC.myHUD).ConfiguredCrosshairScaling = 0.1 * OutIntValue;
-			}
-			
-			if(Profile.GetProfileSettingValueIdByName('DisplayWeaponBar', OutIntValue))
-				if(UTHUD(PC.myHUD) != None)
-					UTHUD(PC.myHUD).bShowWeaponbar = (OutIntValue==UTPID_VALUE_YES);
-		}
-		*/
 	}
+	*/
 	
 	/*
 	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)

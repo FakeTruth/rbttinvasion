@@ -218,6 +218,18 @@ function GameHasEnded(optional Actor EndGameFocus, optional bool bIsWinner)
 	Super.GameHasEnded(EndGameFocus, bIsWinner);
 }
 
+function PawnDied(Pawn P)
+{
+	if ( Pawn != P )
+		return;
+
+	Super.PawnDied(P);
+	
+	`log(">>>>>>>>>>>>>>        PAWN HAS DIED        <<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>> ABOUT TO DESTROY CONTROLLER <<<<<<<<<<<<<<<");
+	Destroy();
+}
+
 defaultproperties
 {
    ReactionTime=0.500000

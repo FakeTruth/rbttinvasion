@@ -193,13 +193,17 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "Mutator";
 	ServerState.ServerInfo[i].Value = "UT3 Invasion"@InvasionVersion;
+	i++;
+	ServerState.ServerInfo.Length = i+1;
+	ServerState.ServerInfo[i].Key = "UT3 Invasion";
+	ServerState.ServerInfo[i].Value = InvasionVersion;
 }
 
 defaultproperties
 {
    MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
 
-   InvasionVersion="Rev 39"
+   InvasionVersion="Rev 42"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

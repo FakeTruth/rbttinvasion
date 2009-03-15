@@ -234,19 +234,16 @@ function RangedAttack(Actor A);
 
 //*******************************************************************
 
-
+/*
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
 	local bool DiedReturn;
 
 	DiedReturn = Super.Died(Killer, damageType, HitLocation);
-	
-	`log(">>>>>>>>>>>>>>>>>>>Pawn Destroyed!<<<<<<<<<<<<<<<<<<<");
-	MonsterController.Destroy();
-	`log(">>>>>>>>>>>>>> CONTROLLER DESTROYED <<<<<<<<<<<<<<<");
 
 	return DiedReturn;
 }
+*/
 
 simulated function NotifyTeamChanged()
 {

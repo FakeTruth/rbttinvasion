@@ -98,7 +98,8 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 	local vector NewSize;
 	local RBTTSlime NewSlime;
 
-	super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+	if(Class<UTDmgType_BioGoo>(DamageType) == None )
+		super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 	
 	if(bMotherSlime)
 	{
@@ -141,6 +142,7 @@ function InitSize(vector NewSize)
 	//native(283) final function SetCollisionSize( float NewRadius, float NewHeight );
 }
 
+/*
 simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocation)
 {
 	local UTProj_BioGlob BioGlobSpawn;
@@ -157,7 +159,28 @@ simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocatio
 		VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
 		BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;
 	}
+}
+*/
+
+function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+	local UTProj_BioGlob BioGlobSpawn;
+	local Vector VNorm;
+
+	BioGlobSpawn = Spawn(Class'UTGameContent.UTProj_BioGlob',,,self.Location);
+	BioGlobSpawn.InitBio(None, 25); //make its strength 25
 	
+	BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
+	if (BioGlobSpawn.Physics == PHYS_Falling)
+	{
+		VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
+		BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;
+	}
+	
+	Super.Died(Killer, damageType, HitLocation);
+	
+	Destroy();
+	return True;
 }
 
 // /////////// WEAPON STUFZZZ ///////////////////////////////// //

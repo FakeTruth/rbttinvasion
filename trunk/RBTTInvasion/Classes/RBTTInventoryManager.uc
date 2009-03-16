@@ -80,5 +80,7 @@ simulated function SwitchToBestWeapon( optional bool bForceADifferentWeapon )
 
 defaultproperties
 {
+	PendingFire(0) = 0 // Set them, so it don't give accessed none
+	PendingFire(1) = 0
 
 }

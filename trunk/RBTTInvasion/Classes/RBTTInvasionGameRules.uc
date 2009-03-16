@@ -198,6 +198,7 @@ function EndWave()
 	`log("Wave "@CurrentWave@" over!!");
 	CurrentWave++;
 	RespawnPlayersFromQueue();
+	ReplenishAmmo();
 	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
 	{
 		ClearTimer('InvasionTimer'); // Stop this timer, game's over anyway...
@@ -211,6 +212,32 @@ function EndWave()
 		WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
 	InvasionMut.EndWave(self);
 	return;
+}
+
+function ReplenishAmmo()
+{
+	local Inventory Item;
+	local UTInventoryManager InvManager;
+	local UTPlayerController PC;
+	local int AmmoToAdd;
+	local UTWeapon W;
+
+	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+	{
+		InvManager = UTInventoryManager(PC.Pawn.InvManager);
+		
+		for (Item = InvManager.InventoryChain; Item != None; Item = Item.Inventory)
+		{
+			if(!Item.IsA('UTWeap_Redeemer'))
+			{
+				W = UTWeapon(Item);
+				AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
+				
+				if(AmmoToAdd > 0)
+					InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
+			}
+		}
+	}
 }
 
 function RespawnPlayersFromQueue()

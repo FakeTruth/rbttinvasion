@@ -290,10 +290,10 @@ simulated function NotifyTeamChanged()
 			// but this is both less likely to happen and less likely to be noticed when it does)
 
 			// JG: actually - we always want the soundgroup to match the mesh - your own effects are not replicated from server
-			//if (Family != None)
-			//{
-			//	SoundGroupClass = Family.default.SoundGroupClass;
-			//}
+			if (Family != None)
+			{
+				SoundGroupClass = Family.default.SoundGroupClass;
+			}
 
 			if (OverlayMesh != None)
 			{

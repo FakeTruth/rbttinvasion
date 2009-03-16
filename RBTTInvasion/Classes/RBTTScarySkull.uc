@@ -120,6 +120,7 @@ defaultproperties
       ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
    End Object
    
+   SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
    
    Components(1)=Arrow
    Components(2)=MyLightEnvironment

@@ -21,7 +21,7 @@ defaultproperties
    DeathMeshPhysAsset=PhysicsAsset'RBTTScarySkull.ScarySkull_Physics'
    DeathMeshNumMaterialsToSetResident=1
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
-
+   SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
 	//DeathMeshBreakableJoints=("b_LeftArm","b_RightArm","b_LeftLegUpper","b_RightLegUpper")
 	HeadGib=(BoneName=b_Head,GibClass=class'UTGib_HumanHead',bHighDetailOnly=false)
 	Gibs[0]=(BoneName=b_LeftForeArm,GibClass=class'UTGib_HumanArm',bHighDetailOnly=false)

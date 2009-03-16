@@ -89,29 +89,30 @@ simulated function PostBeginPlay()
 }
 
 // FIXME - HUD ISN'T ALWAYS WORKING LIKE THIS!
-/*
+// So just use it to set the team..
 function NotifyLogin(Controller NewPlayer)
 {
-	local RBTTClientReplicator ClientReplicator;
+	//local RBTTClientReplicator ClientReplicator;
 	
 	`log(">> RBTTInvasionGameRules.NotifyLogin <<");
 
 	if(NewPlayer.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
 		UTTeamGame(WorldInfo.Game).SetTeam(NewPlayer, UTTeamGame(WorldInfo.Game).Teams[0], False);
 	
+	/*
 	if(UTPlayerController(NewPlayer) != None)
 	{
 		ClientReplicator = NewPlayer.Spawn(Class'RBTTClientReplicator');
 		ClientReplicator.OwnerController = NewPlayer;
 	}
+	*/
 }
-*/
 
 function MatchStarting()
 {
 	//local UTTeamGame Game;
 	local PathNode NavPoint;
-	//local Controller C;
+	local Controller C;
 	local int i;
 	//local RBTTClientReplicator ClientReplicator;
 	
@@ -125,13 +126,13 @@ function MatchStarting()
 	
 	//#### SET THE HUD ####\\
 	// FIXME - NOT WORKING YET!!!
-	/*
-	WorldInfo.Game.HUDType=Class'RBTTInvasionHUD';
+	//WorldInfo.Game.HUDType=Class'RBTTInvasionHUD';
 	foreach WorldInfo.AllControllers(class'Controller', C)
 	{
 		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
 			UTTeamGame(WorldInfo.Game).SetTeam(C, UTTeamGame(WorldInfo.Game).Teams[0], False);
 		
+		/*
 		if(UTPlayerController(C) != None && UTPlayerController(C).myHUD.class != Class'RBTTInvasionHUD')
 		{
 			ClientReplicator = C.Spawn(Class'RBTTClientReplicator');
@@ -139,8 +140,8 @@ function MatchStarting()
 			if(WorldInfo.NetMode != NM_DedicatedServer)	// For offline play
 				ClientReplicator.UpdateClientHUD(C);	
 		}
+		*/
 	}
-	*/
 	
 	/*
 	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)

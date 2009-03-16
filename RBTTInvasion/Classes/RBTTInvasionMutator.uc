@@ -174,15 +174,13 @@ function MatchStarting()
 
 // Use this function to send NotifyLogin to the Invasion GameRules
 // This is used to spawn the HUD when a player joins mid-game
-/*
 function NotifyLogin(Controller NewPlayer)
 {
 	super.NotifyLogin(NewPlayer);
 	`log(">> RBTTInvasionMutator.NotifyLogin <<");
-	if(CurrentRules != None)
+	if(RBTTInvasionGameRules(CurrentRules) != None)
 		RBTTInvasionGameRules(CurrentRules).NotifyLogin(NewPlayer);
 }
-*/
 
 /*
 function PostBeginPlay()

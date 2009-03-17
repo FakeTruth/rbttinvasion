@@ -65,6 +65,9 @@ var UTTeamInfo 					Teams[2];		// an array of team infos held within UTGame
 
 var int 					BetweenWavesCountdown;	// Goes from 10 to 0 every wave begin
 
+var config int					InitialRandomKillTime;	// The initial time before random monster killing happens!
+var config int					NextRandomKillTime;	// After one monster was killed, the next will die in this amount of seconds
+
 simulated function PostBeginPlay()
 {
 	local int i;
@@ -394,6 +397,30 @@ function CreateMonsterTeam()
 	Game.Teams[1].AI.SetObjectiveLists();
 }
 
+function KillRandomMonster()
+{
+	local RBTTMonsterController MC;
+
+	foreach WorldInfo.AllControllers(class'RBTTMonsterController', MC)
+	{
+		if(MC.Pawn.PlayerCanSeeMe())
+		{
+			SetTimer(InitialRandomKillTime, true, 'KillRandomMonster'); 
+			`log(">> Set timer to : "@InitialRandomKillTime@"<<");
+			return;
+		}
+	}
+	
+	foreach WorldInfo.AllControllers(class'RBTTMonsterController', MC)
+	{
+		MC.Pawn.Died(MC, None, MC.Pawn.Location);
+		SetTimer(NextRandomKillTime, true, 'KillRandomMonster'); 
+		`log(">> Set timer to : "@NextRandomKillTime@"<<");
+		return;
+	}
+}
+
+
 function ScoreKill(Controller Killer, Controller Other)
 {
 	local UTPlayerReplicationInfo PRI;
@@ -405,6 +432,9 @@ function ScoreKill(Controller Killer, Controller Other)
 	PRI = UTPlayerReplicationInfo(Other.PlayerReplicationInfo);
 
 	`log(">>>>>>>>>>>>>>> SCOREKILL CALLED <<<<<<<<<<<<<<<<");
+	
+	if(Killer != Other) // reset the timer. It wasn't killed by itself, so a player probably helped it?
+		SetTimer(InitialRandomKillTime, true, 'KillRandomMonster');
 
 	if(PRI != None && PRI.Team.TeamIndex != 1)
 	{
@@ -568,7 +598,7 @@ state BetweenWaves
 		local UTPlayerController PC;
 		
 		if(BetweenWavesCountDown <= 0) // Timer reached zero, let the wave begin.
-		{	GotoState(''); return; 	}
+		{	GotoState(''); SetTimer(InitialRandomKillTime, true, 'KillRandomMonster'); return; 	}
 		
 		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
 		{
@@ -627,6 +657,9 @@ defaultproperties
    MonsterEnemyRosterClass=class'RBTTMonsterTeamInfo'
    MonsterTeamAIType=Class'UTMonsterTeamAI'
 
+   InitialRandomKillTime = 120
+   NextRandomKillTime = 30
+   
    PortalSpawnInterval = 60 //Portal spawns every 60 seconds!
 
 	MonsterTable(0)=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab")

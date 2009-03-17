@@ -9,6 +9,7 @@ function name GetOrders()
 		return 'Attack'; // Attack! Be more agressive yo!
 }
 
+/*
 simulated function Tick( float DeltaTime )
 {
 	if(VeryOldGoalString == GoalString)
@@ -17,6 +18,7 @@ simulated function Tick( float DeltaTime )
 	VeryOldGoalString = GoalString;
 	`log(GoalString);
 }
+*/
 
 /* ChooseAttackMode()
 Handles tactical attacking state selection - choose which type of attack to do from here
@@ -45,7 +47,7 @@ event WhatToDoNext()
 	if(Pawn.Velocity.Z < 128)
 	{
 		Pawn.Velocity.Z += 50;
-		`log(">>Monster goes up!<<");
+		//`log(">>Monster goes up!<<");
 	}
 }
 

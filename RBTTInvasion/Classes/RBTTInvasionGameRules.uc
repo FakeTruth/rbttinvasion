@@ -29,6 +29,7 @@ struct WaveTable
 	var float 				MonstersPerPlayer;	// Monster per player ratio
 	var bool				bIgnoreMPP;		// Ignore monsters per player ratio
 	var bool				bIsQueue;		// If this is a queue, spawn the monsters in the given order
+	var bool				bTimedWave;		// The wave will last this time in seconds
 	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
 	var bool				bAllowPortals;		// Should this wave have portals
 	
@@ -53,6 +54,7 @@ var int						CurrentWave;		// The current wave number
 var int 					WaveMonsters; 		// The ammount of monsters that have been killed in a wave
 var float					LastPortalTime;		// The last time a portal (monsterspawner) was spawned
 var config int					PortalSpawnInterval;	// How many second between each portal spawn
+var bool 					bTimedWaveOver;		// For timed waves only, see if the wave is over
 
 var array<NavigationPoint> 			MonsterSpawnPoints;	// Holds the spots where monsters can spawn
 
@@ -598,7 +600,11 @@ state BetweenWaves
 		local UTPlayerController PC;
 		
 		if(BetweenWavesCountDown <= 0) // Timer reached zero, let the wave begin.
-		{	GotoState(''); SetTimer(InitialRandomKillTime, true, 'KillRandomMonster'); return; 	}
+		{	
+			GotoState('');
+			BeginWave();
+			return;
+		}
 		
 		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
 		{
@@ -629,17 +635,76 @@ state BetweenWaves
 		
 		if(WaveConfig[CurrentWave].bIsQueue == True)
 			WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
+			
+
 	}
 	
 	function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
 	{
-		GotoState('MatchInProgress');
-		return Global.InsertMonster(UTP, SpawnLocation, SpawnRotation, bIgnoreMaxMonsters);	
+		// GotoState('MatchInProgress');
+		// return Global.InsertMonster(UTP, SpawnLocation, SpawnRotation, bIgnoreMaxMonsters);	
+		return false;
 	}
 	
 	function bool SafeSpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation)
 	{
 		return false; // This function is not allowed to spawn monsters between waves
+	}
+}
+
+function BeginWave()
+{
+	SetTimer(InitialRandomKillTime, true, 'KillRandomMonster');
+	
+	if(WaveConfig[CurrentWave].bTimedWave == True)
+		GotoState('TimedWave');
+}
+
+state TimedWave
+{
+	function BeginState(Name PreviousStateName)
+	{
+		SetTimer(WaveConfig[CurrentWave].WaveLength, true, 'TimedWaveOver'); 
+	}
+	
+	function TimedWaveOver()
+	{
+		bTimedWaveOver = True;
+	}
+	
+	function InvasionTimer()
+	{
+		//#### END-OF-WAVE ####\\
+		if ( (bTimedWaveOver && NumMonsters <= 0 && NumPortals <= 0) // Not the same statement as in the normal InvasionTimer
+			|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length))
+		{
+			EndWave(); bTimedWaveOver = False; return;
+		}
+		
+		if (bTimedWaveOver)
+			return; 	// Don't do any spawning, because the time's up!
+
+		//#### AddMonsters ####\\ if there aren't enough monsters in the game
+		if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters)
+			if( (NumMonsters < WaveConfig[CurrentWave].MonstersPerPlayer * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))
+				|| WaveConfig[CurrentWave].bIgnoreMPP )
+			{
+				if (!WaveConfig[CurrentWave].bIsQueue)
+					if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
+						AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
+				
+				if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[WaveConfigBuffer[0]].MonsterClass))
+				{
+					WaveConfigBuffer.Remove(0, 1);
+				}
+			}
+		
+		if(LastPortalTime + PortalSpawnInterval < WorldInfo.TimeSeconds)
+			if(WaveConfig[CurrentWave].bAllowPortals)
+			{
+				SpawnPortal();
+				LastPortalTime = WorldInfo.TimeSeconds;
+			}
 	}
 }
 

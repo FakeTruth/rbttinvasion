@@ -48,19 +48,35 @@ function SpawnBabySlimes()
 {
 	local int i;
 	local RBTTSlime NewSlime;
+	local Vector SpawnLocation;
 	
 	if(bMotherSlime)
 		for(i=0; i<4; i++)
 		{
 			if(i == 0)
-				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(1,1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			{
+				SpawnLocation = self.Location+(Vect(1,1,0)*(GetCollisionRadius()+16));
+				if ( FastTrace(SpawnLocation, Location) )
+					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
+			}
 			if(i == 1)
-				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(1,-1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			{
+				SpawnLocation = self.Location+(Vect(1,-1,0)*(GetCollisionRadius()+16));
+				if ( FastTrace(SpawnLocation, Location) )
+					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
+			}
 			if(i == 2)
-				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(-1,1,0)*(GetCollisionRadius()+16)),self.Rotation);
+			{
+				SpawnLocation = self.Location+(Vect(-1,1,0)*(GetCollisionRadius()+16));
+				if ( FastTrace(SpawnLocation, Location) )
+					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
+			}
 			if(i == 3)
-				NewSlime = self.Spawn(self.class,,,self.Location+(Vect(-1,-1,0)*(GetCollisionRadius()+16)),self.Rotation);
-				
+			{
+				SpawnLocation = self.Location+(Vect(-1,-1,0)*(GetCollisionRadius()+16));
+				if ( FastTrace(SpawnLocation, Location) )
+					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
+			}
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
@@ -97,6 +113,7 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 {
 	local vector NewSize;
 	local RBTTSlime NewSlime;
+	local Vector SpawnLocation;
 
 	
 	if(Class<UTDmgType_BioGoo>(DamageType) == None )
@@ -110,7 +127,9 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 		if(DamageAmount > 60 && health > 0)
 		{
 			`log(">>Gonan spawn now!<<");
-			NewSlime = self.Spawn(self.class,,,self.Location+(Vect(0,0,1)*(GetCollisionHeight()+16)),self.Rotation);
+			SpawnLocation = self.Location+(Vect(0,0,1)*(GetCollisionHeight()+16));
+			if ( FastTrace(SpawnLocation, Location) )
+				NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);

@@ -229,9 +229,9 @@ simulated function HandleBlur(float DeltaTime)
 		
 		BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		
-		BlurryBlur.bUseWorldSettings = False;
+		//BlurryBlur.bUseWorldSettings = False;
 		BlurryBlur.bShowInGame = True;
-		BlurryBlur.FocusDistance = 0.0000;
+		//BlurryBlur.FocusDistance = 0.0000;
 	}
 	
 	if(PlayerOwner.Pawn != None && PlayerOwner.Pawn.health < (PlayerOwner.Pawn.HealthMax * BlurBelowHealthRatio)) // If the player has low health, blur his screen
@@ -245,6 +245,9 @@ simulated function HandleBlur(float DeltaTime)
 			BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		if(BlurryBlur == None)
 			return;
+			
+		BlurryBlur.bUseWorldSettings = False;
+		BlurryBlur.FocusDistance = 0.0000;
 		
 		LastBlurTime = WorldInfo.TimeSeconds;
 		
@@ -289,6 +292,7 @@ simulated function HandleBlur(float DeltaTime)
 			//BlurryBlur.FocusDistance = 0.00;
 			BlurryBlur.SceneDesaturation = 0.400;
 			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 0.125000;
+			BlurryBlur.bUseWorldSettings = True;
 			bScreenBlurred = False;
 			//UTPlayerController(PlayerOwner).ClearCameraEffect(); // Remove some ugly effect
 		}

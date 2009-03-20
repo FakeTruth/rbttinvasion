@@ -20,6 +20,14 @@ var float LastBlurTime;
 var config bool bEnableLowHealthBlur;
 var config float BlurBelowHealthRatio;
 
+// ** variables before screen blurrss ** \\
+var float InSceneDesaturation;
+var float InBloomScale;
+var float InFocusInnerRadius;
+var float InFocusDistance;
+var float InMaxFarBlurAmount;
+// ************************************** \\
+
 /* // Only do this when new default values need to be in the INI file
 simulated function PostBeginPlay()
 {
@@ -245,8 +253,21 @@ simulated function HandleBlur(float DeltaTime)
 			BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		if(BlurryBlur == None)
 			return;
-			
+				
 		BlurryBlur.bUseWorldSettings = False;
+		
+		if(!bScreenBlurred)
+		{
+			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 50;
+			InSceneDesaturation = BlurryBlur.SceneDesaturation;
+			InBloomScale = BlurryBlur.BloomScale;
+			InFocusInnerRadius = BlurryBlur.FocusInnerRadius;
+			InFocusDistance = BlurryBlur.FocusDistance;
+			InMaxFarBlurAmount = BlurryBlur.MaxFarBlurAmount;
+			//UTPlayerController(PlayerOwner).ClientSpawnCameraEffect(InsideCameraEffect); // Add some ugly effect
+			bScreenBlurred = True;
+		}
+		
 		BlurryBlur.FocusDistance = 0.0000;
 		
 		LastBlurTime = WorldInfo.TimeSeconds;
@@ -259,12 +280,6 @@ simulated function HandleBlur(float DeltaTime)
 		BlurryBlur.SceneDesaturation = abs(sin(LastBlurTime*2))/2;
 		
 		//MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('MotionBlur')).MotionBlurAmount = 10;
-		if(!bScreenBlurred)
-		{
-			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 50;
-			//UTPlayerController(PlayerOwner).ClientSpawnCameraEffect(InsideCameraEffect); // Add some ugly effect
-			bScreenBlurred = True;
-		}
 	}
 	else if(bScreenBlurred) // Fade the blur out if screen is blurred but player has enough health
 	{
@@ -273,24 +288,24 @@ simulated function HandleBlur(float DeltaTime)
 		if(BlurryBlur == None)
 			return;
 			
-		if(WorldInfo.TimeSeconds < LastBlurTime+4)
+		if(WorldInfo.TimeSeconds < LastBlurTime+2)
 		{
-			BlurryBlur.MaxFarBlurAmount += (0.00 - BlurryBlur.MaxFarBlurAmount)*2*DeltaTime;
+			BlurryBlur.MaxFarBlurAmount += (InMaxFarBlurAmount - BlurryBlur.MaxFarBlurAmount)*2*DeltaTime;
 			//BlurryBlur.MaxNearBlurAmount = 0.00;
-			BlurryBlur.BloomScale += (1.00 - BlurryBlur.BloomScale)*2*DeltaTime;
-			BlurryBlur.FocusInnerRadius += (2000.00 - BlurryBlur.FocusInnerRadius)*2*DeltaTime;
-			//BlurryBlur.FocusDistance = 0.00;
-			BlurryBlur.SceneDesaturation += (0.400 - BlurryBlur.SceneDesaturation)*2*DeltaTime;
+			BlurryBlur.BloomScale += (InBloomScale - BlurryBlur.BloomScale)*2*DeltaTime;
+			BlurryBlur.FocusInnerRadius += (InFocusInnerRadius - BlurryBlur.FocusInnerRadius)*2*DeltaTime;
+			BlurryBlur.FocusDistance += (InFocusDistance - BlurryBlur.FocusDistance)*2*DeltaTime;
+			BlurryBlur.SceneDesaturation += (InSceneDesaturation - BlurryBlur.SceneDesaturation)*2*DeltaTime;
 			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount += (0.125000 - MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount)*2*DeltaTime;
 		}
 		else
 		{
-			BlurryBlur.MaxFarBlurAmount = 0.00;
+			BlurryBlur.MaxFarBlurAmount = InMaxFarBlurAmount;
 			//BlurryBlur.MaxNearBlurAmount = 0.00;
-			BlurryBlur.BloomScale = 1.00;
-			BlurryBlur.FocusInnerRadius = 2000.00;
-			//BlurryBlur.FocusDistance = 0.00;
-			BlurryBlur.SceneDesaturation = 0.400;
+			BlurryBlur.BloomScale = InBloomScale;
+			BlurryBlur.FocusInnerRadius = InFocusInnerRadius;
+			BlurryBlur.FocusDistance = InFocusDistance;
+			BlurryBlur.SceneDesaturation = InSceneDesaturation;
 			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 0.125000;
 			BlurryBlur.bUseWorldSettings = True;
 			bScreenBlurred = False;

@@ -6,6 +6,8 @@ var bool bMatchHasStarted;		// A check to see if the match has actually started 
 var string InitMutatorOptionsString; 	// For sending the game options to other mutators/gameinfo's spawned by us
 var string InvasionVersion;		// Version of the invasion mutator, added in the serverdetails when querying server
 var GameRules CurrentRules;		// The last Invasion GameRules that spawned
+var config bool bAllowTranslocator;	// Add translocator ??
+var class<Inventory> TranslocatorClass; // The translocator class
 
 struct MutatorList
 {
@@ -61,6 +63,22 @@ function InitMutator(string Options, out string ErrorMessage)
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	UpdateMutators();				// Set the mutators up for the first wave
 	UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
+	AddTranslocator(UTGame(WorldInfo.Game));
+}
+
+function AddTranslocator(UTGame Game)
+{
+	// add translocator to default inventory list, if game has none, and Invasion allows it
+	`log(">>> ADDING TRANSLOCATOR <<<");
+	if (bAllowTranslocator && !Game.bAllowTranslocator)
+	{
+		`log(">>> TRANSLOCATOR ALLOWED <<<");
+		if (TranslocatorClass != None)
+		{
+			Game.DefaultInventory[Game.DefaultInventory.Length] = TranslocatorClass;
+			`log(">>> TRANSLOCATOR HAS BEEN ADDED <<<");
+		}
+	}
 }
 
 // Wave has ended, probably gets called by the gamerules
@@ -210,8 +228,10 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 defaultproperties
 {
    MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
-
-   InvasionVersion="Rev 42"
+   
+   bAllowTranslocator=True;
+   TranslocatorClass=Class'UTGameContent.UTWeap_Translocator_Content'
+   InvasionVersion="Rev 52"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

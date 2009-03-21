@@ -37,7 +37,7 @@ struct WaveTable
 	{
 		WaveLength = 10
 		WaveCountdown = 10
-		WaveCountdownAnnouncer = Class'RBTTTimerMessage'
+		WaveCountdownAnnouncer = Class'RBTTTimerMessage_Sexy'
 		MonstersPerPlayer = 3
 		bIsQueue = False
 		MaxMonsters = 16

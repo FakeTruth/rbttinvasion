@@ -172,7 +172,9 @@ function InvasionTimer()
 	if ( (WaveMonsters >= WaveConfig[CurrentWave].WaveLength && NumPortals <= 0 && !WaveConfig[CurrentWave].bIsQueue)
 		|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length))
 	{
-		EndWave(); return;
+		CountMonstersLeft();
+		if(NumMonsters<=0)
+		{	EndWave(); return;	}
 	}
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
@@ -213,8 +215,6 @@ function EndWave()
 	WaveMonsters=0;
 	`log("In Wave "@CurrentWave@" Now!");
 	GotoState('BetweenWaves'); 
-	if(WaveConfig[CurrentWave].bIsQueue == True)
-		WaveConfigBuffer = WaveConfig[CurrentWave].MonsterNum;
 	InvasionMut.EndWave(self);
 	return;
 }
@@ -272,10 +272,32 @@ function SpawnPortal()
 	MonsterPortal = Spawn(Class'MonsterSpawner',,,StartSpot.Location);
 	if(MonsterPortal != None)
 	{
+		CountMonstersLeft(); // Count how many monsters left here, because portal spawning can screw up the monster killing timer
 		MonsterPortal.SpawnArray = PortalTable[0].SpawnArray;
 		MonsterPortal.Initialize(PortalTable[0].SpawnInterval);
 		NumPortals++;
 	}
+}
+
+function CountMonstersLeft()
+{
+	local Pawn P;
+	local int NewMonsterNum, i;
+
+	foreach WorldInfo.AllPawns(class'Pawn', P)
+	{
+		for(i=MonsterTable.Length-1; i >= 0; i--)
+		{
+			if(P.class == MonsterTable[i].MonsterClass)
+			{
+				NewMonsterNum++;
+				continue;
+			}
+		}
+	}
+	
+	NumMonsters = NewMonsterNum;
+	`log(">> MONSTERS HAVE BEEN COUNTED, THIS MANY LEFT:: "@NewMonsterNum@"<<<");
 }
 
 function bool AddMonster(class<UTPawn> UTP)
@@ -306,12 +328,11 @@ function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Ro
 	   || (NumMonsters >= 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))))
 		return False;
 
-	WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
 	if(!SpawnMonster(UTP, SpawnLocation, SpawnRotation))
 	{
-		WaveMonsters++; //If the monster fails to spawn, it doesn't need to be killed
 		return False;
 	}
+	WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
 	
 	return True;
 }
@@ -403,6 +424,10 @@ function KillRandomMonster()
 {
 	local RBTTMonsterController MC;
 
+	CountMonstersLeft(); 	// Also count the monsters, because it might have screwed up.
+	if(NumMonsters <= 0)
+		return;		// No need to kill a monster if there isn't any left
+	
 	foreach WorldInfo.AllControllers(class'RBTTMonsterController', MC)
 	{
 		if(MC.Pawn.PlayerCanSeeMe())
@@ -678,7 +703,9 @@ state TimedWave
 		if ( (bTimedWaveOver && NumMonsters <= 0 && NumPortals <= 0) // Not the same statement as in the normal InvasionTimer
 			|| (WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length <= 0 && WaveMonsters >= WaveConfig[CurrentWave].MonsterNum.length))
 		{
-			EndWave(); bTimedWaveOver = False; return;
+			CountMonstersLeft();
+			if(NumMonsters <= 0)
+			{	EndWave(); bTimedWaveOver = False; return;	}
 		}
 		
 		if (bTimedWaveOver)
@@ -743,8 +770,8 @@ defaultproperties
 	//MonsterTable(12)=(MonsterName="Skaarj Pupae",MonsterClassName="RBTTSkaarjPack.SkaarjPupae")
    
    //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
-   WaveConfig(0)=(MonsterNum=(6,6,7,6,6,7,6,6,7,6,6,7),MonstersPerPlayer=2,bIsQueue=True)
-   WaveConfig(1)=(MonsterNum=(7,7,7,0,0,0,6),WaveLength=15,WaveCountdown=15)
+   WaveConfig(0)=(MonsterNum=(6,6,7,6,6,7,6,6,7,6,6,7),MonstersPerPlayer=2,bIsQueue=True,bAllowPortals=True)
+   WaveConfig(1)=(MonsterNum=(7,7,7,0,0,0,6),WaveLength=15,WaveCountdown=15,bAllowPortals=True)
    WaveConfig(2)=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,bAllowPortals=True)
    WaveConfig(3)=(MonsterNum=(1,2,4),WaveLength=10,WaveCountdown=10)
    WaveConfig(4)=(MonsterNum=(6,7),WaveLength=30,MonstersPerPlayer=6,WaveCountDown=15,bAllowPortals=True)

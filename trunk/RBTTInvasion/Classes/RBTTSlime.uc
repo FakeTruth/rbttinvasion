@@ -231,6 +231,7 @@ simulated function InstantFire()
 
 defaultproperties
 {
+	HitDamage = 10
 	MonsterScale=(X=32,Y=32,Z=32)
 	MinMonsterScale=(X=8,Y=8,Z=8)
 	health = 500

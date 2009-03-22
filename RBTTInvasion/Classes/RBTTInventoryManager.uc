@@ -20,7 +20,11 @@ event PostBeginPlay()
 	{
 		NewWeapon = Instigator.Spawn(class'DummyWeapon');
 		if(RBTTMonster(Instigator).bMeleeMonster)
+		{
 			UTWeapon(NewWeapon).bMeleeWeapon=true;
+			UTWeapon(NewWeapon).bSniping=false;
+		}
+		UTWeapon(NewWeapon).InstantHitDamage[0] = RBTTMonster(Instigator).HitDamage;
 	}
 	else if(RBTTMonster(Instigator).bMeleeMonster)
 		NewWeapon = Instigator.Spawn(class'RBTTWeaponMelee');

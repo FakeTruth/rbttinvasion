@@ -11,6 +11,7 @@ var bool bMeleeMonster;
 var bool bEmptyHanded;
 var bool bCanDrive;
 var bool bShotAnim;
+var float HitDamage;
 
 simulated function PostBeginPlay()
 {
@@ -311,6 +312,7 @@ simulated function WeaponChanged(UTWeapon NewWeapon); // This function only does
 
 defaultproperties
 {
+	HitDamage = 10
 	WeaponSpeedMultiplier = 1.000 //0.5 = half speed, 1 = standard, 2 = twice as fast, etc.
 	MonsterSkill = 1
 	bCanDrive = True

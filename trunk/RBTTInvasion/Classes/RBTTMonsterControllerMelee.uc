@@ -9,6 +9,7 @@ function name GetOrders()
 		return 'Attack'; // Attack! Be more agressive yo!
 }
 
+/*
 simulated function Tick( float DeltaTime )
 {
 	if(VeryOldGoalString == GoalString)
@@ -17,6 +18,7 @@ simulated function Tick( float DeltaTime )
 	VeryOldGoalString = GoalString;
 	`log(GoalString);
 }
+*/
 
 
 /* ChooseAttackMode()

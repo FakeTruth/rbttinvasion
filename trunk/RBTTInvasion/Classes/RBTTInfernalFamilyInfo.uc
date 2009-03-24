@@ -2,8 +2,7 @@
  * Copyright 1998-2007 Epic Games, Inc. All Rights Reserved.
  */
 
-class RBTTInfernalFamilyInfo extends UTFamilyInfo
-	abstract;
+class RBTTInfernalFamilyInfo extends UTFamilyInfo;
 
 
 

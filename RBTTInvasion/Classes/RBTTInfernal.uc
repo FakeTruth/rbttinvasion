@@ -101,12 +101,12 @@ simulated function InstantFire()
 
 simulated function DoPound()
 {
-	FullBodyAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
-	TopHalfAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
+	//FullBodyAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
+	//TopHalfAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
 	PlaySound(SoundCue'A_Gameplay_UT3G.Titan.A_Gameplay_UT3G_Titan_TitanMelee01_Cue');
 	HeroGroundPoundEmitter.ActivateSystem();
 	bInHeroMelee = true;
-	//PlayEmote('MeleeA', -1);
+	PlayEmote('MeleeA', -1);
 	AccelRate = 0;
 	SetTimer(2.0, false, 'StopMeleeAttack');
 	SetTimer(0.84, false, 'CauseMeleeDamage');
@@ -298,6 +298,13 @@ simulated event PlayFootStepSound(int FootDown)
 			PC.PlayCameraAnim(FootStepShake, 1.0 - (Dist/FootStepShakeRadius));
 		}
 	}
+}
+
+event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+{
+	Momentum = vect(0,0,0); // Infernals are way to heavy to get pushed around
+
+	super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType, HitInfo);
 }
 
 defaultproperties

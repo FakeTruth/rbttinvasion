@@ -1,11 +1,5 @@
-class RBTTInfernal extends RBTTMonster;
-
-var() skeletalMeshComponent DefaultMonsterMesh;
-var() class<UTWeapon> DefaultMonsterWeapon;
-
-
-var() int monsterTeam;
-var() int MonsterScale;
+class RBTTInfernal extends RBTTMonster
+	config(RBTTInvasion);
 
 var ParticleSystemComponent HeroGroundPoundEmitter;
 var class<UTReplicatedEmitter> HeroMeleeEmitterClass;
@@ -22,10 +16,8 @@ var soundcue footsound;
 /** Melee attack properties */
 var class <DamageType> MeleeDmgClass;
 
-var float PoundDamage;
+var config float PoundDamage;
 
-
-//var AnimNodeSlot FullBodyAnimSlot;
 
 simulated function PostBeginPlay()
 {
@@ -81,11 +73,15 @@ simulated function Projectile ProjectileFire()
 		{
 			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
 		}
-
+		
+		UTProj_SeekingRocket(SpawnedProjectile).Seeking = Controller.Enemy;
+		
 		// Return it up the line
+		//TopHalfAnimSlot.PlayCustomAnim('hoverboardjumpltstart', 1, 0.5, 0.5, FALSE, TRUE);
+		FullBodyAnimSlot.PlayCustomAnim('hoverboardjumpland', 1, 0.2, 0.2, FALSE, TRUE);
+		
 		return SpawnedProjectile;
 	}
-
 	return None;
 }
 
@@ -304,7 +300,22 @@ event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vec
 {
 	Momentum = vect(0,0,0); // Infernals are way to heavy to get pushed around
 
+	if( IsValidTargetFor( EventInstigator ) )
+	{
+		RBTTMonsterController(Controller).Squad.SetEnemy(UTBot(Controller), EventInstigator.Pawn);
+		Controller.Enemy = EventInstigator.Pawn;
+	}
+	
 	super.TakeDamage(Damage, EventInstigator, HitLocation, Momentum, DamageType, HitInfo);
+}
+
+
+
+// Infernal shouldn't gib, it's too collosal
+/** @return whether or not we should gib due to damage from the passed in damagetype */
+simulated function bool ShouldGib(class<UTDamageType> UTDamageType)
+{
+	return FALSE;
 }
 
 defaultproperties

@@ -1,4 +1,4 @@
-class RBTTInfernalPlasma extends UTProjectile;
+class RBTTInfernalPlasma extends UTProj_SeekingRocket;
 
 simulated function PostBeginPlay()
 {
@@ -20,7 +20,7 @@ defaultproperties
 	Damage=20.0
 	DamageRadius=220.0
 	MomentumTransfer=85000
-	MyDamageType=class'UTGame.UTDmgType_Rocket'
+	MyDamageType=class'RBTTInfernalPlasmaDamage'
 	LifeSpan=16.0
 	AmbientSound=SoundCue'A_Weapon_RocketLauncher.Cue.A_Weapon_RL_Travel_Cue'
 	ExplosionSound=SoundCue'A_Weapon_RocketLauncher.Cue.A_Weapon_RL_Impact_Cue'

@@ -34,6 +34,8 @@ defaultproperties
  	Gibs[6]=(BoneName=b_Spine2,GibClass=class'UTGib_HumanBone',bHighDetailOnly=false)
  	Gibs[7]=(BoneName=b_LeftLegUpper,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=true)
  	Gibs[8]=(BoneName=b_RightLegUpper,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=true)
+	
+	FamilyEmotes[19]=(CategoryName="SpecialMove",EmoteTag="ThrowPlasma",EmoteAnim="hoverboardjumpland",bTopHalfEmote=true)
 
    Name="Default__RBTTHumanSkeletonFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'

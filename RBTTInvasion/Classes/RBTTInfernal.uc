@@ -17,15 +17,18 @@ var soundcue footsound;
 var class <DamageType> MeleeDmgClass;
 
 var config float PoundDamage;
+var bool bInitializedExtraAnimSets;
 
 
 simulated function PostBeginPlay()
 {
 	local ParticleSystem GroundPoundTemplate;
-
+	local AnimTree	AnimTreeRootNode;
+	local int i, j;
+	
 	super.PostBeginPlay();
 	
-	Mesh.AnimSets[Mesh.AnimSets.Length] = AnimSet'CH_AnimHuman_Hero.Anims.K_AnimHuman_Hero';
+	Mesh.AnimSets[Mesh.AnimSets.Length] = GetFamilyInfo().default.HeroMeleeAnimSet;
 	
 	HeroMeleeEmitterClass = class'UTEmit_HeroMelee';
 	GroundPoundTemplate = HeroGroundPoundTemplate;
@@ -38,17 +41,26 @@ simulated function PostBeginPlay()
 		HeroGroundPoundEmitter.bAutoActivate = false;
 		Mesh.AttachComponentToSocket(HeroGroundPoundEmitter, WeaponSocket);
 	}
+	
+	// slow down movement animations since hero is bigger
+	AnimTreeRootNode = AnimTree(Mesh.Animations);
+	if( AnimTreeRootNode != None )
+	{
+		for(i=0; i<AnimTreeRootNode.AnimGroups.Length; i++)
+		{
+			for ( j=0; j<AnimTreeRootNode.AnimGroups[i].SeqNodes.Length; j++ )
+			{
+				AnimTreeRootNode.AnimGroups[i].SeqNodes[j].Rate *= 0.5;
+			}
+		}
+	}
 }
 
-
-simulated function EmoteTimer()
+event CollisionChanged()
 {
-	//local float AnimLength;
-	//`log(">>Doing animation! << FullBodyAnimSlot:"@FullBodyAnimSlot);
-	//AnimLength = FullBodyAnimSlot.PlayCustomAnim(Class'UTGame.UTFamilyInfo'.default.FamilyEmotes[0].EmoteAnim, 1.0, 0.2, 0.2, FALSE, TRUE);
-	//AnimLength = FullBodyAnimSlot.PlayCustomAnim('Taunt_FB_Victory', 1.0, 0.2, 0.2, FALSE, TRUE);
-	//`log(">>AnimLength is :"@AnimLength);
-	//PlayEmote('TauntA', 0);
+	`log(">> $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ <<");
+	`log(">> !!! Infernal collision changed somehow!!! <<");
+	`log(">> $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ <<");
 }
 
 simulated function Projectile ProjectileFire()
@@ -62,6 +74,9 @@ simulated function Projectile ProjectileFire()
 	// tell remote clients that we fired, to trigger effects
 	Weapon.IncrementFlashCount();
 
+	//FullBodyAnimSlot.PlayCustomAnim('hoverboardjumpland', 1, 0.2, 0.2, FALSE, TRUE); // The animation for shooting plasma
+	PlayEmote('ThrowPlasma', -1);
+	
 	if( Role == ROLE_Authority )
 	{
 		// this is the location where the projectile is spawned.
@@ -77,9 +92,6 @@ simulated function Projectile ProjectileFire()
 		UTProj_SeekingRocket(SpawnedProjectile).Seeking = Controller.Enemy;
 		
 		// Return it up the line
-		//TopHalfAnimSlot.PlayCustomAnim('hoverboardjumpltstart', 1, 0.5, 0.5, FALSE, TRUE);
-		FullBodyAnimSlot.PlayCustomAnim('hoverboardjumpland', 1, 0.2, 0.2, FALSE, TRUE);
-		
 		return SpawnedProjectile;
 	}
 	return None;
@@ -97,8 +109,6 @@ simulated function InstantFire()
 
 simulated function DoPound()
 {
-	//FullBodyAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
-	//TopHalfAnimSlot.PlayCustomAnim('GroundPound_A', 1.0, 0.2, 0.2, FALSE, TRUE);
 	PlaySound(SoundCue'A_Gameplay_UT3G.Titan.A_Gameplay_UT3G_Titan_TitanMelee01_Cue');
 	HeroGroundPoundEmitter.ActivateSystem();
 	bInHeroMelee = true;
@@ -107,8 +117,23 @@ simulated function DoPound()
 	SetTimer(2.0, false, 'StopMeleeAttack');
 	SetTimer(0.84, false, 'CauseMeleeDamage');
 
-	HeroGroundPoundEmitter.SetActive(true);
-	HeroGroundPoundEmitter.SetHidden(false);
+	//HeroGroundPoundEmitter.SetActive(true);
+	//HeroGroundPoundEmitter.SetHidden(false);
+}
+
+/** Play an emote given a category and index within that category. */
+simulated function DoPlayEmote(name InEmoteTag, int InPlayerID)
+{
+	if(WorldInfo.NetMode != NM_DedicatedServer)
+	{
+		if(!bInitializedExtraAnimSets)
+		{
+			bInitializedExtraAnimSets = True;
+			Mesh.AnimSets[Mesh.AnimSets.Length] = GetFamilyInfo().default.HeroMeleeAnimSet;
+		}
+	}
+
+	Super.DoPlayEmote(InEmoteTag, InPlayerID);
 }
 
 simulated function StopMeleeAttack()
@@ -373,7 +398,7 @@ defaultproperties
       
       SkeletalMesh=SkeletalMesh'RBTTInfernal.Infernal'
       AnimTreeTemplate=AnimTree'CH_AnimHuman_Tree.AT_CH_Human'
-      AnimSets(1)=AnimSet'CH_AnimHuman.Anims.K_AnimHuman_BaseMale'
+      AnimSets(0)=AnimSet'CH_AnimHuman.Anims.K_AnimHuman_BaseMale'
       PhysicsAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
       bHasPhysicsAssetInstance=True
       Name="WPawnSkeletalMeshComponent"

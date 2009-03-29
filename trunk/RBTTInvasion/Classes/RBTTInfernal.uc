@@ -56,13 +56,6 @@ simulated function PostBeginPlay()
 	}
 }
 
-event CollisionChanged()
-{
-	`log(">> $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ <<");
-	`log(">> !!! Infernal collision changed somehow!!! <<");
-	`log(">> $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ <<");
-}
-
 simulated function Projectile ProjectileFire()
 {
 	local vector		RealStartLoc;
@@ -405,6 +398,9 @@ defaultproperties
 	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
    End Object
    Mesh=WPawnSkeletalMeshComponent
+   
+   DefaultRadius = 64.0000
+   DefaultHeight = 128
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=128.000000

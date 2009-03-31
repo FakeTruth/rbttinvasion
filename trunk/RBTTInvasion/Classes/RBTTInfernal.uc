@@ -19,6 +19,14 @@ var class <DamageType> MeleeDmgClass;
 var config float PoundDamage;
 var bool bInitializedExtraAnimSets;
 
+/** Particle Emitters */
+var ParticleSystemComponent AmbientEmitter;
+var ParticleSystemComponent FireEmitterRHand;
+var ParticleSystemComponent FireEmitterLHand;
+var ParticleSystemComponent FireEmitterNeck;
+
+var array<name> DeResBoneNames;
+
 
 simulated function PostBeginPlay()
 {
@@ -42,7 +50,18 @@ simulated function PostBeginPlay()
 		Mesh.AttachComponentToSocket(HeroGroundPoundEmitter, WeaponSocket);
 	}
 	
-	// slow down movement animations since hero is bigger
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+	{
+		//AttachFireEmitterTo(FireEmitterRHand, 'b_RightForeArm');
+		//AttachFireEmitterTo(FireEmitterLHand, 'b_LeftForeArm');
+		//AttachFireEmitterTo(FireEmitterNeck, 'b_Neck');
+		
+		AmbientEmitter = new(self) class'UTParticleSystemComponent';
+		Mesh.AttachComponent(AmbientEmitter, 'b_Hips');
+		AmbientEmitter.SetTemplate(ParticleSystem'RBTTInfernal.InfernalAmbient');		
+	}
+	
+	// Slow down infernal's movement animations
 	AnimTreeRootNode = AnimTree(Mesh.Animations);
 	if( AnimTreeRootNode != None )
 	{
@@ -50,10 +69,44 @@ simulated function PostBeginPlay()
 		{
 			for ( j=0; j<AnimTreeRootNode.AnimGroups[i].SeqNodes.Length; j++ )
 			{
-				AnimTreeRootNode.AnimGroups[i].SeqNodes[j].Rate *= 0.5;
+				AnimTreeRootNode.AnimGroups[i].SeqNodes[j].Rate *= 0.3;
 			}
 		}
 	}
+}
+
+function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
+{	
+	//local TraceHitInfo HitInfo;
+	local MaterialInstanceTimeVarying MITV_BurnOut;
+	
+	local int i;
+	
+	MITV_BurnOut = new(Mesh.outer) class'MaterialInstanceTimeVarying';
+	MITV_BurnOut.SetParent( GetFamilyInfo().default.SkeletonBurnOutMaterials[0] );
+	// this can have a max of 6 before it wraps and become visible again
+	Mesh.SetMaterial( 0, MITV_BurnOut );
+	MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 1.0f );	
+
+	//Class'UTDamageType'.static.CreateDeathSkeleton(self, None, HitInfo, Location);
+	
+	for(i = DeResBoneNames.length-1; i >= 0; i--)
+	{
+		WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
+	}
+
+	ClearTimer('CauseMeleeDamage');
+	
+	return Super.Died(Killer, damageType, HitLocation);
+	
+	SetTimer(4, False, 'Destroy');
+}
+
+function AttachFireEmitterTo(out ParticleSystemComponent ParticleSystem, name BoneName)
+{
+	ParticleSystem = new(self) class'UTParticleSystemComponent';
+	Mesh.AttachComponent(ParticleSystem, BoneName);
+	ParticleSystem.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
 }
 
 simulated function Projectile ProjectileFire()
@@ -276,12 +329,6 @@ function CauseMeleeDamage()
 	}
 }
 
-function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
-{
-	ClearTimer('CauseMeleeDamage');
-	return Super.Died(Killer, damageType, HitLocation);
-}
-
 event Landed(vector HitNormal, actor FloorActor)
 {
 	Super.Landed(HitNormal, FloorActor);
@@ -338,6 +385,10 @@ simulated function bool ShouldGib(class<UTDamageType> UTDamageType)
 
 defaultproperties
 {
+	DeResBoneNames(0)=b_RightForeArm
+	DeResBoneNames(1)=b_LeftForeArm
+	DeResBoneNames(2)=b_Neck
+
 	health = 500
 
 	PoundDamage = 50.0
@@ -387,7 +438,7 @@ defaultproperties
    ControllerClass=Class'RBTTMonsterControllerNoWeapon'
  
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-      Scale3D=(X=3,Y=3,Z=3)
+      Scale3D=(X=4,Y=4,Z=4)
       
       SkeletalMesh=SkeletalMesh'RBTTInfernal.Infernal'
       AnimTreeTemplate=AnimTree'CH_AnimHuman_Tree.AT_CH_Human'
@@ -399,12 +450,12 @@ defaultproperties
    End Object
    Mesh=WPawnSkeletalMeshComponent
    
-   DefaultRadius = 64.0000
-   DefaultHeight = 128
+   DefaultRadius = 85.0000
+   DefaultHeight = 171.0000
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=128.000000
-      CollisionRadius=64.000000
+      CollisionHeight=171.000000
+      CollisionRadius=85.000000
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder

@@ -221,6 +221,8 @@ protected event ExecuteWhatToDoNext()
 {
 	local float StartleRadius, StartleHeight;
 
+	super.ExecuteWhatToDoNext();
+	
 	if (Pawn == None)
 	{
 		// pawn got destroyed between WhatToDoNext() and now - abort

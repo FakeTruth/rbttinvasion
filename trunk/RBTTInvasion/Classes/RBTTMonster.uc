@@ -238,11 +238,10 @@ function RangedAttack(Actor A);
 /*
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
-	local bool DiedReturn;
 
-	DiedReturn = Super.Died(Killer, damageType, HitLocation);
+	WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Location, Rotator(vect(0,0,1)), self );
 
-	return DiedReturn;
+	return Super.Died(Killer, damageType, HitLocation);
 }
 */
 

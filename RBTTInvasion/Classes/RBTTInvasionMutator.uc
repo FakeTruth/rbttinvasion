@@ -32,6 +32,8 @@ function PostBeginPlay()
 	if (bAllowTranslocator && !Game.bAllowTranslocator)
 	{
 		`log(">>> TRANSLOCATOR ALLOWED <<<");
+		if(Game.TranslocatorClass == None)
+			Game.TranslocatorClass = class'UTGameContent.UTWeap_Translocator_Content';
 		Game.bAllowTranslocator = True;
 	}
 }

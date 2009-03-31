@@ -230,6 +230,30 @@ function PawnDied(Pawn P)
 	Destroy();
 }
 
+/** triggers ExecuteWhatToDoNext() to occur during the next tick
+ * this is also where logic that is unsafe to do during the physics tick should be added
+ * @note: in state code, you probably want LatentWhatToDoNext() so the state is paused while waiting for ExecuteWhatToDoNext() to be called
+ */
+event WhatToDoNext()
+{
+	local NavigationPoint N;
+
+	if ( Enemy == None )
+	{
+		if ( ( WorldInfo.TimeSeconds - LastRespawnTime > 5) && ((LastSeenTime == 0) || (WorldInfo.TimeSeconds - LastSeenTime) > 15) && !Pawn.PlayerCanSeeMe() )
+		{
+			`log("@@@@ TELEPORTING MONSTER @@@@");
+			LastRespawnTime = WorldInfo.TimeSeconds;
+			EnemyVisibilityTime = 0;
+			N = WorldInfo.Game.FindPlayerStart(self,1);
+			if(N != None)
+				Pawn.SetLocation(N.Location+(Pawn.GetCollisionHeight()) * vect(0,0,1));
+		}
+	}
+	
+	super.WhatToDoNext();
+}
+
 defaultproperties
 {
    ReactionTime=0.500000

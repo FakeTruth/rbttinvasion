@@ -44,7 +44,7 @@ struct WaveTable
 		bAllowPortals = False
 	}
 };
-var config array<WaveTable>			WaveConfig;		// Wave configuration. When to spawn what monsters/portals
+var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
 var array<int>					WaveConfigBuffer; 	// Fill this up, and drain it down when the monster list is a queue
 
 //var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
@@ -77,6 +77,10 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules Spawned<<<<<<<<<<<<<<<<<<<<");
 
+	if(LoadCustomWaveConfig())
+		`log("Custom Wave Configuration has been loaded");
+	
+	
 	`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
 	for(i=0;i < MonsterTable.length;i++)
 	{
@@ -89,7 +93,9 @@ simulated function PostBeginPlay()
 	//#### SET GAME INFORMATION ####\\
 	if(UTTeamGame(WorldInfo.Game) != None)
 		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
-		
+			
+	
+	
 	//SaveConfig();
 }
 
@@ -111,6 +117,24 @@ function NotifyLogin(Controller NewPlayer)
 		ClientReplicator.OwnerController = NewPlayer;
 	}
 	*/
+}
+
+function KillAllMonsters()
+{
+	local Pawn P;
+	local int i;
+
+	foreach WorldInfo.AllPawns(class'Pawn', P)
+	{
+		for(i=MonsterTable.Length-1; i >= 0; i--)
+		{
+			if(P.class == MonsterTable[i].MonsterClass)
+			{
+				P.Died(None, None, P.Location);
+				continue;
+			}
+		}
+	}
 }
 
 function MatchStarting()
@@ -553,19 +577,26 @@ function EndInvasionGame(Optional string Reason)
 	ClearTimer('InvasionTimer');
 }
 
+function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
+{
+	`log(">> CHECKENDGAME <<");
+	return CheckEndGame(Winner, Reason); 
+}
+
 
 /** removes a player from the queue, sets it up to play, and returns the Controller
  * @note: doesn't spawn the player in (i.e. doesn't call RestartPlayer()), calling code is responsible for that
  */
 
-function Controller GetPlayerFromQueue(int Index)
+function Controller GetPlayerFromQueue(int Index, optional bool bDontFromQueue)
 {
 	local Controller C;
 	local UTPlayerReplicationInfo PRI;
 	local UTTeamInfo NewTeam;
 
 	PRI = Queue[Index];
-	Queue.Remove(Index, 1);
+	if(!bDontFromQueue)
+		Queue.Remove(Index, 1);
 
 	// after a seamless travel some players might still have the old TeamInfo from the previous level
 	// so we need to manually count instead of using Size
@@ -582,6 +613,39 @@ function Controller GetPlayerFromQueue(int Index)
 	
 	return None;
 	
+}
+
+/** If PlayerName is not given, ressurect ALL players */
+function ResPlayer(optional string PlayerName) //-FIXMEFAKE NOT WORKING PER PLAYER YET
+{
+	local Controller C;
+	local int i;
+
+	if(PlayerName ~= "")
+	{
+		for(i = Queue.length-1; i >= 0; i--)
+		{
+			C = GetPlayerFromQueue(i);
+			if(C != None)
+				RestartPlayer(C);
+		}
+	}
+	else
+	{
+		for(i = Queue.length-1; i >= 0; i--)
+		{
+			C = GetPlayerFromQueue(i, True);
+			if(C != None && C.PlayerReplicationInfo != None)
+			{
+				`log(">> C.PlayerName "@C.PlayerReplicationInfo.PlayerName@"<<");
+				if(Left(C.PlayerReplicationInfo.PlayerName, Len(PlayerName)) ~= PlayerName)
+				{
+					GetPlayerFromQueue(i);
+					RestartPlayer(C);
+				}
+			}
+		}
+	}
 }
 
 
@@ -641,20 +705,11 @@ state BetweenWaves
 		`log(BetweenWavesCountDown@"Seconds before next wave!");
 		BetweenWavesCountdown--; // 1 second less left
 		//UTHUD(PlayerController(InvasionMut.Instigator.Controller).myHUD).DisplayHUDMessage("wutwutwut!"); //, optional float XOffsetPct = 0.05, optional float YOffsetPct = 0.05)
-		
 	}
 
 	function BeginState(Name PreviousStateName)
-	{
-		local Controller C;
-		local int i;
-		
-		for(i = Queue.length-1; i >= 0; i--)
-		{
-			C = GetPlayerFromQueue(i);
-			if(C != None)
-				RestartPlayer(C);
-		}
+	{		
+		ResPlayer();
 		
 		BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
 		
@@ -744,6 +799,93 @@ function NotifyKilled(Controller Killer, Controller KilledPlayer, Pawn KilledPaw
 	Teams[1].AI.NotifyKilled(Killer,KilledPlayer,KilledPawn);
 }
 
+
+//############################# PER MAP WAVE CONFIGURATION #############################
+// THAAAAANKS SUDVASION!!!
+/** Return the MapName, where some signs are replaced by a "_" */
+function string GetSafeMapName()
+{
+	local string MapName;
+
+	//MapName = Left(string(Level), InStr(string(Level), "."));
+	//MapName = WorldInfo.GetMapName();
+	MapName = GetURLMap();
+	MapName = Repl(MapName, " ", "_");
+	MapName = Repl(MapName, "[", "_");
+	MapName = Repl(MapName, "]", "_");
+
+	return MapName;
+}
+
+/** Get the wave configuration for configName (usually the mapname) */
+static function CustomWaveConfig FindCustomWaveConfig(string configName)
+{
+	local array<string> CustomWaveConfigNames;
+	local int bestMatch, bestLength, newLength, maxLength;
+	local int i;
+
+	bestMatch = -1;
+	bestLength = 0;
+	maxLength = Len(configName);
+
+
+	//CustomWaveConfigNames = class'CustomWaveConfig'.static.GetPerObjectNames(class'CustomWaveConfig'.default.ConfigFile);
+	//native static final function bool GetPerObjectConfigSections( class SearchClass, out array<string> out_SectionNames, optional Object ObjectOuter, optional int MaxResults=1024 );
+	GetPerObjectConfigSections( class'CustomWaveConfig', CustomWaveConfigNames );
+	//array<string> GetPerObjectNames (string ININame) [static] 
+	
+	// find wave config with the longest match prefix to configName
+	for (i = 0; i < CustomWaveConfigNames.Length; i++)
+	{
+		newLength = Len(CustomWaveConfigNames[i])-Len(" CustomWaveConfig");
+		CustomWaveConfigNames[i] = Left(CustomWaveConfigNames[i], newLength);
+		
+		`log(">> CustomWaveConfigNames["@i@"] = "@CustomWaveConfigNames[i]@" <<");
+		
+		if ((newLength > bestLength) && (newLength <= maxLength) && (Left(configName, newLength) ~= CustomWaveConfigNames[i]))
+		{
+			bestMatch = i;
+			bestLength = newLength;
+
+			if (newLength == maxLength)
+				break;                 // found configname's wave config
+		}
+	}
+
+	if (bestMatch != -1)
+		return new(None, CustomWaveConfigNames[bestMatch]) class'CustomWaveConfig';
+
+	//return None;
+	return new(None, "Default") class'CustomWaveConfig';
+}
+
+/** Load the wave configuration for the current map */
+function bool LoadCustomWaveConfig()
+{
+	local CustomWaveConfig CWaveConfig;
+//	local array<string> CustomWaveConfigNames;
+	local string configName;
+	//local int i;
+
+
+	configName = GetSafeMapName();
+	CWaveConfig = static.FindCustomWaveConfig(configName);
+
+	if (CWaveConfig == None)
+		return false;       // no custom wave config
+
+	WaveConfig.Length = 0;
+
+	//for (i = 0; i < WaveConfig.Waves.Length; i++)
+	//	Waves[i] = WaveConfig.Waves[i];
+	WaveConfig = CWaveConfig.WaveConfig;
+
+	CWaveConfig = None;
+
+	`log("Invasion Custom Wave Config successfully loaded for"@configName);
+	return true;
+}
+
 defaultproperties
 {
    MonsterEnemyRosterClass=class'RBTTMonsterTeamInfo'
@@ -754,14 +896,14 @@ defaultproperties
    
    PortalSpawnInterval = 60 //Portal spawns every 60 seconds!
 
-	MonsterTable(0)=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab")
-	MonsterTable(1)=(MonsterName="HumanSkeleton",MonsterClassName="RBTTInvasion.RBTTHumanSkeleton")
-	MonsterTable(2)=(MonsterName="KrallSkeleton",MonsterClassName="RBTTInvasion.RBTTKrallSkeleton")
-	MonsterTable(3)=(MonsterName="MiningRobot",MonsterClassName="RBTTInvasion.RBTTMiningRobot")
-	MonsterTable(4)=(MonsterName="WeldingRobot",MonsterClassName="RBTTInvasion.RBTTWeldingRobot")
-	MonsterTable(5)=(MonsterName="Spider",MonsterClassName="RBTTInvasion.RBTTSpider")
-	MonsterTable(6)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
-	MonsterTable(7)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
+	//MonsterTable(0)=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab")
+	//MonsterTable(1)=(MonsterName="HumanSkeleton",MonsterClassName="RBTTInvasion.RBTTHumanSkeleton")
+	//MonsterTable(2)=(MonsterName="KrallSkeleton",MonsterClassName="RBTTInvasion.RBTTKrallSkeleton")
+	//MonsterTable(3)=(MonsterName="MiningRobot",MonsterClassName="RBTTInvasion.RBTTMiningRobot")
+	//MonsterTable(4)=(MonsterName="WeldingRobot",MonsterClassName="RBTTInvasion.RBTTWeldingRobot")
+	//MonsterTable(5)=(MonsterName="Spider",MonsterClassName="RBTTInvasion.RBTTSpider")
+	//MonsterTable(6)=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime")
+	//MonsterTable(7)=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull")
 	
 	//MonsterTable(8)=(MonsterName="Raptor",MonsterClassName="JR.JRRaptor")
 	//MonsterTable(9)=(MonsterName="Rex",MonsterClassName="JR.JRRex")
@@ -770,14 +912,14 @@ defaultproperties
 	//MonsterTable(12)=(MonsterName="Skaarj Pupae",MonsterClassName="RBTTSkaarjPack.SkaarjPupae")
    
    //WaveConfig(0)=(MonsterNum=(1,2,4,6),WaveLength=10,WaveCountdown=10)
-   WaveConfig(0)=(MonsterNum=(6,6,7,6,6,7,6,6,7,6,6,7),MonstersPerPlayer=2,bIsQueue=True,bAllowPortals=True)
-   WaveConfig(1)=(MonsterNum=(7,7,7,0,0,0,6),WaveLength=15,WaveCountdown=15,bAllowPortals=True)
-   WaveConfig(2)=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,bAllowPortals=True)
-   WaveConfig(3)=(MonsterNum=(1,2,4),WaveLength=10,WaveCountdown=10)
-   WaveConfig(4)=(MonsterNum=(6,7),WaveLength=30,MonstersPerPlayer=6,WaveCountDown=15,bAllowPortals=True)
-   WaveConfig(5)=(MonsterNum=(0,7),WaveLength=20,MonstersPerPlayer=4,bAllowPortals=True)
-   WaveConfig(6)=(MonsterNum=(5),WaveLength=15,MonstersPerPlayer=4,bAllowPortals=False,bAllowPortals=True)
-   WaveConfig(7)=(MonsterNum=(0,1,3,4,5,6,7),WaveLength=60,WaveCountdown=60,MonstersPerPlayer=20,bAllowPortals=True)
+   //WaveConfig(0)=(MonsterNum=(6,6,7,6,6,7,6,6,7,6,6,7),MonstersPerPlayer=2,bIsQueue=True,bAllowPortals=True)
+   //WaveConfig(1)=(MonsterNum=(7,7,7,0,0,0,6),WaveLength=15,WaveCountdown=15,bAllowPortals=True)
+   //WaveConfig(2)=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,bAllowPortals=True)
+   //WaveConfig(3)=(MonsterNum=(1,2,4),WaveLength=10,WaveCountdown=10)
+   //WaveConfig(4)=(MonsterNum=(6,7),WaveLength=30,MonstersPerPlayer=6,WaveCountDown=15,bAllowPortals=True)
+   //WaveConfig(5)=(MonsterNum=(0,7),WaveLength=20,MonstersPerPlayer=4,bAllowPortals=True)
+   //WaveConfig(6)=(MonsterNum=(5),WaveLength=15,MonstersPerPlayer=4,bAllowPortals=False,bAllowPortals=True)
+   //WaveConfig(7)=(MonsterNum=(0,1,3,4,5,6,7),WaveLength=60,WaveCountdown=60,MonstersPerPlayer=20,bAllowPortals=True)
    
    //WaveConfig(0)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)
    //WaveConfig(1)=(MonsterNum=(0),WaveLength=10,WaveCountdown=10)

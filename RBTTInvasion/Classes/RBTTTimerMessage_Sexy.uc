@@ -12,7 +12,7 @@ static simulated function ClientReceive( PlayerController P, optional int Switch
 	
 	Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
 
-	if ( default.Announcements[Switch].AnnouncementSound != None )
+	if (Switch < default.Announcements.length && default.Announcements[Switch].AnnouncementSound != None )
 	{
 		HUD = UTHUD(P.myHUD);
 		if ( (HUD != None) && HUD.bIsSplitScreen && !HUD.bIsFirstPlayer )
@@ -43,7 +43,7 @@ static simulated function ClientReceive( PlayerController P, optional int Switch
 static function string GetString( optional int Switch, optional bool bPRI1HUD, optional PlayerReplicationInfo RelatedPRI_1,
 					optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
-	if(default.Announcements[Switch].AnnouncementText != "")
+	if(Switch < default.Announcements.length && default.Announcements[Switch].AnnouncementText != "")
 		return default.Announcements[Switch].AnnouncementText;
 		
 	return String(Switch)$"...";

@@ -47,7 +47,8 @@ simulated function PostBeginPlay()
 	super.PostBeginPlay();
 
 	//Get the game rules so we can make it summon monsters
-	InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+	if(WorldInfo.NetMode == NM_Standalone || WorldInfo.NetMode == NM_DedicatedServer)
+		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
 
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{

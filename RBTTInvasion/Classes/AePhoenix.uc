@@ -1,47 +1,4 @@
-class AePhoenix extends RBTTMonster;
-
-var() skeletalMeshComponent DefaultMonsterMesh;
-var() class<UTWeapon> DefaultMonsterWeapon;
-
-
-var() int monsterTeam;
-var() int MonsterScale;
-
-function AddDefaultInventory()
-{
-    Super.AddDefaultInventory();
-    CreateInventory(DefaultMonsterWeapon);
-}
-
-function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
-{
-	super.PerformDodge(DoubleClickMove, Dir, Cross);
-	
-	SetPhysics(PHYS_Flying);
-	return true;
-}
-
-function DropToGround()
-{
-	super.DropToGround();
-	SetPhysics(PHYS_Flying);
-}
-
-function AddVelocity( vector NewVelocity, vector HitLocation, class<DamageType> damageType, optional TraceHitInfo HitInfo )
-{
-	super.AddVelocity(NewVelocity, HitLocation, damageType, HitInfo );
-	SetPhysics(PHYS_Flying);
-}
-
-function SetMovementPhysics()
-{
-	SetPhysics(PHYS_Flying);
-}
-
-function JumpOffPawn()
-{
-	SetPhysics(PHYS_Flying);
-}
+class AePhoenix extends RBTTScarySkull;
 
 // /////////// WEAPON STUFZZZ ///////////////////////////////// //
 function byte BestMode(){	return 0;	}
@@ -72,49 +29,16 @@ defaultproperties
 	HitDamage = 10
 	AccelRate=+1000.000000
 
-	LeftFootControlName="LeftFrontFootControl"
- 
-	RightFootControlName="RightFrontFootControl"
-
 	MonsterName = "AePhoenix"
 	
 	//DefaultMonsterWeapon=class'UTGame.UTWeap_LinkGun'
-	
-	bCanPickupInventory = False
-	
-	bCanJump=False
-	bCanFly = True
-	
-	bCanWalk = False
-	
-	bMeleeMonster = True;
+
 	bEmptyHanded = True
-	bInvisibleWeapon = True
-   
-	MonsterSkill=3
 
-	LightEnvironment=MyLightEnvironment
-
-	BioBurnAway=GooDeath
-
-	ArmsMesh(0)=FirstPersonArms
-
-	ArmsMesh(1)=FirstPersonArms2
-
-	PawnAmbientSound=AmbientSoundComponent
-
-	WeaponAmbientSound=AmbientSoundComponent2
-   
-   OverlayMesh=OverlayMeshComponent0
-   
    DefaultFamily=Class'AePhoenixFamilyInfo'
    
    DefaultMesh=SkeletalMesh'AePhoenix.AePhoenix'
-   
-   WalkableFloorZ=1.00000
-   
-   GroundSpeed=400.000000
-   
+
    AirSpeed=400.00000
    
    
@@ -143,11 +67,7 @@ defaultproperties
    
    Components(0)=CollisionCylinder
    
-   Begin Object Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
-      ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
-   End Object
-   
-   SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
+   //SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
    
    Components(1)=Arrow
    Components(2)=MyLightEnvironment

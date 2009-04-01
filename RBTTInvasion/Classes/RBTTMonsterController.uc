@@ -7,10 +7,10 @@ event PostBeginPlay()
 	
 	Super.PostBeginPlay();
 	
+	LastRespawnTime = WorldInfo.TimeSeconds;
+	
 	//InitPlayerReplicationInfo();
 	//GotoState('Roaming', 'Begin');
-	
-
 }
 function InitPlayerReplicationInfo() {
 	

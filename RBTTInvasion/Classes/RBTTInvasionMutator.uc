@@ -25,6 +25,8 @@ var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configurati
 function PostBeginPlay()
 {
 	local UTGame Game;
+	
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.PostBeginPlay<<<<<<<<<<<<<<<<<<<<");
 
 	Game = UTGame(WorldInfo.Game);
 	
@@ -36,10 +38,14 @@ function PostBeginPlay()
 			Game.TranslocatorClass = class'UTGameContent.UTWeap_Translocator_Content';
 		Game.bAllowTranslocator = True;
 	}
+	
+	`log("##################RBTTInvasionMutator.PostBeginPlay####################");
 }
 
 function Mutate (string MutateString, PlayerController Sender)
 {
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.Mutate<<<<<<<<<<<<<<<<<<<<");
+
 	if (Sender.PlayerReplicationInfo.bAdmin || Sender.WorldInfo.NetMode == NM_Standalone) {
 		switch( MutateString )
 		{
@@ -63,12 +69,15 @@ function Mutate (string MutateString, PlayerController Sender)
 	//} else {
 		//Sender.ClientMessage ("You need to be administrator for that!");
 	}
-  Super.Mutate(MutateString, Sender);
+	Super.Mutate(MutateString, Sender);
+	`log("##################RBTTInvasionMutator.Mutate####################");
 }
 
 function InitMutator(string Options, out string ErrorMessage)
 {
 	local int i;
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.InitMutator<<<<<<<<<<<<<<<<<<<<");
+	
 	InitMutatorOptionsString = Options; 		// Save it for when initializing other gameinfo/mutators
 
 	Super.InitMutator(Options, ErrorMessage);
@@ -110,11 +119,15 @@ function InitMutator(string Options, out string ErrorMessage)
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	UpdateMutators();				// Set the mutators up for the first wave
 	UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
+	
+	`log("##################RBTTInvasionMutator.InitMutator####################");
 }
 
 // Wave has ended, probably gets called by the gamerules
 function EndWave(GameRules G)
 {
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.EndWave<<<<<<<<<<<<<<<<<<<<");
+
 	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
 	G.Destroy();						// Destroy the gamerules
 	
@@ -122,6 +135,8 @@ function EndWave(GameRules G)
 	
 	SpawnNewGameRules();					// Spawn the new gamerules
 	UpdateMutators();					// Update the mutators
+	
+	`log("##################RBTTInvasionMutator.EndWave####################");
 }
 
 // Spawn the mutators that need spawning and remove which has to be removed
@@ -132,6 +147,8 @@ function UpdateMutators()
 	local class<Mutator> MutClass;	// The class of the mutator
 	local bool bMutRemoved;		// True if we just removed this mutator;
 	local string ErrorMessage; 	// for initializing mutators
+	
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.UpdateMutators<<<<<<<<<<<<<<<<<<<<");
 	
 	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
 		if((MutatorConfig[i].BeginWave == CurrentWave) || (MutatorConfig[i].EndWave == CurrentWave)) // Only get relevant mutators
@@ -171,6 +188,8 @@ function UpdateMutators()
 					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);// Initialize the mutator
 			}
 		}
+		
+	`log("##################RBTTInvasionMutator.UpdateMutators####################");
 }
 
 // Find a mutator by it's class
@@ -178,11 +197,14 @@ function Mutator FindMutatorByClass(Class<Mutator> MutClass)
 {
 	local Mutator mut;
 
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.FindMutatorByClass<<<<<<<<<<<<<<<<<<<<");
+	
 	if(MutClass != None)
 		for ( mut=WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
 			if ( mut.Class == MutClass )					// We found the mutator if the classes match
 				return mut;						// Return the mutator we were looking for, for further handling
 
+	`log("##################RBTTInvasionMutator.FindMutatorByClass####################");
 	return None; 	// We couldn't find anything, so return None
 }
 
@@ -192,6 +214,8 @@ function SpawnNewGameRules()
 	local UTTeamGame Game;			// Quick reference
 	local RBTTInvasionGameRules G;		// We're gonna spawn this, yes
 
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.SpawnNewGameRules<<<<<<<<<<<<<<<<<<<<");
+	
 	Game = UTTeamGame(WorldInfo.Game);	// Get the GameType
 	if (Game == None)			// If it's not a teamgame, our monsters won't work! (yet)
 	{
@@ -212,14 +236,20 @@ function SpawnNewGameRules()
 		if(bMatchHasStarted)				// See if the match has actually started
 			G.MatchStarting();			// If so, send MatchStarting() to the GameRules
 	}
+	
+	`log("##################RBTTInvasionMutator.SpawnNewGameRules####################");
 }
 
 // This function gets called when the match starts, that's when the players actually spawn.
 function MatchStarting()
 {
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.MatchStarting<<<<<<<<<<<<<<<<<<<<");
+
+	SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
 	bMatchHasStarted = True;	// The match has started, so set the flag
-	SpawnNewGameRules(); 	// Spawn before super, in case it needs to do something fancy..
 	super.MatchStarting();		// Let the super handle the rest of the function
+	
+	`log("##################RBTTInvasionMutator.MatchStarting####################");
 }
 
 
@@ -227,10 +257,13 @@ function MatchStarting()
 // This is used to spawn the HUD when a player joins mid-game
 function NotifyLogin(Controller NewPlayer)
 {
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.NotifyLogin<<<<<<<<<<<<<<<<<<<<");
+
 	super.NotifyLogin(NewPlayer);
-	`log(">> RBTTInvasionMutator.NotifyLogin <<");
 	if(RBTTInvasionGameRules(CurrentRules) != None)
 		RBTTInvasionGameRules(CurrentRules).NotifyLogin(NewPlayer);
+		
+	`log("##################RBTTInvasionMutator.NotifyLogin####################");
 }
 
 /*
@@ -248,6 +281,7 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 {
 	// append the mutator name.
 	local int i;
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.GetServerDetails<<<<<<<<<<<<<<<<<<<<");
 	i = ServerState.ServerInfo.Length;
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "Mutator";
@@ -256,6 +290,7 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "UT3 Invasion";
 	ServerState.ServerInfo[i].Value = InvasionVersion;
+	`log("##################RBTTInvasionMutator.GetServerDetails####################");
 }
 
 defaultproperties

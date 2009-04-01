@@ -1,29 +1,7 @@
 class RBTTSpider extends RBTTMonster;
 
-var() skeletalMeshComponent DefaultMonsterMesh;
-var() class<UTWeapon> DefaultMonsterWeapon;
-
-//var() int MonsterSkill, 
-var() int monsterTeam;
-var() int MonsterScale;
-//var() string MonsterName;
-
-/*
-function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
-{
-	local bool DiedReturn;
-
-	DiedReturn = Super.Died(Killer, damageType, HitLocation);
-	
-	`log(">>>>>>>>>>>>>>>>>>>Pawn Destroyed!<<<<<<<<<<<<<<<<<<<");
-	MonsterController.Destroy();
-	`log(">>>>>>>>>>>>>> CONTROLLER DESTROYED <<<<<<<<<<<<<<<");
-	Destroy();
-
-	return DiedReturn;
-}
-*/
-
+/** Enable or disable IK that keeps hands on IK bones. */
+simulated function SetHandIKEnabled(bool bEnabled); // It doesn't have hands
 
 defaultproperties
 {

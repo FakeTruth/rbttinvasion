@@ -1,18 +1,5 @@
 class RBTTScarySkull extends RBTTMonster;
 
-var() skeletalMeshComponent DefaultMonsterMesh;
-var() class<UTWeapon> DefaultMonsterWeapon;
-
-
-var() int monsterTeam;
-var() int MonsterScale;
-
-function AddDefaultInventory()
-{
-    Super.AddDefaultInventory();
-    CreateInventory(DefaultMonsterWeapon);
-}
-
 function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
 {
 	super.PerformDodge(DoubleClickMove, Dir, Cross);
@@ -48,6 +35,9 @@ simulated function bool ShouldGib(class<UTDamageType> UTDamageType)
 {
 	return FALSE;
 }
+
+/** Enable or disable IK that keeps hands on IK bones. */
+simulated function SetHandIKEnabled(bool bEnabled); // It doesn't have hands >_<;
 
 defaultproperties
 {

@@ -33,8 +33,8 @@ simulated function PostBeginPlay()
 {
 	super.PostBeginPlay();
 
-	
-	InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+	if(WorldInfo.NetMode == NM_Standalone || WorldInfo.NetMode == NM_DedicatedServer)
+		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
 	
 	SetTimer(1, False, 'SpawnBabySlimes');
 		

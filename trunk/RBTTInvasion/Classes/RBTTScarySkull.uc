@@ -43,6 +43,12 @@ function JumpOffPawn()
 	SetPhysics(PHYS_Flying);
 }
 
+/** @return whether or not we should gib due to damage from the passed in damagetype */
+simulated function bool ShouldGib(class<UTDamageType> UTDamageType)
+{
+	return FALSE;
+}
+
 defaultproperties
 {
 	bMeleeMonster = True;

@@ -11,6 +11,7 @@ class RBTTSlimeFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
+	SoundGroupClass=Class'RBTTInvasion.RBTTSlimeSoundGroup'
 	LeftFootBone=L_FrontFoot //b_LeftAnkle
 	RightFootBone=R_FrontFoot //b_RightAnkle
 	TakeHitPhysicsFixedBones[0]=L_FrontFoot //b_LeftAnkle 
@@ -21,6 +22,6 @@ defaultproperties
    PhysAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
    DeathMeshNumMaterialsToSetResident=1
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
-   Name="Default__RBTTSpiderFamilyInfo"
+   Name="Default__RBTTSlimeFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'
 }

@@ -21,7 +21,8 @@ defaultproperties
    DeathMeshSkelMesh=SkeletalMesh'RBTTInfernal.Infernal'
    DeathMeshPhysAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
    DeathMeshNumMaterialsToSetResident=1
-   SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
+   //SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
+   SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'RBTTInfernal.Infernal_MITV'
 
 	DeathMeshBreakableJoints=("b_LeftArm","b_RightArm","b_LeftLegUpper","b_RightLegUpper")
 	

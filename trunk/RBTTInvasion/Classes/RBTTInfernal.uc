@@ -20,10 +20,7 @@ var config float PoundDamage;
 var bool bInitializedExtraAnimSets;
 
 /** Particle Emitters */
-var ParticleSystemComponent AmbientEmitter;
-var ParticleSystemComponent FireEmitterRHand;
-var ParticleSystemComponent FireEmitterLHand;
-var ParticleSystemComponent FireEmitterNeck;
+var ParticleSystemComponent InfernalEmitters[11];
 
 var array<name> DeResBoneNames;
 
@@ -52,13 +49,20 @@ simulated function PostBeginPlay()
 	
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
-		//AttachFireEmitterTo(FireEmitterRHand, 'b_RightForeArm');
-		//AttachFireEmitterTo(FireEmitterLHand, 'b_LeftForeArm');
-		//AttachFireEmitterTo(FireEmitterNeck, 'b_Neck');
-		
-		AmbientEmitter = new(self) class'UTParticleSystemComponent';
-		Mesh.AttachComponent(AmbientEmitter, 'b_Hips');
-		AmbientEmitter.SetTemplate(ParticleSystem'RBTTInfernal.InfernalAmbient');		
+		InfernalEmitters[0] = new(self) class'UTParticleSystemComponent';
+		Mesh.AttachComponent(InfernalEmitters[0], 'b_Hips');
+		InfernalEmitters[0].SetTemplate(ParticleSystem'RBTTInfernal.InfernalAmbient');
+	
+		AttachFireEmitterTo(InfernalEmitters[1], 'b_RightForeArm');
+		AttachFireEmitterTo(InfernalEmitters[2], 'b_LeftForeArm');
+		AttachFireEmitterTo(InfernalEmitters[3], 'b_Neck');
+		AttachFireEmitterTo(InfernalEmitters[4], 'b_RightHand');
+		AttachFireEmitterTo(InfernalEmitters[5], 'b_LeftHand');
+		AttachFireEmitterTo(InfernalEmitters[6], 'b_Spine');
+		AttachFireEmitterTo(InfernalEmitters[7], 'b_Spine1');
+		AttachFireEmitterTo(InfernalEmitters[8], 'b_Spine2');
+		AttachFireEmitterTo(InfernalEmitters[9], 'b_RightLeg');
+		AttachFireEmitterTo(InfernalEmitters[10], 'b_LeftLeg');
 	}
 	
 	// Slow down infernal's movement animations
@@ -75,38 +79,51 @@ simulated function PostBeginPlay()
 	}
 }
 
+simulated function AttachFireEmitterTo(out ParticleSystemComponent ParticleSystem, name BoneName)
+{
+	ParticleSystem = new(self) class'UTParticleSystemComponent';
+	Mesh.AttachComponent(ParticleSystem, BoneName);
+	ParticleSystem.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
+}
+
 function bool Died(Controller Killer, class<DamageType> damageType, vector HitLocation)
 {	
-	//local TraceHitInfo HitInfo;
+	ClearTimer('CauseMeleeDamage');
+	return Super.Died(Killer, damageType, HitLocation);
+	SetTimer(2, False, 'Destroy');
+}
+
+simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
 	local MaterialInstanceTimeVarying MITV_BurnOut;
-	
 	local int i;
+	
+	
+	super.PlayDying(DamageType, HitLoc);
 	
 	MITV_BurnOut = new(Mesh.outer) class'MaterialInstanceTimeVarying';
 	MITV_BurnOut.SetParent( GetFamilyInfo().default.SkeletonBurnOutMaterials[0] );
 	// this can have a max of 6 before it wraps and become visible again
 	Mesh.SetMaterial( 0, MITV_BurnOut );
-	MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 1.0f );	
+	Mesh.SetMaterial( 1, MITV_BurnOut );
+	Mesh.SetMaterial( 2, MITV_BurnOut );
+	//MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 1.0f );	
+	MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 0 );	
 
 	//Class'UTDamageType'.static.CreateDeathSkeleton(self, None, HitInfo, Location);
 	
 	for(i = DeResBoneNames.length-1; i >= 0; i--)
 	{
 		WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
+		//WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'RBTTInfernal.DeRez_Emitter', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
 	}
-
-	ClearTimer('CauseMeleeDamage');
 	
-	return Super.Died(Killer, damageType, HitLocation);
+	for(i = ArrayCount(InfernalEmitters)-1; i>=0; i--)
+	{	// Deactivate all the emitters on the Infernal
+		InfernalEmitters[i].DeactivateSystem();
+	}
 	
-	SetTimer(4, False, 'Destroy');
-}
-
-function AttachFireEmitterTo(out ParticleSystemComponent ParticleSystem, name BoneName)
-{
-	ParticleSystem = new(self) class'UTParticleSystemComponent';
-	Mesh.AttachComponent(ParticleSystem, BoneName);
-	ParticleSystem.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
+	SetTimer(2, False, 'Destroy');
 }
 
 simulated function Projectile ProjectileFire()
@@ -388,6 +405,11 @@ defaultproperties
 	DeResBoneNames(0)=b_RightForeArm
 	DeResBoneNames(1)=b_LeftForeArm
 	DeResBoneNames(2)=b_Neck
+	DeResBoneNames(3)=b_RightHand
+	DeResBoneNames(4)=b_LeftHand
+	DeResBoneNames(5)=b_Spine1
+	DeResBoneNames(6)=b_RightLeg
+	DeResBoneNames(7)=b_LeftLeg
 
 	health = 500
 

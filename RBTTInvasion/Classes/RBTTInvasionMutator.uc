@@ -111,13 +111,17 @@ function InitMutator(string Options, out string ErrorMessage)
 			case "UTMutator_Slomo":
 				MutatorConfig[i].MutatorClass = "RBTTInvasion.UTMutator_Slomo_RBTT";
 				break;
+			case "UTGame.UTMutator_Instagib":
+			case "UTMutator_Instagib":
+				MutatorConfig[i].MutatorClass = "RBTTInvasion.UTMutator_Instagib_RBTT";
+				break;
 			
 		
 		}
 	}
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
-	UpdateMutators();				// Set the mutators up for the first wave
+	//UpdateMutators();				// Set the mutators up for the first wave
 	UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 	
 	`log("##################RBTTInvasionMutator.InitMutator####################");
@@ -147,6 +151,7 @@ function UpdateMutators()
 	local class<Mutator> MutClass;	// The class of the mutator
 	local bool bMutRemoved;		// True if we just removed this mutator;
 	local string ErrorMessage; 	// for initializing mutators
+	local UTPlayerController PC;	// For sending messages to this player
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.UpdateMutators<<<<<<<<<<<<<<<<<<<<");
 	
@@ -162,6 +167,8 @@ function UpdateMutators()
 				if(MutatorConfig[i].bSpawned) 				// Don't remove it if it wasn't spawned by us
 					if(mut != None)					// Make sure the mutator actually exists
 					{
+						foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+						{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',0,,,mut.class);	}	
 						WorldInfo.Game.RemoveMutator( mut );	// Remove the mutator (takes it out of the chain)
 						mut.Destroy();				// Destroy the mutator
 						bMutRemoved = True;			// Set the flag that we just removed this mutator
@@ -175,7 +182,6 @@ function UpdateMutators()
 				{
 					`log(MutatorConfig[i].MutatorClass);
 					WorldInfo.Game.AddMutator(MutatorConfig[i].MutatorClass, False);		// Add the mutator
-					//WorldInfo.Game.AddMutator("RBTTInvasion.UTMutator_LowGrav_RBTT", False);
 					MutatorConfig[i].bSpawned = True; 						// It's spawned by us
 					`log(">>Mutator Added<<");
 				}
@@ -185,7 +191,11 @@ function UpdateMutators()
 			{
 				mut = FindMutatorByClass(MutClass); 				// It just got added, so find it
 				if(mut != None)							// See if it was actually found
+				{
 					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);// Initialize the mutator
+					foreach WorldInfo.AllControllers(class'UTPlayerController', PC)			// Go through all players
+					{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',1,,,mut.class);	}	// Send a message that this mutator has been added
+				}
 			}
 		}
 		
@@ -245,6 +255,7 @@ function MatchStarting()
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.MatchStarting<<<<<<<<<<<<<<<<<<<<");
 
+	UpdateMutators();
 	SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
 	bMatchHasStarted = True;	// The match has started, so set the flag
 	super.MatchStarting();		// Let the super handle the rest of the function

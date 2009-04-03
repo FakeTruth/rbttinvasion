@@ -38,17 +38,19 @@ simulated function PostBeginPlay()
 	HeroMeleeEmitterClass = class'UTEmit_HeroMelee';
 	GroundPoundTemplate = HeroGroundPoundTemplate;
 	
-	if ( HeroGroundPoundEmitter == None || GroundPoundTemplate != HeroGroundPoundEmitter.Template )
-	{
-		`log(">> CREATING EMITTER IN POSTBEGINPLAY <<");
-		HeroGroundPoundEmitter = new(self) class'UTParticleSystemComponent';
-		HeroGroundPoundEmitter.SetTemplate(GroundPoundTemplate);
-		HeroGroundPoundEmitter.bAutoActivate = false;
-		Mesh.AttachComponentToSocket(HeroGroundPoundEmitter, WeaponSocket);
-	}
+
 	
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
+		if ( HeroGroundPoundEmitter == None || GroundPoundTemplate != HeroGroundPoundEmitter.Template )
+		{
+			`log(">> CREATING EMITTER IN POSTBEGINPLAY <<");
+			HeroGroundPoundEmitter = new(self) class'UTParticleSystemComponent';
+			HeroGroundPoundEmitter.SetTemplate(GroundPoundTemplate);
+			HeroGroundPoundEmitter.bAutoActivate = false;
+			Mesh.AttachComponentToSocket(HeroGroundPoundEmitter, WeaponSocket);
+		}
+	
 		InfernalEmitters[0] = new(self) class'UTParticleSystemComponent';
 		Mesh.AttachComponent(InfernalEmitters[0], 'b_Hips');
 		InfernalEmitters[0].SetTemplate(ParticleSystem'RBTTInfernal.InfernalAmbient');

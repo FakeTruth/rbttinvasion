@@ -21,7 +21,8 @@ var Array<PortalStruct>				PortalTable;		// Holds all the different portals
 struct WaveTable
 {
 	var array<int> 				MonsterNum;		// MonsterTable[MonsterNum];
-	var array<int> 				PortalNum;		// PortalTable[PortalNum];
+	var array<int>				BossMonsters;		// MonsterTable[MonsterNum];
+	//var array<int> 				PortalNum;		// PortalTable[PortalNum];
 	//var array<bool>				bPortalSpawned;		// Has the portal been spawned yet?
 	var int					WaveLength;		// How many monsters should be in this wave?
 	var int					WaveCountdown;		// Wave countdown per wave!
@@ -29,7 +30,7 @@ struct WaveTable
 	var float 				MonstersPerPlayer;	// Monster per player ratio
 	var bool				bIgnoreMPP;		// Ignore monsters per player ratio
 	var bool				bIsQueue;		// If this is a queue, spawn the monsters in the given order
-	var bool				bTimedWave;		// The wave will last this time in seconds
+	var bool				bTimedWave;		// The wave will last WaveLength time in seconds
 	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
 	var bool				bAllowPortals;		// Should this wave have portals
 	
@@ -47,7 +48,6 @@ struct WaveTable
 var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
 var array<int>					WaveConfigBuffer; 	// Fill this up, and drain it down when the monster list is a queue
 
-//var array<int> 					WaveLength; 		// Cheap-ass monstertable, it only holds the wave length (ammount of monsters each wave
 var int 					NumMonsters;		// Current number of monsters
 var int						NumPortals;		// Current number of portals
 var int						CurrentWave;		// The current wave number
@@ -203,7 +203,12 @@ function InvasionTimer()
 	{
 		CountMonstersLeft();
 		if(NumMonsters<=0)
-		{	EndWave(); return;	}
+		{	
+			if(WaveConfig[CurrentWave].BossMonsters.length > 0)
+			{	GotoState('BossWave'); return;	}
+			EndWave(); 
+			return;	
+		}
 	}
 
 	//#### AddMonsters ####\\ if there aren't enough monsters in the game
@@ -237,7 +242,6 @@ function EndWave()
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndWave<<<<<<<<<<<<<<<<<<<<");
 	`log("Wave "@CurrentWave@" over!!");
-	CurrentWave++;
 	RespawnPlayersFromQueue();
 	ReplenishAmmo();
 	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
@@ -246,9 +250,6 @@ function EndWave()
 		EndInvasionGame("triggered"); // Game's over, end the game.
 		return;
 	}	
-	WaveMonsters=0;
-	`log("In Wave "@CurrentWave@" Now!");
-	GotoState('BetweenWaves'); 
 	InvasionMut.EndWave(self);
 	return;
 }
@@ -330,7 +331,7 @@ function CountMonstersLeft()
 	{
 		for(i=MonsterTable.Length-1; i >= 0; i--)
 		{
-			if(P.class == MonsterTable[i].MonsterClass)
+			if(P.class == MonsterTable[i].MonsterClass && P.Health > 0)
 			{
 				NewMonsterNum++;
 				continue;
@@ -751,9 +752,16 @@ state BetweenWaves
 
 	function BeginState(Name PreviousStateName)
 	{		
+		local UTPlayerController PC;
+	
 		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BetweenWaves.BeginState<<<<<<<<<<<<<<<<<<<<");
 	
 		ResPlayer();
+		
+		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+		{
+			PC.ClientMessage( "Wave:"@CurrentWave+1);
+		}
 		
 		BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
 		
@@ -808,7 +816,14 @@ state TimedWave
 		{
 			CountMonstersLeft();
 			if(NumMonsters <= 0)
-			{	EndWave(); bTimedWaveOver = False; return;	}
+			{	
+				if(WaveConfig[CurrentWave].BossMonsters.length > 0)
+				{	GotoState('BossWave'); return;	}
+				
+				bTimedWaveOver = False;
+				EndWave();
+				return;	
+			}
 		}
 		
 		if (bTimedWaveOver)
@@ -838,6 +853,39 @@ state TimedWave
 	}
 }
 
+state BossWave
+{
+	function BeginState(Name PreviousStateName)
+	{
+		local int i;
+	
+		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BossWave.BeginState<<<<<<<<<<<<<<<<<<<<");
+		
+		WaveConfigBuffer = WaveConfig[CurrentWave].BossMonsters;
+		
+		// Make SURE ALL monsters have been spawned at once
+		for(i = WaveConfigBuffer.length-1; WaveConfigBuffer.length > 0; i--)
+		{
+			if(i < 0)
+				i = WaveConfigBuffer.length;
+			if(AddMonster(MonsterTable[WaveConfigBuffer[i]].MonsterClass))
+				WaveConfigBuffer.Remove(i, 1);
+		}
+	}
+
+	function InvasionTimer()
+	{
+		`log(">> BossWave.InvasionTimer() <<");
+		`log(">> NumMonsters: "@NumMonsters@" <<");
+		//#### END-OF-WAVE ####\\
+		if (NumMonsters <= 0)
+		{
+			CountMonstersLeft();
+			if(NumMonsters<=0)
+			{	EndWave(); return;	}
+		}
+	}
+}
 
 /* For TeamGame, tell teams about kills rather than each individual bot
 */

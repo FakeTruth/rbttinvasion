@@ -30,36 +30,36 @@ var float InMaxFarBlurAmount;
 
 event PostRender(Canvas Canvas)
 {
-	local UTHud uth;
-	local float XPos, YPos, lineH;
+	//local UTHud uth;
+	//local float XPos, YPos, lineH;
 	
 
 	//`log(">> Rendering <<");
 	
-	uth = UTHud(OwnerController.MyHUD);
-	if (uth == None)
-		return;
+	//uth = UTHud(OwnerController.MyHUD);
+	//if (uth == None)
+	//	return;
 	
-	XPos = 20 * uth.ResolutionScale;
-	YPos = 120 * uth.ResolutionScale;
+	//XPos = 20 * uth.ResolutionScale;
+	//YPos = 120 * uth.ResolutionScale;
 
 	//lineH represents the onscreen line spacing of our text, in case we need it
-	lineH = 20 * uth.ResolutionScale;
+	//lineH = 20 * uth.ResolutionScale;
 	
 	//Canvas.Font = Font'EngineFonts.SmallFont';
-	Canvas.Font = Font'MF_Medium';
+	//Canvas.Font = Font'MF_Medium';
 	
-	Canvas.SetDrawColor(255,255,255,255);
+	//Canvas.SetDrawColor(255,255,255,255);
 
-	Canvas.SetPos(XPos , YPos);
-	Canvas.DrawText("I'm overlaying correctly! My OwnerController is" @ OwnerController);
+	//Canvas.SetPos(XPos , YPos);
+	//Canvas.DrawText("I'm overlaying correctly! My OwnerController is" @ OwnerController);
 
-	YPos += lineH;
-	Canvas.SetPos(XPos , YPos);
-	Canvas.DrawText("And now a second line. It's the best day in my life!");
-	YPos += lineH;
-	Canvas.SetPos(XPos , YPos);
-	Canvas.DrawText("RadarPulse: "@RadarPulse);
+	//YPos += lineH;
+	//Canvas.SetPos(XPos , YPos);
+	//Canvas.DrawText("And now a second line. It's the best day in my life!");
+	//YPos += lineH;
+	//Canvas.SetPos(XPos , YPos);
+	//Canvas.DrawText("RadarPulse: "@RadarPulse);
 	
 	DrawRadar(Canvas);
 }

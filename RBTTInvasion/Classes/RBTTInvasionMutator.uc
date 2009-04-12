@@ -122,7 +122,7 @@ function InitMutator(string Options, out string ErrorMessage)
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
 	//UpdateMutators();				// Set the mutators up for the first wave
-	UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
+	//UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 	
 	`log("##################RBTTInvasionMutator.InitMutator####################");
 }
@@ -274,16 +274,31 @@ function NotifyLogin(Controller NewPlayer)
 	if(RBTTInvasionGameRules(CurrentRules) != None)
 		RBTTInvasionGameRules(CurrentRules).NotifyLogin(NewPlayer);
 		
+	GiveRBTTPRI(NewPlayer);
+	
 	`log("##################RBTTInvasionMutator.NotifyLogin####################");
 }
 
-/*
-function PostBeginPlay()
+function GiveRBTTPRI (Controller C)
 {
-	Super.PostBeginPlay();
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameMutator<<<<<<<<<<<<<<<<<<<<");
+	local RBTTPRI PRI;
+	local UTPlayerReplicationInfo UTPRI;
+
+	if(UTPlayerController(C) == None)
+		return;
+	
+	UTPRI = UTPlayerReplicationInfo(C.PlayerReplicationInfo);
+	if (UTPRI != None) {
+		PRI = Spawn (class'RBTTPRI');
+		if(PRI != None)
+		{
+			PRI.OwnerController = UTPlayerController(C);
+			PRI.NextReplicationInfo = UTPRI.CustomReplicationInfo;
+			UTPRI.CustomReplicationInfo = PRI;
+			PRI.ServerInit();
+		}
+	}
 }
-*/
 
 //
 // server querying
@@ -309,7 +324,7 @@ defaultproperties
    MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
    
    bAllowTranslocator=True;
-   InvasionVersion="Rev 52"
+   InvasionVersion="Rev 79"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

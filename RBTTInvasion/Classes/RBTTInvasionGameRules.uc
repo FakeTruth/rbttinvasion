@@ -706,6 +706,7 @@ function AddToQueue(UTPlayerReplicationInfo Who)
 	if (!WorldInfo.Game.bGameEnded)
 	{
 		Who.Owner.GotoState('InQueue');
+		WorldInfo.Game.BroadcastLocalized(self, class'OutMessage',,Who);
 		PC = PlayerController(Who.Owner);
 		if (PC != None)
 		{

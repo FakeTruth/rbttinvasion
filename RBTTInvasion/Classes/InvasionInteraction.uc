@@ -1,6 +1,7 @@
 Class InvasionInteraction extends Interaction config(RBTTInvasion);
 
 var UTPlayerController OwnerController;
+var RBTTPRI RBPRI;
 
 /** Radar variables */
 var float RadarPulse,RadarScale;
@@ -62,6 +63,22 @@ event PostRender(Canvas Canvas)
 	//Canvas.DrawText("RadarPulse: "@RadarPulse);
 	
 	DrawRadar(Canvas);
+	DrawWaveInfo(Canvas);
+}
+
+function DrawWaveInfo(Canvas Canvas)
+{
+	local UTHud uth;
+
+	uth = UTHud(OwnerController.MyHUD);
+	if (uth == None)
+		return;
+		
+	Canvas.Font = Font'MF_Medium';
+	Canvas.DrawColor = uth.WhiteColor;
+		
+	Canvas.SetPos(0.900000*Canvas.ClipX,0.200000*Canvas.ClipY);
+	Canvas.DrawText("Wave: "@RBPRI.CurrentWave+1);
 }
 
 function DrawRadar(Canvas Canvas)

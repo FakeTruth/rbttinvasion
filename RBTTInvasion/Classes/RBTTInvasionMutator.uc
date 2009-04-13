@@ -130,6 +130,8 @@ function InitMutator(string Options, out string ErrorMessage)
 // Wave has ended, probably gets called by the gamerules
 function EndWave(GameRules G)
 {
+	local UTPlayerController PC;
+	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.EndWave<<<<<<<<<<<<<<<<<<<<");
 
 	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
@@ -139,6 +141,11 @@ function EndWave(GameRules G)
 	
 	SpawnNewGameRules();					// Spawn the new gamerules
 	UpdateMutators();					// Update the mutators
+	
+	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)				// Go through all players
+	{
+		GetRBTTPRI(UTPlayerReplicationInfo(PC.PlayerReplicationInfo)).CurrentWave = CurrentWave; // Update the current wave for the players, so they know in what wave they are
+	}
 	
 	`log("##################RBTTInvasionMutator.EndWave####################");
 }

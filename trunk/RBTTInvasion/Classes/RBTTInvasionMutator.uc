@@ -288,6 +288,9 @@ function GiveRBTTPRI (Controller C)
 		return;
 	
 	UTPRI = UTPlayerReplicationInfo(C.PlayerReplicationInfo);
+	if(GetRBTTPRI(UTPRI) != None)
+		return;
+		
 	if (UTPRI != None) {
 		PRI = Spawn (class'RBTTPRI');
 		if(PRI != None)
@@ -298,6 +301,18 @@ function GiveRBTTPRI (Controller C)
 			PRI.ServerInit();
 		}
 	}
+}
+
+simulated static function RBTTPRI GetRBTTPRI(UTPlayerReplicationInfo PRI)
+{
+  local UTLinkedReplicationInfo LPRI;
+
+  if (PRI == None) return None;
+  if (PRI.CustomReplicationInfo == None) return None;
+  for (LPRI = PRI.CustomReplicationInfo; LPRI != None; LPRI = LPRI.NextReplicationInfo) {
+    if (RBTTPRI (LPRI) != None) return RBTTPRI (LPRI);
+  }
+  return None;
 }
 
 //

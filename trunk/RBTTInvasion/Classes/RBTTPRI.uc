@@ -42,10 +42,6 @@ simulated function SpawnInteraction()
 {
 	local InvasionInteraction II;
 	local UTHud uth;
-
-	II = new class'InvasionInteraction';
-	II.OwnerController = OwnerController;
-	OwnerController.Interactions.AddItem(II);
 	
 	//Also set the ScoreBoardTemplate to ours
 	uth = UTHud(OwnerController.MyHUD);
@@ -56,6 +52,26 @@ simulated function SpawnInteraction()
 	}
 	else
 		uth.ScoreboardSceneTemplate = UTUIScene_Scoreboard'RBTTInvasionTex.sbInvasion';
+		
+
+	// Give player an interaction
+	if(GetInvInteraction(OwnerController.Interactions) == None)
+	{		
+		II = new class'InvasionInteraction';
+		II.OwnerController = OwnerController;
+		OwnerController.Interactions.AddItem(II);
+	}
+}
+
+simulated static function InvasionInteraction GetInvInteraction(array<Interaction> Inter)
+{
+  local int i;
+
+  if (Inter.length == 0) return None;
+  for (i = Inter.length-1; i >= 0; i--) {
+    if (InvasionInteraction(Inter[i]) != None) return InvasionInteraction(Inter[i]);
+  }
+  return None;
 }
 
 defaultproperties

@@ -43,6 +43,9 @@ defaultproperties
    End Object
    Mesh=WPawnSkeletalMeshComponent
    
+   DefaultHeight = 24.0000
+   DefaultRadius = 24.0000
+
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=24.000000
       CollisionRadius=24.000000

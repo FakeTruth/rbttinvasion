@@ -1,12 +1,15 @@
 class RBTTPRI extends UTLinkedReplicationInfo;
 
 var repnotify UTPlayerController OwnerController;
+var repnotify int CurrentWave;
 var bool bClientSetup;
 
 replication
 {
 	if(Role == ROLE_Authority && bNetInitial)
 		OwnerController;
+	if(Role == ROLE_Authority && bNetDirty)
+		CurrentWave;
 }
 
 
@@ -17,6 +20,11 @@ simulated event ReplicatedEvent(name VarName)
 		SpawnInteraction();
 		bClientSetup = True;
 	}
+	//else
+	//if(Role < ROLE_Authority && VarName == 'OwnerController')
+	//{
+	//	
+	//}
 	else
 		Super.ReplicatedEvent(VarName);
 }
@@ -59,6 +67,7 @@ simulated function SpawnInteraction()
 	{		
 		II = new class'InvasionInteraction';
 		II.OwnerController = OwnerController;
+		II.RBPRI = self;
 		OwnerController.Interactions.AddItem(II);
 	}
 }

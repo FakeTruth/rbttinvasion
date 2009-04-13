@@ -1,6 +1,6 @@
-class OutMessage extends UTLocalMessage;
+class OutMessage extends UTLocalMessage config(RBTTInvasion);
 
-var string OutString;
+var config string OutString;
 
 static function string GetString(
     optional int Switch,
@@ -10,7 +10,7 @@ static function string GetString(
     optional Object OptionalObject
     )
 {
-    return RelatedPRI_1.GetPlayerAlias()@default.OutString;
+    return RelatedPRI_1.GetPlayerAlias()@default.OutString; // FIXME, OutString must contain %PlayerName% and it'll get replaced by the player's name
 }
 
 defaultproperties

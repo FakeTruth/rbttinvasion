@@ -151,7 +151,7 @@ function UpdateMutators()
 	local class<Mutator> MutClass;	// The class of the mutator
 	local bool bMutRemoved;		// True if we just removed this mutator;
 	local string ErrorMessage; 	// for initializing mutators
-	local UTPlayerController PC;	// For sending messages to this player
+	//local UTPlayerController PC;	// For sending messages to this player
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.UpdateMutators<<<<<<<<<<<<<<<<<<<<");
 	
@@ -167,8 +167,9 @@ function UpdateMutators()
 				if(MutatorConfig[i].bSpawned) 				// Don't remove it if it wasn't spawned by us
 					if(mut != None)					// Make sure the mutator actually exists
 					{
-						foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-						{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',0,,,mut.class);	}	
+						//foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+						//{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',0,,,mut.class);	}
+						WorldInfo.game.BroadcastLocalized(Self,Class'RBTTMutatorMessage',0,,,mut.class);
 						WorldInfo.Game.RemoveMutator( mut );	// Remove the mutator (takes it out of the chain)
 						mut.Destroy();				// Destroy the mutator
 						bMutRemoved = True;			// Set the flag that we just removed this mutator
@@ -193,8 +194,9 @@ function UpdateMutators()
 				if(mut != None)							// See if it was actually found
 				{
 					mut.InitMutator(InitMutatorOptionsString, ErrorMessage);// Initialize the mutator
-					foreach WorldInfo.AllControllers(class'UTPlayerController', PC)			// Go through all players
-					{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',1,,,mut.class);	}	// Send a message that this mutator has been added
+					//foreach WorldInfo.AllControllers(class'UTPlayerController', PC)			// Go through all players
+					//{	PC.ReceiveLocalizedMessage(Class'RBTTMutatorMessage',1,,,mut.class);	}	// Send a message that this mutator has been added
+					WorldInfo.game.BroadcastLocalized(Self,Class'RBTTMutatorMessage',1,,,mut.class);
 				}
 			}
 		}

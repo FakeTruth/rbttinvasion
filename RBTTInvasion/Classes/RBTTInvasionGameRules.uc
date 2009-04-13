@@ -726,7 +726,7 @@ state BetweenWaves
 {
 	function InvasionTimer()
 	{
-		local UTPlayerController PC;
+		//local UTPlayerController PC;
 		
 		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BetweenWaves.InvasionTimer<<<<<<<<<<<<<<<<<<<<");
 		
@@ -738,12 +738,13 @@ state BetweenWaves
 		}
 		
 		`log(">> WaveConfig[CurrentWave].WaveCountdownAnnouncer :: "@WaveConfig[CurrentWave].WaveCountdownAnnouncer@" <<");
-		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-		{
+		//foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
+		//{
 			//PC.ClientPlayAnnouncement(class'RBTTTimerMessage',BetweenWavesCountdown);
-			PC.ReceiveLocalizedMessage( WaveConfig[CurrentWave].WaveCountdownAnnouncer, BetweenWavesCountdown);
+			//PC.ReceiveLocalizedMessage( WaveConfig[CurrentWave].WaveCountdownAnnouncer, BetweenWavesCountdown);
 			//UTHUD(PC.myHUD).DisplayHUDMessage("wutwutwut!");
-		}	
+		//}	
+		WorldInfo.Game.BroadcastLocalized(self,WaveConfig[CurrentWave].WaveCountdownAnnouncer, BetweenWavesCountdown);
 		
 		`log(BetweenWavesCountDown@"Seconds before next wave!");
 		BetweenWavesCountdown--; // 1 second less left

@@ -62,6 +62,13 @@ event PostRender(Canvas Canvas)
 	//Canvas.SetPos(XPos , YPos);
 	//Canvas.DrawText("RadarPulse: "@RadarPulse);
 	
+	if(RBPRI == None)
+	{
+		RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(OwnerController.PlayerReplicationInfo));
+		if(RBPRI == None)
+			return;
+	}
+	
 	DrawRadar(Canvas);
 	DrawWaveInfo(Canvas);
 }

@@ -16,6 +16,7 @@ var soundcue footsound;
 /** Melee attack properties */
 var class <DamageType> MeleeDmgClass;
 
+var config float PlasmaDamage;
 var config float PoundDamage;
 var bool bInitializedExtraAnimSets;
 
@@ -79,6 +80,8 @@ simulated function PostBeginPlay()
 			}
 		}
 	}
+	
+	SaveConfig();
 }
 
 simulated function AttachFireEmitterTo(out ParticleSystemComponent ParticleSystem, name BoneName)
@@ -103,26 +106,29 @@ simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
 	
 	super.PlayDying(DamageType, HitLoc);
 	
-	MITV_BurnOut = new(Mesh.outer) class'MaterialInstanceTimeVarying';
-	MITV_BurnOut.SetParent( GetFamilyInfo().default.SkeletonBurnOutMaterials[0] );
-	// this can have a max of 6 before it wraps and become visible again
-	Mesh.SetMaterial( 0, MITV_BurnOut );
-	Mesh.SetMaterial( 1, MITV_BurnOut );
-	Mesh.SetMaterial( 2, MITV_BurnOut );
-	//MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 1.0f );	
-	MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 0 );	
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+	{
+		MITV_BurnOut = new(Mesh.outer) class'MaterialInstanceTimeVarying';
+		MITV_BurnOut.SetParent( GetFamilyInfo().default.SkeletonBurnOutMaterials[0] );
+		// this can have a max of 6 before it wraps and become visible again
+		Mesh.SetMaterial( 0, MITV_BurnOut );
+		Mesh.SetMaterial( 1, MITV_BurnOut );
+		Mesh.SetMaterial( 2, MITV_BurnOut );
+		//MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 1.0f );	
+		MITV_BurnOut.SetScalarStartTime( 'BurnAmount', 0 );	
 
-	//Class'UTDamageType'.static.CreateDeathSkeleton(self, None, HitInfo, Location);
+		//Class'UTDamageType'.static.CreateDeathSkeleton(self, None, HitInfo, Location);
+		
+		for(i = ArrayCount(InfernalEmitters)-1; i>=0; i--)
+		{	// Deactivate all the emitters on the Infernal
+			InfernalEmitters[i].DeactivateSystem();
+		}
+	}
 	
 	for(i = DeResBoneNames.length-1; i >= 0; i--)
 	{
 		WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
 		//WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'RBTTInfernal.DeRez_Emitter', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
-	}
-	
-	for(i = ArrayCount(InfernalEmitters)-1; i>=0; i--)
-	{	// Deactivate all the emitters on the Infernal
-		InfernalEmitters[i].DeactivateSystem();
 	}
 	
 	SetTimer(2, False, 'Destroy');
@@ -151,10 +157,12 @@ simulated function Projectile ProjectileFire()
 		SpawnedProjectile = Spawn(Class'RBTTInfernalPlasma',,, RealStartLoc);
 		if( SpawnedProjectile != None && !SpawnedProjectile.bDeleteMe )
 		{
+			SpawnedProjectile.Damage = PlasmaDamage;
 			SpawnedProjectile.Init( Vector(Weapon.GetAdjustedAim( RealStartLoc )) );
+			UTProj_SeekingRocket(SpawnedProjectile).Seeking = Controller.Enemy;
 		}
 		
-		UTProj_SeekingRocket(SpawnedProjectile).Seeking = Controller.Enemy;
+		
 		
 		// Return it up the line
 		return SpawnedProjectile;
@@ -415,6 +423,7 @@ defaultproperties
 
 	health = 500
 
+	PlasmaDamage = 50.0
 	PoundDamage = 50.0
 
 	FootStepShakeRadius=1000.0

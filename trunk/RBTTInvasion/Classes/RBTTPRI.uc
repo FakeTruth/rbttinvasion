@@ -17,8 +17,11 @@ simulated event ReplicatedEvent(name VarName)
 {
 	if(Role < ROLE_Authority && !bClientSetup && VarName == 'OwnerController')
 	{
-		SpawnInteraction();
-		bClientSetup = True;
+		if(OwnerController != None)
+		{
+			SpawnInteraction();
+			bClientSetup = True;
+		}
 	}
 	//else
 	//if(Role < ROLE_Authority && VarName == 'OwnerController')
@@ -34,8 +37,6 @@ function PostBeginPlay()
 	super.PostBeginPlay();
 
 	`log(">> You got the RBTTPRI yay~ <<");
-	`log(">> Instigator: "@Instigator@" <<");
-	`log(">> OwnerController: "@OwnerController@" <<");
 }
 
 function ServerInit()
@@ -74,13 +75,13 @@ simulated function SpawnInteraction()
 
 simulated static function InvasionInteraction GetInvInteraction(array<Interaction> Inter)
 {
-  local int i;
+	local int i;
 
-  if (Inter.length == 0) return None;
-  for (i = Inter.length-1; i >= 0; i--) {
-    if (InvasionInteraction(Inter[i]) != None) return InvasionInteraction(Inter[i]);
-  }
-  return None;
+	if (Inter.length == 0) return None;
+	for (i = Inter.length-1; i >= 0; i--) {
+		if (InvasionInteraction(Inter[i]) != None) return InvasionInteraction(Inter[i]);
+	}
+	return None;
 }
 
 defaultproperties

@@ -6,6 +6,7 @@ function InitMutator(string Options, out string ErrorMessage)
 {
 	local UTGame Game;
 	local Controller C;
+	local Weapon Weap;
 
 	Game = UTGame(WorldInfo.Game);
 	
@@ -22,7 +23,12 @@ function InitMutator(string Options, out string ErrorMessage)
 		foreach WorldInfo.AllControllers(class'Controller', C)
 		{	
 			if(C.IsA('UTPlayerController') || C.class == Class'UTGame.UTBot')
+			{
 				C.Pawn.InvManager.CreateInventory(class'UTGame.UTWeap_InstagibRifle');
+				Weap = Weapon(C.Pawn.InvManager.FindInventoryType(class'UTGame.UTWeap_InstagibRifle'));
+				UTWeapon(Weap).CurrentRating = 1.f;
+				C.Pawn.InvManager.SetCurrentWeapon(Weap);
+			}
 		}
 	}
 

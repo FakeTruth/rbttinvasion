@@ -314,13 +314,14 @@ function GiveRBTTPRI (Controller C)
 
 simulated static function RBTTPRI GetRBTTPRI(UTPlayerReplicationInfo PRI)
 {
-  local UTLinkedReplicationInfo LPRI;
+	local UTLinkedReplicationInfo LPRI;
 
-  if (PRI == None) return None;
-  if (PRI.CustomReplicationInfo == None) return None;
-  for (LPRI = PRI.CustomReplicationInfo; LPRI != None; LPRI = LPRI.NextReplicationInfo) {
-    if (RBTTPRI (LPRI) != None) return RBTTPRI (LPRI);
-  }
+	if (PRI == None) return None;
+		if (PRI.CustomReplicationInfo == None) return None;
+	for (LPRI = PRI.CustomReplicationInfo; LPRI != None; LPRI = LPRI.NextReplicationInfo) {
+		if (RBTTPRI (LPRI) != None) return RBTTPRI (LPRI);
+	}
+	
   return None;
 }
 

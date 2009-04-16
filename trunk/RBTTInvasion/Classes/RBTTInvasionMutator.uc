@@ -305,6 +305,7 @@ function GiveRBTTPRI (Controller C)
 		if(PlayerController(C) != None && PRI != None)
 		{
 			PRI.PlayerOwner = PlayerController(C);
+			PRI.CurrentWave = CurrentWave;
 			PRI.ServerSetup();
 			
 			PRI.NextReplicationInfo = UTPRI.CustomReplicationInfo;

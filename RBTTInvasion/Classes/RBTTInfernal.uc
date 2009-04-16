@@ -421,7 +421,7 @@ defaultproperties
 	DeResBoneNames(6)=b_RightLeg
 	DeResBoneNames(7)=b_LeftLeg
 
-	health = 500
+	health = 1000
 
 	PlasmaDamage = 50.0
 	PoundDamage = 50.0

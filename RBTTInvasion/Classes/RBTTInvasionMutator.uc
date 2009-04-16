@@ -22,6 +22,12 @@ struct MutatorList
 };
 var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configuration
 
+replication
+{
+	if(Role == ROLE_Authority && bNetDirty)
+		CurrentWave;
+}
+
 function PostBeginPlay()
 {
 	local UTGame Game;
@@ -293,21 +299,20 @@ function GiveRBTTPRI (Controller C)
 	local RBTTPRI PRI;
 	local UTPlayerReplicationInfo UTPRI;
 
-	if(UTPlayerController(C) == None)
-		return;
-	
 	UTPRI = UTPlayerReplicationInfo(C.PlayerReplicationInfo);
-	if(GetRBTTPRI(UTPRI) != None)
-		return;
-		
 	if (UTPRI != None) {
-		PRI = Spawn (class'RBTTPRI');
-		if(PRI != None)
+		PRI = Spawn (class'RBTTPRI',WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		if(PlayerController(C) != None && PRI != None)
 		{
-			PRI.OwnerController = UTPlayerController(C);
+			PRI.PlayerOwner = PlayerController(C);
+			PRI.ServerSetup();
+			
 			PRI.NextReplicationInfo = UTPRI.CustomReplicationInfo;
 			UTPRI.CustomReplicationInfo = PRI;
-			PRI.ServerInit();
+		}
+		else
+		{
+			WarnInternal("Failed to spawn RBTTPlayerReplicationInfo!");
 		}
 	}
 }

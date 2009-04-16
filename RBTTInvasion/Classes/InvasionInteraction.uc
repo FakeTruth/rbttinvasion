@@ -1,6 +1,7 @@
 Class InvasionInteraction extends Interaction config(RBTTInvasion);
 
-var UTPlayerController OwnerController;
+var PlayerController PlayerOwner;
+var RBTTInvasionMutator InvasionMut;
 var RBTTPRI RBPRI;
 
 /** Radar variables */
@@ -27,7 +28,16 @@ var float InFocusDistance;
 var float InMaxFarBlurAmount;
 /**-Blur variables-*/
 
+/*
+function GetInvasionMutator()
+{
+	local Mutator mut;
 
+	for ( mut=PlayerOwner.WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
+		if ( RBTTInvasionMutator(mut) != None)						// We found the mutator!!
+			InvasionMut = RBTTInvasionMutator(mut);
+}
+*/
 
 event PostRender(Canvas Canvas)
 {
@@ -37,7 +47,7 @@ event PostRender(Canvas Canvas)
 
 	//`log(">> Rendering <<");
 	
-	//uth = UTHud(OwnerController.MyHUD);
+	//uth = UTHud(PlayerOwner.MyHUD);
 	//if (uth == None)
 	//	return;
 	
@@ -53,7 +63,7 @@ event PostRender(Canvas Canvas)
 	//Canvas.SetDrawColor(255,255,255,255);
 
 	//Canvas.SetPos(XPos , YPos);
-	//Canvas.DrawText("I'm overlaying correctly! My OwnerController is" @ OwnerController);
+	//Canvas.DrawText("I'm overlaying correctly! My PlayerOwner is" @ PlayerOwner);
 
 	//YPos += lineH;
 	//Canvas.SetPos(XPos , YPos);
@@ -64,10 +74,16 @@ event PostRender(Canvas Canvas)
 	
 	if(RBPRI == None)
 	{
-		RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(OwnerController.PlayerReplicationInfo));
+		RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(PlayerOwner.PlayerReplicationInfo));
 		if(RBPRI == None)
 			return;
 	}
+	//if(InvasionMut == None)
+	//{
+	//	GetInvasionMutator();
+	//	if(InvasionMut == None)
+	//		return;
+	//}
 	
 	DrawRadar(Canvas);
 	DrawWaveInfo(Canvas);
@@ -77,7 +93,7 @@ function DrawWaveInfo(Canvas Canvas)
 {
 	local UTHud uth;
 
-	uth = UTHud(OwnerController.MyHUD);
+	uth = UTHud(PlayerOwner.MyHUD);
 	if (uth == None)
 		return;
 		
@@ -86,6 +102,7 @@ function DrawWaveInfo(Canvas Canvas)
 		
 	Canvas.SetPos(0.900000*Canvas.ClipX,0.200000*Canvas.ClipY);
 	Canvas.DrawText("Wave: "@RBPRI.CurrentWave+1);
+	//Canvas.DrawText("Wave: "@InvasionMut.CurrentWave+1);
 }
 
 function DrawRadar(Canvas Canvas)
@@ -104,13 +121,13 @@ function DrawRadar(Canvas Canvas)
 	local float HudCanvasScale;
 	local color RedColor;
 	
-	uth = UTHud(OwnerController.MyHUD);
+	uth = UTHud(PlayerOwner.MyHUD);
 	if (uth == None)
 		return;
 		
 	HudCanvasScale 	= uth.HudCanvasScale;
 	RedColor 	= uth.RedColor;
-	TeamIndex = OwnerController.GetTeamNum();
+	TeamIndex = PlayerOwner.GetTeamNum();
 	uth.GetTeamColor(TeamIndex, TeamLC, TextC);
 
 	RadarScale = Default.RadarScale * HudCanvasScale;
@@ -138,19 +155,19 @@ function DrawRadar(Canvas Canvas)
 
 	///////////////////////////////////////////////////////////////////////////
 	
-	LastDrawRadar = OwnerController.WorldInfo.TimeSeconds;
+	LastDrawRadar = PlayerOwner.WorldInfo.TimeSeconds;
 	RadarWidth = 0.5 * RadarScale * Canvas.ClipX;
 	DotSize = 24*Canvas.ClipX*HudCanvasScale/1600;
-	if ( OwnerController.Pawn == None )
-		Start = OwnerController.Location;
+	if ( PlayerOwner.Pawn == None )
+		Start = PlayerOwner.Location;
 	else
-		Start = OwnerController.Pawn.Location;
+		Start = PlayerOwner.Pawn.Location;
 	
 	MaxDist = 3000 * RadarPulse;
 	//C.Style = ERenderStyle.STY_Translucent;
 	OffsetY = RadarPosY + RadarWidth/Canvas.ClipY;
 	MinEnemyDist = 3000;
-	ForEach OwnerController.DynamicActors(class'Pawn',P)
+	ForEach PlayerOwner.DynamicActors(class'Pawn',P)
 		if ( P.Health > 0 )
 		{
 			Dist = VSize(Start - P.Location);
@@ -192,10 +209,10 @@ function DrawRadar(Canvas Canvas)
 				}
 				Dir = rotator(P.Location - Start);
 				OffsetScale = RadarScale*Dist*0.000167;
-				if ( OwnerController.Pawn == None )
-					Angle = ((Dir.Yaw - OwnerController.Rotation.Yaw) & 65535) * 6.2832/65536;
+				if ( PlayerOwner.Pawn == None )
+					Angle = ((Dir.Yaw - PlayerOwner.Rotation.Yaw) & 65535) * 6.2832/65536;
 				else
-					Angle = ((Dir.Yaw - OwnerController.Pawn.Rotation.Yaw) & 65535) * 6.2832/65536;
+					Angle = ((Dir.Yaw - PlayerOwner.Pawn.Rotation.Yaw) & 65535) * 6.2832/65536;
 				Canvas.SetPos(RadarPosX * Canvas.ClipX + OffsetScale * Canvas.ClipX * sin(Angle) - 0.5*DotSize,
 						OffsetY * Canvas.ClipY - OffsetScale * Canvas.ClipX * cos(Angle) - 0.5*DotSize);
 				Canvas.DrawTile( Texture2D'RBTTInvasionTex.SkinA',DotSize,DotSize,838,238,144,144);
@@ -213,8 +230,8 @@ event Tick(float DeltaTime)
 	RadarPulse = RadarPulse + 0.5 * DeltaTime;
 	if ( RadarPulse >= 1 )
 	{
-		if (OwnerController.WorldInfo.TimeSeconds - LastDrawRadar < 0.2) 
-			OwnerController.ClientPlaySound(SoundCue'RBTTInvasionTex.RadarPulseSoundCue');
+		if (PlayerOwner.WorldInfo.TimeSeconds - LastDrawRadar < 0.2) 
+			PlayerOwner.ClientPlaySound(SoundCue'RBTTInvasionTex.RadarPulseSoundCue');
 		RadarPulse = RadarPulse - 1;
 	}
 	
@@ -230,14 +247,14 @@ function HandleBlur(float DeltaTime)
 	{
 		bBlurInitialized = True;
 		
-		BlurryBlur = UberPostProcessEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[0]);
+		BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		
 		//BlurryBlur.bUseWorldSettings = False;
 		BlurryBlur.bShowInGame = True;
 		//BlurryBlur.FocusDistance = 0.0000;
 	}
 	
-	if(OwnerController.Pawn != None && OwnerController.Pawn.health < (OwnerController.Pawn.HealthMax * BlurBelowHealthRatio)) // If the player has low health, blur his screen
+	if(PlayerOwner.Pawn != None && PlayerOwner.Pawn.health < (PlayerOwner.Pawn.HealthMax * BlurBelowHealthRatio)) // If the player has low health, blur his screen
 	{
 		
 		//LocalPlayer(PlayerOwner.Player).RemoveAllPostProcessingChains();
@@ -245,7 +262,7 @@ function HandleBlur(float DeltaTime)
 		//BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].FindPostProcessEffect('DOFBlur'));
 		
 		if(BlurryBlur == None)
-			BlurryBlur = UberPostProcessEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[0]);
+			BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		if(BlurryBlur == None)
 			return;
 				
@@ -253,7 +270,7 @@ function HandleBlur(float DeltaTime)
 		
 		if(!bScreenBlurred)
 		{
-			MotionBlurEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 50;
+			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 50;
 			InSceneDesaturation = BlurryBlur.SceneDesaturation;
 			InBloomScale = BlurryBlur.BloomScale;
 			InFocusInnerRadius = BlurryBlur.FocusInnerRadius;
@@ -265,7 +282,7 @@ function HandleBlur(float DeltaTime)
 		
 		BlurryBlur.FocusDistance = 0.0000;
 		
-		LastBlurTime = OwnerController.WorldInfo.TimeSeconds;
+		LastBlurTime = PlayerOwner.WorldInfo.TimeSeconds;
 		
 		BlurryBlur.FocusInnerRadius = 400.00;
 		
@@ -279,11 +296,11 @@ function HandleBlur(float DeltaTime)
 	else if(bScreenBlurred) // Fade the blur out if screen is blurred but player has enough health
 	{
 		if(BlurryBlur == None)
-			BlurryBlur = UberPostProcessEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[0]);
+			BlurryBlur = UberPostProcessEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[0]);
 		if(BlurryBlur == None)
 			return;
 			
-		if(OwnerController.WorldInfo.TimeSeconds < LastBlurTime+2)
+		if(PlayerOwner.WorldInfo.TimeSeconds < LastBlurTime+2)
 		{
 			BlurryBlur.MaxFarBlurAmount += (InMaxFarBlurAmount - BlurryBlur.MaxFarBlurAmount)*2*DeltaTime;
 			//BlurryBlur.MaxNearBlurAmount = 0.00;
@@ -291,7 +308,7 @@ function HandleBlur(float DeltaTime)
 			BlurryBlur.FocusInnerRadius += (InFocusInnerRadius - BlurryBlur.FocusInnerRadius)*2*DeltaTime;
 			BlurryBlur.FocusDistance += (InFocusDistance - BlurryBlur.FocusDistance)*2*DeltaTime;
 			BlurryBlur.SceneDesaturation += (InSceneDesaturation - BlurryBlur.SceneDesaturation)*2*DeltaTime;
-			MotionBlurEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount += (0.125000 - MotionBlurEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount)*2*DeltaTime;
+			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount += (0.125000 - MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount)*2*DeltaTime;
 		}
 		else
 		{
@@ -301,7 +318,7 @@ function HandleBlur(float DeltaTime)
 			BlurryBlur.FocusInnerRadius = InFocusInnerRadius;
 			BlurryBlur.FocusDistance = InFocusDistance;
 			BlurryBlur.SceneDesaturation = InSceneDesaturation;
-			MotionBlurEffect(LocalPlayer(OwnerController.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 0.125000;
+			MotionBlurEffect(LocalPlayer(PlayerOwner.Player).PlayerPostProcessChains[0].Effects[1]).MotionBlurAmount = 0.125000;
 			BlurryBlur.bUseWorldSettings = True;
 			bScreenBlurred = False;
 			//UTPlayerController(PlayerOwner).ClearCameraEffect(); // Remove some ugly effect

@@ -1,13 +1,13 @@
 class RBTTPRI extends UTLinkedReplicationInfo;
 
-var repnotify UTPlayerController OwnerController;
-var repnotify int CurrentWave;
-var bool bClientSetup;
+var repnotify PlayerController PlayerOwner;
+var int CurrentWave;
+var bool bCreatedHUD;
 
 replication
 {
 	if(Role == ROLE_Authority && bNetInitial)
-		OwnerController;
+		PlayerOwner;
 	if(Role == ROLE_Authority && bNetDirty)
 		CurrentWave;
 }
@@ -15,16 +15,18 @@ replication
 
 simulated event ReplicatedEvent(name VarName)
 {
-	if(Role < ROLE_Authority && !bClientSetup && VarName == 'OwnerController')
+	if(VarName == 'PlayerOwner')
 	{
-		if(OwnerController != None)
+		if(!bCreatedHUD)
 		{
-			SpawnInteraction();
-			bClientSetup = True;
+			if(PlayerOwner != None)
+			{
+				SpawnInteraction();
+			}
 		}
 	}
 	//else
-	//if(Role < ROLE_Authority && VarName == 'OwnerController')
+	//if(Role < ROLE_Authority && VarName == 'PlayerOwner')
 	//{
 	//	
 	//}
@@ -39,7 +41,7 @@ function PostBeginPlay()
 	`log(">> You got the RBTTPRI yay~ <<");
 }
 
-function ServerInit()
+function ServerSetup()
 {
 	if(WorldInfo.NetMode == NM_Standalone)
 	{
@@ -53,7 +55,7 @@ simulated function SpawnInteraction()
 	local UTHud uth;
 	
 	//Also set the ScoreBoardTemplate to ours
-	uth = UTHud(OwnerController.MyHUD);
+	uth = UTHud(PlayerOwner.MyHUD);
 	if (uth == None)
 	{
 		SetTimer(5.00, FALSE, 'SpawnInteraction'); //Try again later...?
@@ -64,12 +66,12 @@ simulated function SpawnInteraction()
 		
 
 	// Give player an interaction
-	if(GetInvInteraction(OwnerController.Interactions) == None)
+	if(GetInvInteraction(PlayerOwner.Interactions) == None)
 	{		
 		II = new class'InvasionInteraction';
-		II.OwnerController = OwnerController;
+		II.PlayerOwner = PlayerOwner;
 		II.RBPRI = self;
-		OwnerController.Interactions.AddItem(II);
+		PlayerOwner.Interactions.AddItem(II);
 	}
 }
 

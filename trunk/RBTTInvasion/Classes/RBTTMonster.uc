@@ -1,5 +1,6 @@
 class RBTTMonster extends UTPawn;
 
+var() float MonsterHealth;
 var() int MonsterSkill;
 var() string MonsterName;
 var Controller MonsterController;
@@ -16,6 +17,10 @@ var float HitDamage;
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
+	
+	if(MonsterHealth > 0)
+		health = MonsterHealth;
+	
 	SpawnDefaultController();
 	//AddDefaultInventory();
 	DeactivateSpawnProtection(); // No spawn protection for this monster! :D
@@ -311,6 +316,7 @@ simulated function WeaponChanged(UTWeapon NewWeapon); // This function only does
 
 defaultproperties
 {
+	MonsterHealth = 0
 	HitDamage = 10
 	WeaponSpeedMultiplier = 1.000 //0.5 = half speed, 1 = standard, 2 = twice as fast, etc.
 	MonsterSkill = 1

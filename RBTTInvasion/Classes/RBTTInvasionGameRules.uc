@@ -273,10 +273,13 @@ function ReplenishAmmo()
 			if(!Item.IsA('UTWeap_Redeemer'))
 			{
 				W = UTWeapon(Item);
-				AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
-				
-				if(AmmoToAdd > 0)
-					InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
+				if(W != None)
+				{
+					AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
+					
+					if(AmmoToAdd > 0)
+						InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
+				}
 			}
 		}
 	}
@@ -632,6 +635,9 @@ function Controller GetPlayerFromQueue(int Index, optional bool bDontRemoveFromQ
 	PRI = Queue[Index];
 	if(!bDontRemoveFromQueue)
 		Queue.Remove(Index, 1);
+		
+	if(PRI == None)
+		return None;
 
 	// after a seamless travel some players might still have the old TeamInfo from the previous level
 	// so we need to manually count instead of using Size

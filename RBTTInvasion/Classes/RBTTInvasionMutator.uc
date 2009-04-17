@@ -352,10 +352,10 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 
 defaultproperties
 {
-   MutatorConfig(0)=(MutatorClass="UTGame.UTMutator_LowGrav", BeginWave=1, EndWave=2)
+   //MutatorConfig(0)=()
    
    bAllowTranslocator=True;
-   InvasionVersion="Rev 79"
+   InvasionVersion="Rev 89"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

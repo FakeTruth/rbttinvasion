@@ -102,9 +102,25 @@ finally your directory should look like this
 = Compiling The Project =
 
 first we need to setup the ini file so unreal knows what is to be compiled 
+once again open up an explorer window and browse to 
 
+http://images.allprog.nl/img/6775_1240070928.jpg
 
-thankfully for this epic have given us a very handy little tool in the version of UT3FrontEnd you can find it C:\Program Files\Unreal Tournament 3\Binaries (OR where ever you have your game installed) 
+locate and open your UTEditor.ini file with notepad now hit CRTL + F to bring up a search window in the field type "ModPackages"
+
+ http://images.allprog.nl/img/6986_1240071425.jpg
+
+now edit the section [ModPackages} From this
+
+ http://images.allprog.nl/img/9720_1240072854.jpg
+
+I personally like to change the ModOutputDir to the published folder but you can leave it as is if you like you just have to move the script to the published folder to play it. you also need to add a modpackages line it should look like this
+
+ http://images.allprog.nl/img/1755_1240072993.jpg
+
+Now save your changes and close notepad!
+
+thankfully for this part epic have given us a very handy little tool called UT3FrontEnd you can find it by browsing to C:\Program Files\Unreal Tournament 3\Binaries (OR where ever you have your game installed) 
 
  http://images.allprog.nl/img/1763_1240065876.jpg
 
@@ -113,5 +129,18 @@ just create a shortcut and place it on your desktop
  http://images.allprog.nl/img/864_1240066351.jpg
 
 
+Startup UT3FrontEnd locate the script tab and set the Script compile config to debug and then hit the make button at the top (it may look like it's hanging if your pc is old like mine but just give a couple of seconds to get going) 
 
+if everything went ok it should look like this
+
+ http://images.allprog.nl/img/5632_1240077455.jpg
+
+the version compiled here has 2 warnings but dont worry We're updating all the time so from time to time the odd warning may creep in but we usally fix pretty quick
+
+Finally all you need to do is to copy the packages folder from the unpublished folder to the published folder and you good to play 
+
+have fun !!!
+
+
+ 
 

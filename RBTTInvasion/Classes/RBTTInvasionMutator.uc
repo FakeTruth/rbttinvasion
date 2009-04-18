@@ -7,6 +7,7 @@ var string InitMutatorOptionsString; 	// For sending the game options to other m
 var string InvasionVersion;		// Version of the invasion mutator, added in the serverdetails when querying server
 var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 var config bool bAllowTranslocator;	// Add translocator ??
+var config bool bForceAllRed;		// Force all players to the red team?
 
 struct MutatorList
 {
@@ -95,6 +96,8 @@ function InitMutator(string Options, out string ErrorMessage)
 		Destroy();
 		return;
 	}
+	
+	UTTeamGame(WorldInfo.Game).bForceAllRed = bForceAllRed;
 	
 	for(i = MutatorConfig.length-1; i >= 0; i--) // Take a look at the entire mutatorlist
 	{
@@ -249,7 +252,6 @@ function SpawnNewGameRules()
 	}
 	else
 	{
-		//Game.bForceAllRed=true;			// This is done in the GameRules itself now
 		G = spawn(class'RBTTInvasionGameRules');	// Spawn the Invasion rules
 		CurrentRules = G;				// Cache it to a global variable
 		G.InvasionMut = self;				// Quick reference to our mutator
@@ -354,8 +356,9 @@ defaultproperties
 {
    //MutatorConfig(0)=()
    
+   bForceAllRed=True;
    bAllowTranslocator=True;
-   InvasionVersion="Rev 89"
+   InvasionVersion="Rev 90"
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

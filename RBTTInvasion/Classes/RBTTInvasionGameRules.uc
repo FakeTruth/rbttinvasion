@@ -109,7 +109,7 @@ function NotifyLogin(Controller NewPlayer)
 	`log(">> RBTTInvasionGameRules.NotifyLogin <<");
 
 	if(NewPlayer.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
-		UTTeamGame(WorldInfo.Game).SetTeam(NewPlayer, UTTeamGame(WorldInfo.Game).Teams[0], False);
+		UTTeamGame(WorldInfo.Game).SetTeam(NewPlayer, UTTeamGame(WorldInfo.Game).Teams[0], TRUE);
 	
 	/*
 	if(UTPlayerController(NewPlayer) != None)
@@ -142,11 +142,8 @@ function KillAllMonsters()
 
 function MatchStarting()
 {
-	//local UTTeamGame Game;
 	local PathNode NavPoint;
-	local Controller C;
 	local int i;
-	//local RBTTClientReplicator ClientReplicator;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.MatchStarting<<<<<<<<<<<<<<<<<<<<");
 	
@@ -158,40 +155,12 @@ function MatchStarting()
 		i++;
 	}
 	
-	//#### SET THE HUD ####\\
-	// FIXME - NOT WORKING YET!!!
-	//WorldInfo.Game.HUDType=Class'RBTTInvasionHUD';
-	foreach WorldInfo.AllControllers(class'Controller', C)
-	{
-		if(C.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
-			UTTeamGame(WorldInfo.Game).SetTeam(C, UTTeamGame(WorldInfo.Game).Teams[0], False);
-		
-		/*
-		if(UTPlayerController(C) != None && UTPlayerController(C).myHUD.class != Class'RBTTInvasionHUD')
-		{
-			ClientReplicator = C.Spawn(Class'RBTTClientReplicator');
-			ClientReplicator.OwnerController = C;
-			if(WorldInfo.NetMode != NM_DedicatedServer)	// For offline play
-				ClientReplicator.UpdateClientHUD(C);	
-		}
-		*/
-	}
-	
-	/*
-	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-	{
-		PC.ClientSetHUD( Class'RBTTInvasionHUD', WorldInfo.Game.ScoreboardType );
-		PC.bRetrieveSettingsFromProfileOnNextTick = TRUE;
-	}
-	*/
-	
 	//#### GET CURRENT WAVE FROM MUTATOR ####\\
 	CurrentWave = InvasionMut.CurrentWave;
 	
 	CreateMonsterTeam();
 	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
 	LastPortalTime = WorldInfo.TimeSeconds;	 	// Spawn portal after PortalSpawnInterval seconds
-	//WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
 	GotoState('BetweenWaves'); 			// Initially start counting down for the first wave.
 }
 

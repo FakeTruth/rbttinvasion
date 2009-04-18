@@ -6,11 +6,48 @@ first off your gonna need a svn client to download the source from our repositor
 
 http://kent.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.6.1.16129-win32-svn-1.6.1.msi 
    
-
-
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Ok first off you need to install the svn client 
+
+ http://images.allprog.nl/img/9056_1240056482.jpg
+
+Just follow the prompts and klik next (pretty simple)
+
+now browse to 
+
+C:\Documents and Settings\User Name\My Documents\My Games\Unreal Tournament 3\UTGame\Src
+
+ http://images.allprog.nl/img/9113_1240056031.jpg
+
+Here you'll need to create a folder for your project called RBTTInvasion 
+
+ http://images.allprog.nl/img/1931_1240056712.jpg
+
+Ok now to get some classes from the repository. Right klik in the rbbtinvasion folder and Select TortoiseSVN > Repo Browser
+
+ http://images.allprog.nl/img/8683_1240057034.jpg
+
+a window will popup asking for the url of your repository just enter
+
+svn checkout http://rbttinvasion.googlecode.com/svn/trunk/ rbttinvasion-read-only
+
+ http://images.allprog.nl/img/6147_1240057655.jpg
+
+the repository browser window will now appear. Extend the RBTTInvasion folder by kliking the little cross next to it 
+
+ http://images.allprog.nl/img/5281_1240058171.jpg
+
+Now Right Klik the the classes folder and select checkout 
+
+ http://images.allprog.nl/img/8668_1240059146.jpg
+
+when the checkout window appears you'll notice the URL of Repository field is already filled in for you,add a forward slash at the end of the line so it reads 
+
+http://rbttinvasion.googlecode.com/svn/trunk/RBTTInvasion/Classes/
+
+It is very important you add a forward slash or the files wil write out to the wrong place it should look like 
+
+http://images.allprog.nl/img/5543_1240059599.jpg
+
+

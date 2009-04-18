@@ -1,0 +1,16 @@
+A short guide on setting up svn / ut3 to compile rbttinvasion on your machine 
+
+= Introduction =
+
+first off your gonna need a svn client to download the source from our repository. you can get tortoise svn free from 
+
+http://kent.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.6.1.16129-win32-svn-1.6.1.msi 
+   
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages

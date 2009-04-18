@@ -2,11 +2,13 @@ A short guide on setting up svn / ut3 to compile rbttinvasion on your machine
 
 = Introduction =
 
+This Tutorial assumes you have UT3 and it's fully updated and at least a basic knowledge of UT3 
+
 first off your gonna need a svn client to download the source from our repository. you can get tortoise svn free from 
 
 http://kent.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.6.1.16129-win32-svn-1.6.1.msi 
    
-= Details =
+= Installing TortoiseSVN =
 
 Ok first off you need to install the svn client 
 
@@ -14,7 +16,9 @@ Ok first off you need to install the svn client
 
 Just follow the prompts and klik next (pretty simple)
 
-now browse to 
+= Installing The Classes =
+
+now you've finnished installing tortoise open an explorer window and browse to 
 
 C:\Documents and Settings\User Name\My Documents\My Games\Unreal Tournament 3\UTGame\Src
 
@@ -23,6 +27,8 @@ C:\Documents and Settings\User Name\My Documents\My Games\Unreal Tournament 3\UT
 Here you'll need to create a folder for your project called RBTTInvasion 
 
  http://images.allprog.nl/img/1931_1240056712.jpg
+
+
 
 Ok now to get some classes from the repository. Right klik in the rbbtinvasion folder and Select TortoiseSVN > Repo Browser
 
@@ -44,10 +50,68 @@ Now Right Klik the the classes folder and select checkout
 
 when the checkout window appears you'll notice the URL of Repository field is already filled in for you,add a forward slash at the end of the line so it reads 
 
-http://rbttinvasion.googlecode.com/svn/trunk/RBTTInvasion/Classes/
+ http://rbttinvasion.googlecode.com/svn/trunk/RBTTInvasion/Classes/
 
 It is very important you add a forward slash or the files wil write out to the wrong place it should look like 
 
-http://images.allprog.nl/img/5543_1240059599.jpg
+ http://images.allprog.nl/img/5543_1240059599.jpg
+
+if you did everythig right this window will appear and you'll see the classes being downloaded to your machine :)
+
+ http://images.allprog.nl/img/6145_1240060816.jpg
+
+your directory should now look like this 
+
+ http://images.allprog.nl/img/6173_1240061042.jpg
+
+= Installing The packages =
+
+Ok now its time to go get some packages open up an eplorer window again and browse to 
+
+C:\Documents and Settings\User Name\My Documents\My Games\Unreal Tournament 3\UTGame\Unpublished\CookedPC
+
+ http://images.allprog.nl/img/4653_1240061770.jpg
+
+again right klik in the folder select tortoiseSVN > Repo browser
+
+ http://images.allprog.nl/img/8683_1240057034.jpg
+
+the url window will appear again already filled in this time just klik ok 
+
+ http://images.allprog.nl/img/6147_1240057655.jpg
+
+this time when the repo browser appears you'll need to double klik on the RBTTInvasion folder to refresh the view. Then just right klik the packages folder and select checkout
+
+ http://images.allprog.nl/img/3808_1240062875.jpg
+
+again when the checkout window appears make sure you add a forward slash to the end of the URL of Repository field so it reads 
+
+http://rbttinvasion.googlecode.com/svn/trunk/RBTTInvasion/Packages/
+
+ http://images.allprog.nl/img/713_1240063547.jpg
+
+the packages take a little longer than the classes to download 
+
+ http://images.allprog.nl/img/6145_1240060816.jpg
+
+finally your directory should look like this
+
+ http://images.allprog.nl/img/3522_1240063950.jpg
+
+
+= Compiling The Project =
+
+first we need to setup the ini file so unreal knows what is to be compiled 
+
+
+thankfully for this epic have given us a very handy little tool in the version of UT3FrontEnd you can find it C:\Program Files\Unreal Tournament 3\Binaries (OR where ever you have your game installed) 
+
+ http://images.allprog.nl/img/1763_1240065876.jpg
+
+just create a shortcut and place it on your desktop
+
+ http://images.allprog.nl/img/864_1240066351.jpg
+
+
 
 

@@ -41,7 +41,7 @@ defaultproperties
 	Lifetime=5
 	MessageArea=1
 	bIsConsoleMessage=False
-	bIsUnique=true
+	bIsUnique=FALSE
 	//bBeep=false
 	DrawColor=(R=255,G=255,B=0,A=255)
 	Addcolor=(R=255,G=255,B=0,A=255)

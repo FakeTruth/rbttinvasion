@@ -24,10 +24,13 @@ function InitMutator(string Options, out string ErrorMessage)
 		{	
 			if(C.IsA('UTPlayerController') || C.class == Class'UTGame.UTBot')
 			{
-				C.Pawn.InvManager.CreateInventory(class'UTGame.UTWeap_InstagibRifle');
-				Weap = Weapon(C.Pawn.InvManager.FindInventoryType(class'UTGame.UTWeap_InstagibRifle'));
-				UTWeapon(Weap).CurrentRating = 1.f;
-				C.Pawn.InvManager.SetCurrentWeapon(Weap);
+				if(C.Pawn != None)
+				{
+					C.Pawn.InvManager.CreateInventory(class'UTGame.UTWeap_InstagibRifle');
+					Weap = Weapon(C.Pawn.InvManager.FindInventoryType(class'UTGame.UTWeap_InstagibRifle'));
+					UTWeapon(Weap).CurrentRating = 100.f;
+					C.Pawn.InvManager.SetCurrentWeapon(Weap);
+				}
 			}
 		}
 	}

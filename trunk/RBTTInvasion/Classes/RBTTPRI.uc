@@ -1,7 +1,7 @@
 class RBTTPRI extends UTLinkedReplicationInfo;
 
 var repnotify PlayerController PlayerOwner;
-var int CurrentWave;
+var int CurrentWave, NumMonsters;
 var bool bCreatedHUD;
 
 replication
@@ -9,7 +9,7 @@ replication
 	if(Role == ROLE_Authority && bNetInitial)
 		PlayerOwner;
 	if(Role == ROLE_Authority && bNetDirty)
-		CurrentWave;
+		CurrentWave,NumMonsters;
 }
 
 

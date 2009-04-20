@@ -87,6 +87,7 @@ event PostRender(Canvas Canvas)
 	
 	DrawRadar(Canvas);
 	DrawWaveInfo(Canvas);
+	DrawMonsterInfo(Canvas);
 }
 
 function DrawWaveInfo(Canvas Canvas)
@@ -104,7 +105,21 @@ function DrawWaveInfo(Canvas Canvas)
 	Canvas.DrawText("Wave: "@RBPRI.CurrentWave+1);
 	//Canvas.DrawText("Wave: "@InvasionMut.CurrentWave+1);
 }
+function DrawMonsterInfo(Canvas Canvas)
+{
+	local UTHud uth;
 
+	uth = UTHud(PlayerOwner.MyHUD);
+	if (uth == None)
+		return;
+		
+	Canvas.Font = Font'MF_Medium';
+	Canvas.DrawColor = uth.WhiteColor;
+		
+	Canvas.SetPos(0.8500000*Canvas.ClipX,0.1800000*Canvas.ClipY);
+	Canvas.DrawText("Monsters: "@RBPRI.NumMonsters);
+	//Canvas.DrawText("Wave: "@InvasionMut.NumMonsters);
+}
 function DrawRadar(Canvas Canvas)
 {
 	local float Dist, MaxDist, OffsetY, Angle, OffsetScale, DotSize, RadarWidth,PulseWidth, PulseBrightness;

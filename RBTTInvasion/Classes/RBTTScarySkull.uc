@@ -1,5 +1,18 @@
 class RBTTScarySkull extends RBTTMonster;
 
+var ParticleSystemComponent ScarySkullEmitters;
+
+simulated function PostBeginPlay()
+{	
+	super.PostBeginPlay();
+	
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+	{
+		ScarySkullEmitters = new(self) class'UTParticleSystemComponent';
+		Mesh.AttachComponent(ScarySkullEmitters, 'jaw');
+		ScarySkullEmitters.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
+	}
+}
 function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
 {
 	super.PerformDodge(DoubleClickMove, Dir, Cross);

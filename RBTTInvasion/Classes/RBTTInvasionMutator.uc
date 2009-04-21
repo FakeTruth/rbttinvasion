@@ -26,7 +26,7 @@ var config Array<MutatorList> 			MutatorConfig;		// Hold the mutator configurati
 replication
 {
 	if(Role == ROLE_Authority && bNetDirty)
-		CurrentWave;
+		CurrentWave, CurrentRules;
 }
 
 function PostBeginPlay()
@@ -139,8 +139,6 @@ function InitMutator(string Options, out string ErrorMessage)
 // Wave has ended, probably gets called by the gamerules
 function EndWave(GameRules G)
 {
-	local UTPlayerController PC;
-	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.EndWave<<<<<<<<<<<<<<<<<<<<");
 
 	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
@@ -150,11 +148,6 @@ function EndWave(GameRules G)
 	
 	SpawnNewGameRules();					// Spawn the new gamerules
 	UpdateMutators();					// Update the mutators
-	
-	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)				// Go through all players
-	{
-		GetRBTTPRI(UTPlayerReplicationInfo(PC.PlayerReplicationInfo)).CurrentWave = CurrentWave; // Update the current wave for the players, so they know in what wave they are
-	}
 	
 	`log("##################RBTTInvasionMutator.EndWave####################");
 }
@@ -307,7 +300,7 @@ function GiveRBTTPRI (Controller C)
 		if(PlayerController(C) != None && PRI != None)
 		{
 			PRI.PlayerOwner = PlayerController(C);
-			PRI.CurrentWave = CurrentWave;
+			PRI.InvasionMut = self;
 			PRI.ServerSetup();
 			
 			PRI.NextReplicationInfo = UTPRI.CustomReplicationInfo;
@@ -331,6 +324,20 @@ simulated static function RBTTPRI GetRBTTPRI(UTPlayerReplicationInfo PRI)
 	}
 	
   return None;
+}
+
+simulated static function RBTTInvasionMutator GetInvasionMutatorFrom(UTGame Game)
+{
+	local Mutator mut;
+
+	if(Game == None)
+		return None;
+	
+	for ( mut=Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 		// Search the entire chain
+		if ( RBTTInvasionMutator(mut) != None )				// We found the mutator if it's ours
+			return RBTTInvasionMutator(mut);			// Return the mutator we were looking for, for further handling
+
+	return None; 	// We couldn't find anything, so return None	
 }
 
 //
@@ -370,5 +377,7 @@ defaultproperties
    Name="Default__RBTTInvasionMutator"
    ObjectArchetype=Mutator'UTGame.Default__UTMutator'
    
-   
+   bAlwaysRelevant=true
+   RemoteRole=ROLE_SimulatedProxy
+   NetUpdateFrequency=2
 }

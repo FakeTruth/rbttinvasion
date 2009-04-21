@@ -71,6 +71,12 @@ var config int					InitialRandomKillTime;	// The initial time before random mons
 var config int					NextRandomKillTime;	// After one monster was killed, the next will die in this amount of seconds
 var config int					CountMonstersInterval;	// Seconds between each time the monsters get counted
 
+replication
+{
+	if(Role == ROLE_Authority && bNetDirty)
+		NumMonsters;
+}
+
 simulated function PostBeginPlay()
 {
 	local int i;
@@ -377,9 +383,7 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 	local CharacterInfo MonsterBotInfo;
 	local UTTeamInfo RBTTMonsterTeamInfo;
 	local PlayerReplicationInfo PRI;
-	local RBTTPRI RBPRI;
 	local string MonsterName;
-	local UTPlayerController PC;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
 	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
@@ -417,12 +421,6 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 		NumMonsters++;
 		NewMonster.SpawnTransEffect(0);
 		`log("This many monsters in the game now:"@NumMonsters);
-		
-		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)				// Go through all players
-		{
-			RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(PC.Pawn.PlayerReplicationInfo));
-			RBPRI.NumMonsters = NumMonsters; // Update the current NumMonsters for the players, so they know in what wave they are
-		}
 		return True;
 	}
 	else
@@ -486,8 +484,6 @@ function ScoreKill(Controller Killer, Controller Other)
 	local UTPlayerReplicationInfo PRI;
 	local Controller C;
 	local int AlivePlayerCount, i;
-	local RBTTPRI RBPRI;
-	local UTPlayerController PC;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.ScoreKill<<<<<<<<<<<<<<<<<<<<");
 
@@ -526,11 +522,6 @@ function ScoreKill(Controller Killer, Controller Other)
 	else
 	{
 		NumMonsters--;
-		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)				// Go through all players
-		{
-			RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(PC.Pawn.PlayerReplicationInfo));
-			RBPRI.NumMonsters = NumMonsters; // Update the current NumMonsters for the players, so they know in what wave they are
-		}
 		WaveMonsters++;
 		`log(">>>>>>>>>>>>>>>>>>>>> MONSTER KILLED <<<<<<<<<<<<<<<<<<<<<<<");
 		if(Rand(2) == 1)
@@ -1041,4 +1032,8 @@ defaultproperties
    
    Name="Default__RBTTInvasionGameRules"
    ObjectArchetype=GameRules'Engine.Default__GameRules'
+   
+	bAlwaysRelevant=true
+	RemoteRole=ROLE_SimulatedProxy
+	NetUpdateFrequency=0.5
 }

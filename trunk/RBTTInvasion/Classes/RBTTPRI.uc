@@ -1,15 +1,13 @@
 class RBTTPRI extends UTLinkedReplicationInfo;
 
 var repnotify PlayerController PlayerOwner;
-var int CurrentWave, NumMonsters;
+var RBTTInvasionMutator InvasionMut;
 var bool bCreatedHUD;
 
 replication
 {
 	if(Role == ROLE_Authority && bNetInitial)
-		PlayerOwner;
-	if(Role == ROLE_Authority && bNetDirty)
-		CurrentWave,NumMonsters;
+		PlayerOwner, InvasionMut;
 }
 
 
@@ -38,6 +36,9 @@ function PostBeginPlay()
 {
 	super.PostBeginPlay();
 
+	if(InvasionMut == None)
+		InvasionMut = Class'RBTTInvasionMutator'.static.GetInvasionMutatorFrom(UTGame(WorldInfo.Game));
+	
 	`log(">> You got the RBTTPRI yay~ <<");
 }
 
@@ -51,8 +52,8 @@ function ServerSetup()
 
 simulated function SpawnInteraction()
 {
-	local InvasionInteraction II;
 	local UTHud uth;
+	local InvasionInteraction II;
 	
 	//Also set the ScoreBoardTemplate to ours
 	uth = UTHud(PlayerOwner.MyHUD);
@@ -71,6 +72,15 @@ simulated function SpawnInteraction()
 		II = new class'InvasionInteraction';
 		II.PlayerOwner = PlayerOwner;
 		II.RBPRI = self;
+		II.InvasionMut = InvasionMut;
+		`log(">> SPAWNINTERACTION <<");
+		`log(">> SPAWNINTERACTION <<");
+		`log(">> SPAWNINTERACTION <<");
+		`log(">> II.InvasionMut = "@II.InvasionMut@" <<");
+		`log(">> InvasionMut = "@InvasionMut@" <<");
+		`log(">> SPAWNINTERACTION <<");
+		`log(">> SPAWNINTERACTION <<");
+		`log(">> SPAWNINTERACTION <<");
 		PlayerOwner.Interactions.AddItem(II);
 	}
 }

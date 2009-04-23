@@ -12,13 +12,13 @@ to add your own custom monsters first install your new packages
 UTRBTTInvasion.ini file 
 http://images.allprog.nl/img/5565_1240350742.jpg
 
-the data for each monster is held on its own monstertable line the line is broke down like this :
+Now in the RBTTInvasion.RBTTInvasionGameRules section just add your own monster tale line the variables are explained in the table below
 
-MonsterName="SkullCrab"    << the name of the monster (mainly for config intergration)
-
-MonsterClassName="RBTTInvasion.RBTTSkullCrab"     <<the actual name of the pawns Class
-
-MonsterClass=Class'RBTTInvasion.RBTTSkullCrab'  << As Above
+<table border=1 width=800>
+<tr><td><b>MonsterTable</b></td><td>the data for each monster is held on its own monstertable line</td></tr>
+<tr><td><b>MonsterName</b></td><td>the name of the monster (mainly for config intergration) </td></tr>
+<tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>
+<tr><td><b>MonsterClass</b> </td><td> As Above </td></tr></table>
 
 any pawn can be added to UT3Invasion but if it's not using our AI the the pawn should spawn its own otherwise it'll just stand there.. failure to correctly specify the monsters or missing packages will hang your waves 
 
@@ -28,4 +28,10 @@ the fist thing to understand is that ureal takes each of the monster table lines
 
 http://images.allprog.nl/img/8324_1240353537.jpg
 
-MonsterNum=(9,9,9,9) this is where you specify which omsters you want to spawn, the numbers represent the postion of the monster in the monster table this line will spawn all infernals, when invasion is in random spawn mode it picks mosters from the monsternum variable like a pool so if you had a line whch had, MonsterNum=(9,9,0,0) you would get a 50/50 split of skullcrab and infernals
+<table border=1 width=800>
+<tr><td><b>MonsterNum</b></td><td>this is where you specify which mosters you want to spawn, the numbers represent the postion of the monster in the <b>MonsterTable</b> the first line in the <b>MonsterTable</b> above will spawn all infernals, when invasion is in random spawn mode it picks mosters from the <b>MonsterNum</b> variable like a pool so if you had a line whch had, MonsterNum=(9,9,0,0) you would get a 50/50 split of skullcrab and infernals</td></tr>
+<tr><td><b>WaveLength</b></td><td>the amount of time monsters will be spawned for in a wave(the wave will not end till the last monster dies</td></tr>
+<tr><td><b>WaveCountDown</b></td><td>how much time the players have between each wave to collect ammo etc.. a timer will be displayed during this time </td></tr>
+<tr><td><b>MonstersPerPlayer</b> </td><td>the ratio of monsters vs players</td></tr>
+<tr><td><b>bIgnoreMPP</b></td><td>like it says settig this to false will let invasion just keep spwning mosters so be careful with this  </td></tr>
+<tr><td><b>bIsQueue</b> </td><td>this is a little piece of invasion magic by setting this to true the <b>MonsterNum</b> Variable is no longer a pool of monsters that invasion randomly spawns from but an ordered list! this means you can specify in exaclty wot order you want your monsters spawn in</td></tr></table>

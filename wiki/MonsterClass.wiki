@@ -1,3 +1,4 @@
+#labels Deprecated
 MonsterClass a varible from the MonsterTable
 
 = MonsterClass =

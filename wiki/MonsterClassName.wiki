@@ -1,0 +1,10 @@
+MonsterClassName a varible from the MonsterTable
+
+= MonsterClassName =
+
+http://images.allprog.nl/img/5565_1240350742.jpg
+
+
+<table border=1 width=800>
+<tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>
+</table>

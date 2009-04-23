@@ -1,6 +1,6 @@
 WaveLength a varible from the RBTTInvasionGameRules
 
-= MonsterClass =
+= WaveLength =
 
 http://images.allprog.nl/img/5565_1240350742.jpg
 

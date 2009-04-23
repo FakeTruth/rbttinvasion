@@ -11,4 +11,4 @@ http://images.allprog.nl/img/5565_1240350742.jpg
 <tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>
 <tr><td><b>MonsterClass</b> </td><td> As Above </td></tr></table>
 
-More information about the MonsterTable and how to use it can be found on the Configuration page 
+More information about the MonsterTable and how to use it can be found on the [Configuration] page 

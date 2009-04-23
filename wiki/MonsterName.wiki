@@ -1,0 +1,10 @@
+MonsterName a variable from the monster table
+
+= MonsterName =
+
+http://images.allprog.nl/img/5565_1240350742.jpg
+
+<table>
+<tr><td><b>MonsterName</b></td><td>the name of the monster (mainly for config intergration) </td></tr></table>
+
+the monster name set in the monster table is only the name you choose to give the monster when it finally shows up in our configuration menu. the actual name of the monster is set in the monsters pawn class when the monster was scripted we do eventually aim to make this configurable but until then your stuck with our corny names :P

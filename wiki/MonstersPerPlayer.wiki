@@ -1,0 +1,8 @@
+MonstersPerPlayer a varible from the WaveConfig
+
+= MonstersPerPlayer =
+
+http://images.allprog.nl/img/8324_1240353537.jpg
+
+<table border=1 width=800>
+<tr><td><b>MonstersPerPlayer</b></td><td>the ratio of monsters vs players</td></tr></table>

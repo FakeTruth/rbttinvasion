@@ -1,0 +1,8 @@
+WaveLength a varible from the WaveConfig
+
+= WaveCountDown =
+
+http://images.allprog.nl/img/8324_1240353537.jpg
+
+<table border=1 width=800>
+<tr><td><b>WaveCountDown</b></td><td>how much time the players have between each wave to collect ammo etc.. a timer will be displayed during this time </td></tr></table>

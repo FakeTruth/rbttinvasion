@@ -49,4 +49,4 @@ Some valid commandlines to start a server with UT3 Invasion would be:<br>
 
 = Making your own Wave Configuration =
 
-Read the [configuration] page to find out how to set up your own wave 
+Read the [Configuration] page to find out how to set up your own wave 

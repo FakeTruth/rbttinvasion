@@ -15,7 +15,10 @@ event PostBeginPlay()
 
 
 	if(RBTTMonster(Instigator).MonsterWeaponClass != None)
+	{
 		NewWeapon = Instigator.Spawn(RBTTMonster(Instigator).MonsterWeaponClass);
+		Weapon(NewWeapon).bCanThrow = False;
+	}
 	else if(RBTTMonster(Instigator).bEmptyHanded)
 	{
 		NewWeapon = Instigator.Spawn(class'DummyWeapon');

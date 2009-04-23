@@ -6,5 +6,5 @@ http://images.allprog.nl/img/5565_1240350742.jpg
 
 
 <table border=1 width=800>
-<tr><td><b>WaveLength</b></td><td>the amount of time monsters will be spawned for in a wave(the wave will not end till the last monster dies</td></tr>
+<tr><td><b>WaveLength</b></td><td>the amount of time monsters will be spawned for in a wave, the wave will not end till the last monster dies</td></tr>
 </table>

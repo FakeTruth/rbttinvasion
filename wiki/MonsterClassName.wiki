@@ -8,3 +8,9 @@ http://images.allprog.nl/img/5565_1240350742.jpg
 <table border=1 width=800>
 <tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>
 </table>
+
+this can be found by search the RBTTInvasion Source found here
+
+http://images.allprog.nl/img/6173_1240061042.jpg
+
+if you dont have the invasion source you can get it by followin the SettinUpSVN Tutorial

@@ -1,8 +1,9 @@
-WaveLength a varible from the RBTTInvasionGameRules
+WaveLength a varible from the WaveConfig
 
 = WaveLength =
 
-http://images.allprog.nl/img/5565_1240350742.jpg
+
+http://images.allprog.nl/img/8324_1240353537.jpg
 
 
 <table border=1 width=800>

@@ -1,4 +1,4 @@
-#How to install UT3 Invasion on your computer
+#summary How to install UT3 Invasion on your computer
 
 = Download the RBTT UT3 Invasion Mutator =
 

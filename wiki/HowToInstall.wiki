@@ -1,0 +1,51 @@
+#How to install UT3 Invasion on your computer
+
+= Download the RBTT UT3 Invasion Mutator =
+
+|| *Size* || *Version* || *Download* ||
+|| 15.7MB || 88 || [http://rbttinvasion.googlecode.com/files/UT3_Invasion_rev88-release.rar Download] ||
+|| 12.6MB || 55 || [http://rbttinvasion.googlecode.com/files/UT3%20Invasion%20rev55-release.rar Download] ||
+|| 10.1MB || 38 || [http://rbttinvasion.googlecode.com/files/UT3%20Invasion%20rev38-release.rar Download] ||
+
+In case this page isn't up to date with the latest version of Invasion you can always download our latest compiled release from the [http://code.google.com/p/rbttinvasion/downloads/list downloads] tab<br>
+
+If you really want to stay up to date with the latest updates on UT3 Invasion, you can download the sourcecode and compile it yourself by following this tutorial:
+http://code.google.com/p/rbttinvasion/wiki/SettingUpSVN
+
+----
+<br><br>
+= Installing UT3 Invasion for Offline use =
+
+Extract the contents of the package, overwriting existing files, into <br>
+|| *Windows VISTA*||`C:\Users\Kevin\Documents\My Games\Unreal Tournament 3\`||
+|| *Windows XP*||`C:\Documents and Settings\Kevin\My Documents\My Games\Unreal Tournament 3\`||
+
+Now follow these steps:
+ # Start Unreal Tournament 3
+ # Click on *Instant Action*
+ # Select *Team Deathmatch* for the GameType
+ # Select the map you like to play Invasion on, and click Next
+ # On the bottom of the screen, click on Mutators
+ # Find the *RBTT Invasion* mutator in the left list, and put it in the right list by double clicking it
+ # Now you're ready to *Start* the *Game*
+
+If you want to configure your own waves, you should read this wiki page: http://code.google.com/p/rbttinvasion/wiki/PageName
+
+= Installing UT3 Invasion on a Server=
+
+Put the .u and .upk files in:<br>
+`C:\Unreal Tournament 3 (Dedicated)\UTGame\CookedPC\RBTTInvasion`<br>
+
+Put the config file `UTRBTTInvasion.ini` in:<br>
+`C:\Unreal Tournament 3 (Dedicated)\UTGame\Config\`<br>
+
+When starting the server use `?Mutator=RBTTInvasion.RBTTInvasionMutator` to your commandline, or add it to your existing Mutator list in the commandline.
+
+Some valid commandlines to start a server with UT3 Invasion would be:<br>
+`ut3.com server DM-HeatRay?Mutator=RBTTInvasion.RBTTInvasionMutator`<br>
+`ut3.com server DM-ShangriLa?NumPlayers=6?Mutator=RBTTInvasion.RBTTInvasionMutator,UTGame.UTMutator_Hero`<br>
+`ut3.com server DM-ShangriLa?NumPlayers=6?Mutator=RBTTInvasion.RBTTInvasionMutator,BattleRPG.BattleRPG`<br>
+
+= Making your own Wave Configuration =
+
+Read this wiki page to find out how to set up your own wave configuration http://code.google.com/p/rbttinvasion/wiki/PageName

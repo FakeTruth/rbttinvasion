@@ -1,4 +1,6 @@
+#summary How to configure waves for UT3 Invasion
 #labels Phase-Implementation
+
 = Introduction =
 
 This page is a brief decription of the UTRBTTInvasion.ini file and how to configure it to your pleasing 

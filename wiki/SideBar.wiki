@@ -5,7 +5,7 @@
  * Monsters
   * [Infernal Infernal]
   * [AePhoenix AePhoenix]
-  * [Skullcrab SkullCrab]
+  * [SkullCrab SkullCrab]
   * [RBTTHumanSkeleton Human Skeleton]
   * [RBTTKrallSkeletonKrall Skeleton]
   * [RBTTMiningRobot Mining Robot]

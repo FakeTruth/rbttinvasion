@@ -1,5 +1,5 @@
+#summary a varible from the monstertable
 #labels Deprecated
-a varible from the monstertable
 
 = MonsterNum =
 

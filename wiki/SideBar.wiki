@@ -1,6 +1,7 @@
  * Home
  * Tutorials
   * [HowToInstall How to install]
+  * [Configuration Configure Waves]
   * [SettingUpSVN Setting up SVN]
  * Monsters
   * [Infernal Infernal]

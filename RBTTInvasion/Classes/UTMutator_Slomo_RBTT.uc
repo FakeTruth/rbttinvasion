@@ -18,5 +18,11 @@ event Destroyed()
 
 defaultproperties
 {
-	bExportMenuData=False	// This mutator should not be selectable
+   bExportMenuData=False
+   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTMutator_Slomo:Sprite'
+      ObjectArchetype=SpriteComponent'UTGame.Default__UTMutator_Slomo:Sprite'
+   End Object
+   Components(0)=Sprite
+   Name="Default__UTMutator_Slomo_RBTT"
+   ObjectArchetype=UTMutator_Slomo'UTGame.Default__UTMutator_Slomo'
 }

@@ -13,8 +13,7 @@ defaultproperties
 {
    FamilyID="SkullCrab"
    Faction="RBTTMonster"
-   PhysAsset=PhysicsAsset'SkullCrabPKG2.SkullCrabA_Physics'
-   AnimSets(0)=AnimSet'SkullCrabPKG2.SkullCrabAnims'
+   AnimSets(0)=None
    TakeHitPhysicsFixedBones(0)="b_Root"
    TakeHitPhysicsFixedBones(1)="Spine"
    TakeHitPhysicsFixedBones(2)="Spine1"
@@ -29,9 +28,6 @@ defaultproperties
    TakeHitPhysicsFixedBones(11)="L_BackKnee"
    TakeHitPhysicsFixedBones(12)="joint3"
    TakeHitPhysicsFixedBones(13)="L_BackKnee"
-   MasterSkeleton=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
-   DeathMeshSkelMesh=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
-   DeathMeshPhysAsset=PhysicsAsset'SkullCrabPKG2.SkullCrabA_Physics'
    DefaultMeshScale=4.000000
    Name="Default__RBTTMonsterFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'

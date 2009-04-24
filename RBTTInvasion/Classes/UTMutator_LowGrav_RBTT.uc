@@ -16,5 +16,11 @@ event Destroyed()
 
 defaultproperties
 {
-	bExportMenuData=False	// This mutator should not be selectable
+   bExportMenuData=False
+   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTMutator_LowGrav:Sprite'
+      ObjectArchetype=SpriteComponent'UTGame.Default__UTMutator_LowGrav:Sprite'
+   End Object
+   Components(0)=Sprite
+   Name="Default__UTMutator_LowGrav_RBTT"
+   ObjectArchetype=UTMutator_LowGrav'UTGame.Default__UTMutator_LowGrav'
 }

@@ -28,6 +28,17 @@ var float InFocusDistance;
 var float InMaxFarBlurAmount;
 /**-Blur variables-*/
 
+/*
+function GetInvasionMutator()
+{
+	local Mutator mut;
+
+	for ( mut=PlayerOwner.WorldInfo.Game.BaseMutator; mut!=None; mut=mut.NextMutator ) 	// Search the entire chain
+		if ( RBTTInvasionMutator(mut) != None)						// We found the mutator!!
+			InvasionMut = RBTTInvasionMutator(mut);
+}
+*/
+
 event PostRender(Canvas Canvas)
 {
 	//local UTHud uth;
@@ -61,23 +72,22 @@ event PostRender(Canvas Canvas)
 	//Canvas.SetPos(XPos , YPos);
 	//Canvas.DrawText("RadarPulse: "@RadarPulse);
 	
-	DrawRadar(Canvas);
-	
 	if(RBPRI == None)
 	{
 		RBPRI = Class'RBTTInvasionMutator'.static.GetRBTTPRI(UTPlayerReplicationInfo(PlayerOwner.PlayerReplicationInfo));
 		if(RBPRI == None)
 			return;
 	}
-	if(InvasionMut == None)
-	{
-		InvasionMut = RBPRI.InvasionMut;
-		if(InvasionMut == None)
-			return;
-	}
+	//if(InvasionMut == None)
+	//{
+	//	GetInvasionMutator();
+	//	if(InvasionMut == None)
+	//		return;
+	//}
 	
+	DrawRadar(Canvas);
 	DrawWaveInfo(Canvas);
-	DrawMonsterInfo(Canvas);
+	//DrawMonsterInfo(Canvas);
 }
 
 function DrawWaveInfo(Canvas Canvas)
@@ -92,9 +102,10 @@ function DrawWaveInfo(Canvas Canvas)
 	Canvas.DrawColor = uth.WhiteColor;
 		
 	Canvas.SetPos(0.900000*Canvas.ClipX,0.200000*Canvas.ClipY);
-	//Canvas.DrawText("Wave: "@RBPRI.CurrentWave+1);
-	Canvas.DrawText("Wave: "@InvasionMut.CurrentWave+1);
+	Canvas.DrawText("Wave: "@RBPRI.CurrentWave+1);
+	//Canvas.DrawText("Wave: "@InvasionMut.CurrentWave+1);
 }
+/*
 function DrawMonsterInfo(Canvas Canvas)
 {
 	local UTHud uth;
@@ -107,10 +118,9 @@ function DrawMonsterInfo(Canvas Canvas)
 	Canvas.DrawColor = uth.WhiteColor;
 		
 	Canvas.SetPos(0.8500000*Canvas.ClipX,0.1800000*Canvas.ClipY);
-	//Canvas.DrawText("Monsters: "@RBPRI.NumMonsters);
-	if(RBTTInvasionGameRules(InvasionMut.CurrentRules) != None)
-		Canvas.DrawText("Monsters: "@RBTTInvasionGameRules(InvasionMut.CurrentRules).NumMonsters);
-}
+	Canvas.DrawText("Monsters: "@RBPRI.NumMonsters);
+	//Canvas.DrawText("Wave: "@InvasionMut.NumMonsters);
+}*/
 function DrawRadar(Canvas Canvas)
 {
 	local float Dist, MaxDist, OffsetY, Angle, OffsetScale, DotSize, RadarWidth,PulseWidth, PulseBrightness;
@@ -334,10 +344,11 @@ function HandleBlur(float DeltaTime)
 
 defaultproperties
 {
-	RadarScale=0.200000
-	RadarPosX=0.900000
-	RadarPosY=0.250000
-	
-	BlurBelowHealthRatio=0.3
-	bEnableLowHealthBlur=True;
+   RadarScale=0.200000
+   RadarPosX=0.900000
+   RadarPosY=0.250000
+   bEnableLowHealthBlur=True
+   BlurBelowHealthRatio=0.300000
+   Name="Default__InvasionInteraction"
+   ObjectArchetype=Interaction'Engine.Default__Interaction'
 }

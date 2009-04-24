@@ -316,41 +316,77 @@ simulated function WeaponChanged(UTWeapon NewWeapon); // This function only does
 
 defaultproperties
 {
-	MonsterHealth = 0
-	HitDamage = 10
-	WeaponSpeedMultiplier = 1.000 //0.5 = half speed, 1 = standard, 2 = twice as fast, etc.
-	MonsterSkill = 1
-	bCanDrive = True
-	bNeedWeapon = True
-	WalkingPct=+0.4
-	CrouchedPct=+0.4
-	BaseEyeHeight=38.0
-	EyeHeight=38.0
-	GroundSpeed=440.0
-	AirSpeed=440.0
-	WaterSpeed=220.0
-	DodgeSpeed=600.0
-	DodgeSpeedZ=295.0
-	AccelRate=2048.0
-	JumpZ=322.0
-	CrouchHeight=29.0
-	CrouchRadius=21.0
-	WalkableFloorZ=0.78
-	InventoryManagerClass=class'RBTTInventoryManager' // class'UTInventoryManager'
-	MeleeRange=+20.0
-	bMuffledHearing=False
-	Buoyancy=+000.99000000
-	UnderWaterTime=+00020.000000
-	bCanStrafe=True
-	bCanSwim=true
-	RotationRate=(Pitch=20000,Yaw=20000,Roll=20000)
-	MaxLeanRoll=2048
-	AirControl=+0.35
-	DefaultAirControl=+0.35
-	bStasis=false
-	bCanCrouch=true
-	bCanClimbLadders=True
-	bCanPickupInventory=False
-	bCanDoubleJump=true
-	SightRadius=+12000.0
+   MonsterSkill=1
+   bNeedWeapon=True
+   bCanDrive=True
+   WeaponSpeedMultiplier=1.000000
+   HitDamage=10.000000
+   Begin Object Class=DynamicLightEnvironmentComponent Name=MyLightEnvironment ObjName=MyLightEnvironment Archetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:MyLightEnvironment'
+      ObjectArchetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:MyLightEnvironment'
+   End Object
+   LightEnvironment=MyLightEnvironment
+   MaxLeanRoll=2048
+   Begin Object Class=ParticleSystemComponent Name=GooDeath ObjName=GooDeath Archetype=ParticleSystemComponent'UTGame.Default__UTPawn:GooDeath'
+      ObjectArchetype=ParticleSystemComponent'UTGame.Default__UTPawn:GooDeath'
+   End Object
+   BioBurnAway=GooDeath
+   Begin Object Class=DynamicLightEnvironmentComponent Name=DeathVisionLightEnv ObjName=DeathVisionLightEnv Archetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:DeathVisionLightEnv'
+      ObjectArchetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:DeathVisionLightEnv'
+   End Object
+   FirstPersonDeathVisionLightEnvironment=DeathVisionLightEnv
+   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonArms ObjName=FirstPersonArms Archetype=UTSkeletalMeshComponent'UTGame.Default__UTPawn:FirstPersonArms'
+      Begin Object Class=AnimNodeSequence Name=MeshSequenceA ObjName=MeshSequenceA Archetype=AnimNodeSequence'UTGame.Default__UTPawn:MeshSequenceA'
+         ObjectArchetype=AnimNodeSequence'UTGame.Default__UTPawn:MeshSequenceA'
+      End Object
+      Animations=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms.MeshSequenceA'
+      ObjectArchetype=UTSkeletalMeshComponent'UTGame.Default__UTPawn:FirstPersonArms'
+   End Object
+   ArmsMesh(0)=FirstPersonArms
+   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonArms2 ObjName=FirstPersonArms2 Archetype=UTSkeletalMeshComponent'UTGame.Default__UTPawn:FirstPersonArms2'
+      Begin Object Class=AnimNodeSequence Name=MeshSequenceB ObjName=MeshSequenceB Archetype=AnimNodeSequence'UTGame.Default__UTPawn:MeshSequenceB'
+         ObjectArchetype=AnimNodeSequence'UTGame.Default__UTPawn:MeshSequenceB'
+      End Object
+      Animations=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms2.MeshSequenceB'
+      ObjectArchetype=UTSkeletalMeshComponent'UTGame.Default__UTPawn:FirstPersonArms2'
+   End Object
+   ArmsMesh(1)=FirstPersonArms2
+   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent ObjName=AmbientSoundComponent Archetype=UTAmbientSoundComponent'UTGame.Default__UTPawn:AmbientSoundComponent'
+      ObjectArchetype=UTAmbientSoundComponent'UTGame.Default__UTPawn:AmbientSoundComponent'
+   End Object
+   PawnAmbientSound=AmbientSoundComponent
+   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent2 ObjName=AmbientSoundComponent2 Archetype=UTAmbientSoundComponent'UTGame.Default__UTPawn:AmbientSoundComponent2'
+      ObjectArchetype=UTAmbientSoundComponent'UTGame.Default__UTPawn:AmbientSoundComponent2'
+   End Object
+   WeaponAmbientSound=AmbientSoundComponent2
+   Begin Object Class=SkeletalMeshComponent Name=OverlayMeshComponent0 ObjName=OverlayMeshComponent0 Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:OverlayMeshComponent0'
+      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:OverlayMeshComponent0'
+   End Object
+   OverlayMesh=OverlayMeshComponent0
+   Begin Object Class=DynamicLightEnvironmentComponent Name=XRayEffectLightEnv ObjName=XRayEffectLightEnv Archetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:XRayEffectLightEnv'
+      ObjectArchetype=DynamicLightEnvironmentComponent'UTGame.Default__UTPawn:XRayEffectLightEnv'
+   End Object
+   XRayEffectLightEnvironment=XRayEffectLightEnv
+   bCanPickupInventory=False
+   bMuffledHearing=False
+   Begin Object Class=SkeletalMeshComponent Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+   End Object
+   Mesh=WPawnSkeletalMeshComponent
+   Begin Object Class=CylinderComponent Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
+      ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
+   End Object
+   CylinderComponent=CollisionCylinder
+   InventoryManagerClass=Class'RBTTInvasion.RBTTInventoryManager'
+   Components(0)=CollisionCylinder
+   Begin Object Class=ArrowComponent Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
+      ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
+   End Object
+   Components(1)=Arrow
+   Components(2)=MyLightEnvironment
+   Components(3)=WPawnSkeletalMeshComponent
+   Components(4)=AmbientSoundComponent
+   Components(5)=AmbientSoundComponent2
+   CollisionComponent=CollisionCylinder
+   Name="Default__RBTTMonster"
+   ObjectArchetype=UTPawn'UTGame.Default__UTPawn'
 }

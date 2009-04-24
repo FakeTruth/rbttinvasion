@@ -10,5 +10,6 @@
   * [RBTTKrallSkeleton Krall Skeleton]
   * [RBTTMiningRobot Mining Robot]
  * Media
-  * [Screenshots Screenshots]
   * [Downloads Downloads]
+  * [Screenshots Screenshots]
+  * [Movies Movies]

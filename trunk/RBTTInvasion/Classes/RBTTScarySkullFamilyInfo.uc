@@ -11,18 +11,11 @@ class RBTTScarySkullFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
-
    FamilyID="ScarySkull"
    Faction="RBTTMonster"
-   PhysAsset=PhysicsAsset'RBTTScarySkull.ScarySkull_Physics'
-   MasterSkeleton=SkeletalMesh'RBTTScarySkull.ScarySkull'
-
-   DeathMeshSkelMesh=SkeletalMesh'RBTTScarySkull.ScarySkull'
-   DeathMeshPhysAsset=PhysicsAsset'RBTTScarySkull.ScarySkull_Physics'
+   SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
    DeathMeshNumMaterialsToSetResident=1
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
-   SoundGroupClass=Class'RBTTInvasion.ScarySkullSoundGroup'
-
    Name="Default__RBTTScarySkullFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'
 }

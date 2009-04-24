@@ -193,64 +193,62 @@ State FadeOut extends Pickup
 
 defaultproperties
 {
-	PickupMessage = "You picked up an item that a monster dropped!";
-	MessageClass=class'UTPickupMessage'
-	PickupSound=SoundCue'A_Pickups.Armor.Cue.A_Pickups_Armor_Chest_Cue'
-
-	Begin Object Class=SpriteComponent Name=Sprite
-		Sprite=Texture2D'EngineResources.S_Inventory'
-		HiddenGame=True
-		AlwaysLoadOnClient=False
-		AlwaysLoadOnServer=False
-	End Object
-	Components.Add(Sprite)
-
-	Begin Object Class=CylinderComponent NAME=CollisionCylinder
-		CollisionRadius=+00030.000000
-		CollisionHeight=+00020.000000
-		CollideActors=true
-	End Object
-	CollisionComponent=CollisionCylinder
-	Components.Add(CollisionCylinder)
-
- 	Begin Object Class=DynamicLightEnvironmentComponent Name=PickupLightEnvironment
- 	    bDynamic=FALSE
- 	    bCastShadows=FALSE
-		AmbientGlow=(R=0.3f,G=0.3f,B=0.3f,A=1.0f)
- 	End Object
-  	LightEnvironment=PickupLightEnvironment
-  	Components.Add(PickupLightEnvironment)
-	
-	Begin Object Class=StaticMeshComponent Name=PickUpComp
-		AlwaysLoadOnClient=true
-		AlwaysLoadOnServer=true
-
-		CastShadow=FALSE
-		bAcceptsLights=TRUE
-		bForceDirectLightMap=TRUE
-		bCastDynamicShadow=FALSE
-		LightEnvironment=PickupLightEnvironment
-
-		CollideActors=false
-		CullDistance=8000
-		bUseAsOccluder=FALSE
-	End Object
-	PickupMesh=PickUpComp
-	Components.Add(PickUpComp)
-	
-	bOnlyDirtyReplication=true
-	NetUpdateFrequency=8
-	RemoteRole=ROLE_SimulatedProxy
-	bHidden=false
-	NetPriority=+1.4
-	bCollideActors=true
-	bCollideWorld=true
-	RotationRate=(Yaw=5000)
-	DesiredRotation=(Yaw=30000)
-	bOrientOnSlope=true
-	bShouldBaseAtStartup=true
-	bIgnoreEncroachers=false
-	bIgnoreRigidBodyPawns=true
-	bUpdateSimulatedPosition=true
-	LifeSpan=+16.0
+   Begin Object Class=DynamicLightEnvironmentComponent Name=PickupLightEnvironment ObjName=PickupLightEnvironment Archetype=DynamicLightEnvironmentComponent'Engine.Default__DynamicLightEnvironmentComponent'
+      AmbientGlow=(R=0.300000,G=0.300000,B=0.300000,A=1.000000)
+      bCastShadows=False
+      bDynamic=False
+      Name="PickupLightEnvironment"
+      ObjectArchetype=DynamicLightEnvironmentComponent'Engine.Default__DynamicLightEnvironmentComponent'
+   End Object
+   LightEnvironment=PickupLightEnvironment
+   PickupSound=SoundCue'A_Pickups.Armor.Cue.A_Pickups_Armor_Chest_Cue'
+   PickupMessage="You picked up an item that a monster dropped!"
+   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'Engine.Default__SpriteComponent'
+      Sprite=Texture2D'EngineResources.S_Inventory'
+      HiddenGame=True
+      AlwaysLoadOnClient=False
+      AlwaysLoadOnServer=False
+      Name="Sprite"
+      ObjectArchetype=SpriteComponent'Engine.Default__SpriteComponent'
+   End Object
+   Components(0)=Sprite
+   Begin Object Class=CylinderComponent Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'Engine.Default__CylinderComponent'
+      CollisionHeight=20.000000
+      CollisionRadius=30.000000
+      CollideActors=True
+      Name="CollisionCylinder"
+      ObjectArchetype=CylinderComponent'Engine.Default__CylinderComponent'
+   End Object
+   Components(1)=CollisionCylinder
+   Components(2)=PickupLightEnvironment
+   Begin Object Class=StaticMeshComponent Name=PickUpComp ObjName=PickUpComp Archetype=StaticMeshComponent'Engine.Default__StaticMeshComponent'
+      LightEnvironment=DynamicLightEnvironmentComponent'RBTTInvasion.Default__Pickup_Base:PickupLightEnvironment'
+      CullDistance=8000.000000
+      CachedCullDistance=8000.000000
+      bUseAsOccluder=False
+      CastShadow=False
+      bForceDirectLightMap=True
+      bCastDynamicShadow=False
+      CollideActors=False
+      Name="PickUpComp"
+      ObjectArchetype=StaticMeshComponent'Engine.Default__StaticMeshComponent'
+   End Object
+   Components(3)=PickUpComp
+   RemoteRole=ROLE_SimulatedProxy
+   bIgnoreRigidBodyPawns=True
+   bOrientOnSlope=True
+   bUpdateSimulatedPosition=True
+   bOnlyDirtyReplication=True
+   bShouldBaseAtStartup=True
+   bCollideActors=True
+   bCollideWorld=True
+   NetUpdateFrequency=8.000000
+   NetPriority=1.400000
+   LifeSpan=16.000000
+   CollisionComponent=CollisionCylinder
+   RotationRate=(Pitch=0,Yaw=5000,Roll=0)
+   DesiredRotation=(Pitch=0,Yaw=30000,Roll=0)
+   MessageClass=Class'UTGame.UTPickupMessage'
+   Name="Default__Pickup_Base"
+   ObjectArchetype=Actor'Engine.Default__Actor'
 }

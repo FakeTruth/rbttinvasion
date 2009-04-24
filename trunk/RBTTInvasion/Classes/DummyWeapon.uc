@@ -253,101 +253,63 @@ simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name
 
 defaultproperties
 {
-	bExportMenuData=False // dont have data on this weapon! >_<
-	bCanThrow=false
-	
-	WeaponRange=22000
-	MeleeWeaponRange = 500
-	bDropOnDeath = False
-	DroppedPickupClass = None
-
-	// Weapon SkeletalMesh
-	Begin Object class=AnimNodeSequence Name=MeshSequenceA
-	End Object
-
-	// Weapon SkeletalMesh
-	/*
-	Begin Object Name=FirstPersonMesh
-		SkeletalMesh=SkeletalMesh'WP_ShockRifle.Mesh.SK_WP_ShockRifle_1P'
-		AnimSets(0)=AnimSet'WP_ShockRifle.Anim.K_WP_ShockRifle_1P_Base'
-		Animations=MeshSequenceA
-		Rotation=(Yaw=-16384)
-		FOV=60.0
-	End Object
-	*/
-
-	//AttachmentClass=class'UTGame.UTAttachment_ShockRifle'
-
-	/*
-	Begin Object Name=PickupMesh
-		SkeletalMesh=SkeletalMesh'WP_ShockRifle.Mesh.SK_WP_ShockRifle_3P'
-	End Object
-	*/
-
-	InstantHitMomentum(0)=+20000.0
-
-	WeaponFireTypes(0)=EWFT_InstantHit
-	WeaponFireTypes(1)=EWFT_Projectile
-	WeaponProjectiles(1)=class'UTProj_ShockBall'
-
-	InstantHitDamage(0)=10
-	FireInterval(0)=+1.0
-	FireInterval(1)=+1.0
-	InstantHitDamageTypes(0)=class'RBTTInvasion.MeleeDamage'
-	InstantHitDamageTypes(1)=None
-
-	WeaponFireSnd[0]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
-	WeaponFireSnd[1]=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_AltFireCue'
-	WeaponEquipSnd=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_RaiseCue'
-	WeaponPutDownSnd=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_LowerCue'
-	PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Shock_Cue'
-
-	MaxDesireability=0.65
-	AIRating=0.65
-	CurrentRating=0.65
-	bInstantHit=true
-	bSplashJump=false
-	bRecommendSplashDamage=false
-	bSniping=true
-	ShouldFireOnRelease(0)=0
-	ShouldFireOnRelease(1)=1
-
-	ShotCost(0)=0
-	ShotCost(1)=0
-
-	FireOffset=(X=20,Y=5)
-	PlayerViewOffset=(X=17,Y=10.0,Z=-8.0)
-
-	AmmoCount=20
-	LockerAmmoCount=30
-	MaxAmmoCount=50
-
-	FireCameraAnim(1)=CameraAnim'Camera_FX.ShockRifle.C_WP_ShockRifle_Alt_Fire_Shake'
-
-	WeaponFireAnim(1)=WeaponAltFire
-
-	MuzzleFlashSocket=MF
-	MuzzleFlashPSCTemplate=WP_ShockRifle.Particles.P_ShockRifle_MF_Alt
-	MuzzleFlashAltPSCTemplate=WP_ShockRifle.Particles.P_ShockRifle_MF_Alt
-	MuzzleFlashColor=(R=200,G=120,B=255,A=255)
-	MuzzleFlashDuration=0.33
-	MuzzleFlashLightClass=class'UTGame.UTShockMuzzleFlashLight'
-	CrossHairCoordinates=(U=256,V=0,UL=64,VL=64)
-	LockerRotation=(Pitch=32768,Roll=16384)
-
-	IconCoordinates=(U=728,V=382,UL=162,VL=45)
-
-	QuickPickGroup=0
-	QuickPickWeight=0.9
-
-	WeaponColor=(R=160,G=0,B=255,A=255)
-
-	InventoryGroup=4
-	GroupWeight=0.5
-
-	IconX=400
-	IconY=129
-	IconWidth=22
-	IconHeight=48
+   MeleeWeaponRange=500
+   bExportMenuData=False
+   bSniping=True
+   AmmoCount=20
+   LockerAmmoCount=30
+   MaxAmmoCount=50
+   ShotCost(0)=0
+   ShotCost(1)=0
+   FireCameraAnim(0)=None
+   FireCameraAnim(1)=CameraAnim'Camera_FX.ShockRifle.C_WP_ShockRifle_Alt_Fire_Shake'
+   IconX=400
+   IconY=129
+   IconWidth=22
+   IconHeight=48
+   IconCoordinates=(U=728.000000,V=382.000000,UL=162.000000,VL=45.000000)
+   CrossHairCoordinates=(U=256.000000,V=0.000000)
+   InventoryGroup=4
+   GroupWeight=0.500000
+   QuickPickGroup=0
+   QuickPickWeight=0.900000
+   WeaponFireAnim(1)="WeaponAltFire"
+   WeaponFireSnd(0)=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_FireCue'
+   WeaponFireSnd(1)=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_AltFireCue'
+   WeaponPutDownSnd=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_LowerCue'
+   WeaponEquipSnd=SoundCue'A_Weapon_ShockRifle.Cue.A_Weapon_SR_RaiseCue'
+   WeaponColor=(B=255,G=0,R=160,A=255)
+   MuzzleFlashSocket="MF"
+   MuzzleFlashPSCTemplate=ParticleSystem'WP_ShockRifle.Particles.P_ShockRifle_MF_Alt'
+   MuzzleFlashAltPSCTemplate=ParticleSystem'WP_ShockRifle.Particles.P_ShockRifle_MF_Alt'
+   MuzzleFlashColor=(B=255,G=120,R=200,A=255)
+   MuzzleFlashLightClass=Class'UTGame.UTShockMuzzleFlashLight'
+   PlayerViewOffset=(X=17.000000,Y=10.000000,Z=-8.000000)
+   LockerRotation=(Pitch=32768,Yaw=0,Roll=16384)
+   CurrentRating=0.650000
+   ShouldFireOnRelease(1)=1
+   WeaponFireTypes(1)=EWFT_Projectile
+   WeaponProjectiles(1)=Class'UTGame.UTProj_ShockBall'
+   InstantHitDamage(0)=10.000000
+   InstantHitMomentum(0)=20000.000000
+   InstantHitDamageTypes(0)=Class'RBTTInvasion.MeleeDamage'
+   InstantHitDamageTypes(1)=None
+   FireOffset=(X=20.000000,Y=5.000000,Z=0.000000)
+   bCanThrow=False
+   bInstantHit=True
+   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonMesh ObjName=FirstPersonMesh Archetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
+      ObjectArchetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
+   End Object
+   Mesh=FirstPersonMesh
+   AIRating=0.650000
+   MaxDesireability=0.650000
+   PickupSound=SoundCue'A_Pickups.Weapons.Cue.A_Pickup_Weapons_Shock_Cue'
+   DroppedPickupClass=None
+   Begin Object Class=SkeletalMeshComponent Name=PickupMesh ObjName=PickupMesh Archetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
+      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
+   End Object
+   DroppedPickupMesh=PickupMesh
+   PickupFactoryMesh=PickupMesh
+   Name="Default__DummyWeapon"
+   ObjectArchetype=UTWeapon'UTGame.Default__UTWeapon'
 }
-

@@ -22,7 +22,7 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 function Initialize(float InSkill, const out CharacterInfo BotInfo)
@@ -313,24 +313,17 @@ protected event ExecuteWhatToDoNext()
 
 defaultproperties
 {
-	Aggressiveness=1.0000
-	BaseAggressiveness=1.0000
-	bUsingSquadRoute=False
-
-   ReactionTime=0.500000
-   Jumpiness=1.000000
-   
-   Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
+   bUsingSquadRoute=False
+   Aggressiveness=1.000000
+   BaseAggressiveness=1.000000
+   Begin Object Class=UTBotDecisionComponent Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
       ObjectArchetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
    End Object
    DecisionComponent=TheDecider
-
-   Begin Object Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
+   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
       ObjectArchetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
    End Object
    Components(0)=Sprite
    Components(1)=TheDecider
-   RotationRate=(Pitch=65535,Yaw=65535,Roll=2048)
    Name="Default__RBTTMonsterControllerNoWeapon"
-   ObjectArchetype=UTBot'UTGame.Default__UTBot'
 }

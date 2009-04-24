@@ -200,9 +200,12 @@ function string GetLeftMisc(UTPlayerReplicationInfo PRI)
 	return "LMisc";
 }
 
-
-
 defaultproperties
 {
-	bDrawPlayerNum=false
+   Begin Object Class=UIComp_Event Name=WidgetEventComponent ObjName=WidgetEventComponent Archetype=UIComp_Event'UTGame.Default__UTScoreboardPanel:WidgetEventComponent'
+      ObjectArchetype=UIComp_Event'UTGame.Default__UTScoreboardPanel:WidgetEventComponent'
+   End Object
+   EventProvider=WidgetEventComponent
+   Name="Default__RBTTScoreBoardPanel"
+   ObjectArchetype=UTScoreboardPanel'UTGame.Default__UTScoreboardPanel'
 }

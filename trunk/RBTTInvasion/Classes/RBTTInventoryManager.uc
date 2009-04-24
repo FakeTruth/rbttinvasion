@@ -15,10 +15,7 @@ event PostBeginPlay()
 
 
 	if(RBTTMonster(Instigator).MonsterWeaponClass != None)
-	{
 		NewWeapon = Instigator.Spawn(RBTTMonster(Instigator).MonsterWeaponClass);
-		Weapon(NewWeapon).bCanThrow = False;
-	}
 	else if(RBTTMonster(Instigator).bEmptyHanded)
 	{
 		NewWeapon = Instigator.Spawn(class'DummyWeapon');
@@ -87,7 +84,8 @@ simulated function SwitchToBestWeapon( optional bool bForceADifferentWeapon )
 
 defaultproperties
 {
-	PendingFire(0) = 0 // Set them, so it don't give accessed none
-	PendingFire(1) = 0
-
+   PendingFire(0)=0
+   PendingFire(1)=0
+   Name="Default__RBTTInventoryManager"
+   ObjectArchetype=InventoryManager'Engine.Default__InventoryManager'
 }

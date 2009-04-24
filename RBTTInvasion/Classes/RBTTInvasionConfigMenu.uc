@@ -90,13 +90,3 @@ function bool HandleInputKey( const out InputEventParameters EventParms )
 
 	return bResult;
 }
-
-defaultproperties
-{
-   Begin Object Class=UIComp_Event Name=SceneEventComponent ObjName=SceneEventComponent Archetype=UIComp_Event'UTGame.Default__UTUIFrontEnd:SceneEventComponent'
-      ObjectArchetype=UIComp_Event'UTGame.Default__UTUIFrontEnd:SceneEventComponent'
-   End Object
-   EventProvider=SceneEventComponent
-   Name="Default__RBTTInvasionConfigMenu"
-   ObjectArchetype=UTUIFrontEnd'UTGame.Default__UTUIFrontEnd'
-}

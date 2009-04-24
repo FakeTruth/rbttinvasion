@@ -72,13 +72,8 @@ event Destroyed()
 	Super.Destroyed();
 }
 
+
 defaultproperties
 {
-   bExportMenuData=False
-   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTMutator:Sprite'
-      ObjectArchetype=SpriteComponent'UTGame.Default__UTMutator:Sprite'
-   End Object
-   Components(0)=Sprite
-   Name="Default__UTMutator_Instagib_RBTT"
-   ObjectArchetype=UTMutator'UTGame.Default__UTMutator'
+	bExportMenuData=False	// This mutator should not be selectable
 }

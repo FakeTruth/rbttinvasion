@@ -51,6 +51,5 @@ simulated function SwitchToBestWeapon( optional bool bForceADifferentWeapon )
 
 defaultproperties
 {
-   Name="Default__RBTTWRInvManager"
-   ObjectArchetype=InventoryManager'Engine.Default__InventoryManager'
+
 }

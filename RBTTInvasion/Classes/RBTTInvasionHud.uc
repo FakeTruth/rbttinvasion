@@ -316,14 +316,23 @@ simulated function HandleBlur(float DeltaTime)
 
 defaultproperties
 {
-   RadarScale=0.200000
-   RadarPosX=0.900000
-   RadarPosY=0.250000
-   GameName="RBTTInvasion"
-   InsideCameraEffect=Class'UTGameContent.UTEmitCameraEffect_SlowVolume'
-   bEnableLowHealthBlur=True
-   BlurBelowHealthRatio=0.300000
-   ScoreboardSceneTemplate=None
-   Name="Default__RBTTInvasionHud"
-   ObjectArchetype=UTTeamHUD'UTGame.Default__UTTeamHUD'
+	bHasLeaderboard=false
+	bShowDirectional=false
+
+	//ScoreboardSceneTemplate=UTUIScene_TeamScoreboard'UI_Scenes_Scoreboards.sbTeamDM'
+	ScoreboardSceneTemplate=UTUIScene_Scoreboard'RBTTInvasionTex.sbInvasion'
+	TeamScaleModifier=0.75
+
+	TeamIconCenterPoints(0)=(x=140.0,y=27.0)
+	TeamIconCenterPoints(1)=(x=5,y=13)
+	GameName="RBTTInvasion"
+	RadarScale=0.200000
+    RadarPosX=0.900000
+    RadarPosY=0.250000
+
+    BlurBelowHealthRatio=0.3
+    bEnableLowHealthBlur=True;
+    InsideCameraEffect=class'UTEmitCameraEffect_SlowVolume'
+    //EntryPostProcessChain=PostProcessChain'FX_HitEffects.UTPostProcess'
+    EntryPostProcessChain=PostProcessChain'RBTTInvasionTex.PostProcessEffect'
 }

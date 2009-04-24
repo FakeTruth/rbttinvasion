@@ -2,13 +2,26 @@ class MeleeDamage extends UTDamageType;
 
 defaultproperties
 {
-   GibPerterbation=0.500000
-   DamageWeaponClass=Class'RBTTInvasion.DummyWeapon'
-   DamageWeaponFireMode=1
-   DeathString="`o was hacked by a `k"
-   FemaleSuicide="`o was hacked by a `k"
-   MaleSuicide="`o was hacked by a `k"
-   KDamageImpulse=10000.000000
-   Name="Default__MeleeDamage"
-   ObjectArchetype=UTDamageType'UTGame.Default__UTDamageType'
+	//RewardCount=15
+	//RewardEvent=REWARD_JACKHAMMER
+	//RewardAnnouncementSwitch=5
+	//bAlwaysGibs=true
+	GibPerterbation=+0.5
+	//KillStatsName=KILLS_IMPACTHAMMER
+	//DeathStatsName=DEATHS_IMPACTHAMMER
+	//SuicideStatsName=SUICIDES_IMPACTHAMMER
+	DamageWeaponClass=class'RBTTInvasion.DummyWeapon'
+	DamageWeaponFireMode=1.0
+	VehicleDamageScaling=1.0
+	VehicleMomentumScaling=+1.0
+	KDamageImpulse=10000
+	//CustomTauntIndex=5
+
+	//DamageCameraAnim=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Primary_Fire_GetHit_Shake'
+	//DeathCameraEffectInstigator=class'UTEmitCameraEffect_BloodSplatter'
+	
+	DeathString = "`o was hacked by a `k"
+	// `o was killed by `k.
+	FemaleSuicide = "`o was hacked by a `k"
+	MaleSuicide = "`o was hacked by a `k"
 }

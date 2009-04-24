@@ -11,14 +11,17 @@ class RBTTSlimeFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
-   LeftFootBone="L_FrontFoot"
-   RightFootBone="R_FrontFoot"
-   TakeHitPhysicsFixedBones(0)="L_FrontFoot"
-   TakeHitPhysicsFixedBones(1)="R_FrontFoot"
-   SoundGroupClass=Class'RBTTInvasion.RBTTSlimeSoundGroup'
+	SoundGroupClass=Class'RBTTInvasion.RBTTSlimeSoundGroup'
+	LeftFootBone=L_FrontFoot //b_LeftAnkle
+	RightFootBone=R_FrontFoot //b_RightAnkle
+	TakeHitPhysicsFixedBones[0]=L_FrontFoot //b_LeftAnkle 
+	TakeHitPhysicsFixedBones[1]=R_FrontFoot //b_RightAnkle
+	DefaultMeshScale=4.000000
+   DeathMeshSkelMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
+   DeathMeshPhysAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
+   PhysAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
    DeathMeshNumMaterialsToSetResident=1
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
-   DefaultMeshScale=4.000000
    Name="Default__RBTTSlimeFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'
 }

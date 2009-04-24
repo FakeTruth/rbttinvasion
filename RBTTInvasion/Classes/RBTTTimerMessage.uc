@@ -73,28 +73,28 @@ static function int GetFontSize( int Switch, PlayerReplicationInfo RelatedPRI1, 
 
 defaultproperties
 {
-   Announcements(0)=
-   Announcements(1)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_01')
-   Announcements(2)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_02')
-   Announcements(3)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_03')
-   Announcements(4)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_04')
-   Announcements(5)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_05')
-   Announcements(6)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_06')
-   Announcements(7)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_07')
-   Announcements(8)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_08')
-   Announcements(9)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_09')
-   Announcements(10)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_10')
-   Announcements(11)=
-   Announcements(12)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_30SecondsLeft')
-   Announcements(13)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_1MinutesRemain')
-   Announcements(14)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_2MinutesRemain')
-   Announcements(15)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_3MinutesRemain')
-   Announcements(16)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_5MinutesRemain')
-   Announcements(17)=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Overtime')
-   bIsUnique=True
-   Lifetime=1.000000
-   DrawColor=(B=64,G=255,R=255,A=255)
-   FontSize=3
-   Name="Default__RBTTTimerMessage"
-   ObjectArchetype=UTLocalMessage'UTGame.Default__UTLocalMessage'
+	FontSize=3
+	Lifetime=1
+	//MessageArea=2
+	bIsConsoleMessage=False
+	bIsUnique=true
+	//bBeep=false
+	DrawColor=(R=255,G=255,B=64,A=255)
+
+	Announcements[1]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_01') //,AnnouncementText="Yo mama...")
+	Announcements[2]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_02')
+	Announcements[3]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_03')
+	Announcements[4]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_04')
+	Announcements[5]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_05')
+	Announcements[6]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_06')
+	Announcements[7]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_07')
+	Announcements[8]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_08')
+	Announcements[9]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_09')
+	Announcements[10]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_Countdown_10')
+	Announcements[12]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_30SecondsLeft')
+	Announcements[13]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_1MinutesRemain')
+	Announcements[14]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_2MinutesRemain')
+	Announcements[15]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_3MinutesRemain')
+	Announcements[16]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_5MinutesRemain')
+	Announcements[17]=(AnnouncementSound=SoundNodeWave'A_Announcer_Status.Status.A_StatusAnnouncer_overtime')
 }

@@ -37,9 +37,8 @@ Ok now to get some classes from the repository. Right klik in the rbbtinvasion f
 
  http://images.allprog.nl/img/8683_1240057034.jpg
 
-a window will popup asking for the url of your repository just enter
-
-svn checkout http://rbttinvasion.googlecode.com/svn/trunk/rbttinvasion-read-only
+a window will popup asking for the url of your repository just enter<br>
+`svn checkout http://rbttinvasion.googlecode.com/svn/trunk/ rbttinvasion-read-only`
 
  http://images.allprog.nl/img/6147_1240057655.jpg
 

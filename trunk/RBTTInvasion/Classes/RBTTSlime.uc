@@ -79,7 +79,7 @@ function SpawnBabySlimes()
 			}
 			if(NewSlime != None)
 			{
-				LogInternal(">>New Slime is: "@NewSlime);
+				`log(">>New Slime is: "@NewSlime);
 				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
 				NewSlime.health = 65;
@@ -103,7 +103,7 @@ function InitializeMonsterInfo()
 	MonsterBotInfo = RBTTMonsterTeamInfo(RBTTMonsterTeamInfo).GetBotInfo(MonsterName);
 	RBTTMonsterController(Controller).Initialize(MonsterSkill, MonsterBotInfo);
 	PlayerReplicationInfo.PlayerName = MonsterName;
-	LogInternal("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+	`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 	
 	RBTTMonsterTeamInfo.AddToTeam(Controller);
 	RBTTMonsterTeamInfo.SetBotOrders(UTBot(Controller));
@@ -126,13 +126,13 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 	{
 		if(DamageAmount > 60 && health > 0)
 		{
-			LogInternal(">>Gonan spawn now!<<");
+			`log(">>Gonan spawn now!<<");
 			SpawnLocation = self.Location+(Vect(0,0,1)*(GetCollisionHeight()+16));
 			if ( FastTrace(SpawnLocation, Location) )
 				NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
 			if(NewSlime != None)
 			{
-				LogInternal(">>New Slime is: "@NewSlime);
+				`log(">>New Slime is: "@NewSlime);
 				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
 				NewSlime.InitSize(Vect(8,8,8));
@@ -158,7 +158,7 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 
 function InitSize(vector NewSize)
 {
-	LogInternal(">>NewSize:"@NewSize);
+	`log(">>NewSize:"@NewSize);
 	MonsterScale = NewSize; // For replication
 	Mesh.SetScale3D(NewSize);
 	SetCollisionSize( CylinderComponent.default.CollisionRadius * NewSize.X * 2, CylinderComponent.default.CollisionHeight * NewSize.Z * 2 );
@@ -231,85 +231,89 @@ simulated function InstantFire()
 
 defaultproperties
 {
-   bMotherSlime=True
-   MonsterScale=(X=32.000000,Y=32.000000,Z=32.000000)
-   MinMonsterScale=(X=8.000000,Y=8.000000,Z=8.000000)
-   MonsterSkill=5
-   MonsterName="Slime"
-   bInvisibleWeapon=True
-   bMeleeMonster=True
-   bEmptyHanded=True
-   bCanDoubleJump=False
-   bEnableFootPlacement=False
-   Begin Object Class=DynamicLightEnvironmentComponent Name=MyLightEnvironment ObjName=MyLightEnvironment Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:MyLightEnvironment'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:MyLightEnvironment'
-   End Object
-   LightEnvironment=MyLightEnvironment
-   MaxMultiJump=0
-   Begin Object Class=ParticleSystemComponent Name=GooDeath ObjName=GooDeath Archetype=ParticleSystemComponent'RBTTInvasion.Default__RBTTMonster:GooDeath'
-      ObjectArchetype=ParticleSystemComponent'RBTTInvasion.Default__RBTTMonster:GooDeath'
-   End Object
-   BioBurnAway=GooDeath
-   Begin Object Class=DynamicLightEnvironmentComponent Name=DeathVisionLightEnv ObjName=DeathVisionLightEnv Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:DeathVisionLightEnv'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:DeathVisionLightEnv'
-   End Object
-   FirstPersonDeathVisionLightEnvironment=DeathVisionLightEnv
-   TorsoBoneName="Spine"
-   ArmsMesh(0)=None
-   ArmsMesh(1)=None
-   HeadBone="head"
-   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent ObjName=AmbientSoundComponent Archetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent'
-      ObjectArchetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent'
-   End Object
-   PawnAmbientSound=AmbientSoundComponent
-   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent2 ObjName=AmbientSoundComponent2 Archetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent2'
-      ObjectArchetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent2'
-   End Object
-   WeaponAmbientSound=AmbientSoundComponent2
-   Begin Object Class=SkeletalMeshComponent Name=OverlayMeshComponent0 ObjName=OverlayMeshComponent0 Archetype=SkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:OverlayMeshComponent0'
-      ObjectArchetype=SkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:OverlayMeshComponent0'
-   End Object
-   OverlayMesh=OverlayMeshComponent0
-   Begin Object Class=DynamicLightEnvironmentComponent Name=XRayEffectLightEnv ObjName=XRayEffectLightEnv Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:XRayEffectLightEnv'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:XRayEffectLightEnv'
-   End Object
-   XRayEffectLightEnvironment=XRayEffectLightEnv
-   LeftFootControlName="LeftFrontFootControl"
-   RightFootControlName="RightFrontFootControl"
-   DefaultFamily=Class'RBTTInvasion.RBTTSlimeFamilyInfo'
-   DefaultMesh=None
+	HitDamage = 10
+	MonsterScale=(X=32,Y=32,Z=32)
+	MinMonsterScale=(X=8,Y=8,Z=8)
+	health = 500
+	bMotherSlime=True
+
+	bMeleeMonster = True
+	bEmptyHanded = True
+	bInvisibleWeapon = True
+	
+	//bCanStrafe=False // This screws things up!!!!!!!!!!!!
+	bCanSwim=False
+	bCanCrouch=False
+	bCanDoubleJump=False // If it doublejumps it looks silly! :P
+	MaxMultiJump = 0
+	
+	TorsoBoneName="Spine"
+	HeadBone="Head"
+	bEnableFootPlacement=False
+	LeftFootControlName="LeftFrontFootControl"
+	RightFootControlName="RightFrontFootControl"
+	MonsterName = "Slime"
+	MonsterSkill=5
+	LightEnvironment=MyLightEnvironment
+	BioBurnAway=GooDeath
+	ArmsMesh(0)=None
+	ArmsMesh(1)=None
+	PawnAmbientSound=AmbientSoundComponent
+	WeaponAmbientSound=AmbientSoundComponent2
+	GroundSpeed=200.000000
+	
+	OverlayMesh=OverlayMeshComponent0
+	
+   DefaultFamily=Class'RBTTSlimeFamilyInfo'
+   
+   DefaultMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
+   
    WalkableFloorZ=0.800000
-   bCanCrouch=False
-   bCanSwim=False
-   GroundSpeed=200.000000
-   Health=500
-   ControllerClass=Class'RBTTInvasion.RBTTMonsterControllerMelee'
-   Begin Object Class=SkeletalMeshComponent Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-      AnimTreeTemplate=None
-      AnimSets(0)=None
-      Rotation=(Pitch=0,Yaw=49149,Roll=0)
-      Scale3D=(X=32.000000,Y=32.000000,Z=32.000000)
-      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+   
+   ControllerClass=Class'RBTTMonsterControllerMelee'
+   InventoryManagerClass=class'RBTTInventoryManager'
+  
+  
+   Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+      SkeletalMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
+      AnimTreeTemplate=AnimTree'RBTTSlime.RBTTSlimeTree'
+      AnimSets(0)=AnimSet'RBTTSlime.RBTTSlimeAnims'
+      bHasPhysicsAssetInstance=True
+      Scale3D=(X=32,Y=32,Z=32)
+      Rotation=(Yaw=49149) //(65535 = 360 degrees) (16383 = 90 degrees) | Yaw, Roll, Pitch
+      PhysicsAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
+      Name="WPawnSkeletalMeshComponent"
+	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
    End Object
    Mesh=WPawnSkeletalMeshComponent
-   Begin Object Class=CylinderComponent Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
+   
+   Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=2.000000
       CollisionRadius=2.000000
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder
+   
    Components(0)=CollisionCylinder
-   Begin Object Class=ArrowComponent Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
+   
+   Begin Object Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
       ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
    End Object
+   
+   
    Components(1)=Arrow
    Components(2)=MyLightEnvironment
    Components(3)=WPawnSkeletalMeshComponent
    Components(4)=AmbientSoundComponent
    Components(5)=AmbientSoundComponent2
    Components(6)=MyLightEnvironment
-   Components(7)=None
    Components(8)=CollisionCylinder
    CollisionComponent=CollisionCylinder
    Name="Default__RBTTSlime"
+   ObjectArchetype=UTPawn'UTGame.Default__UTPawn'
+	
+	// default bone names
+	WeaponSocket=WeaponPoint
+	WeaponSocket2=DualWeaponPoint
+	bNeedWeapon = false
 }

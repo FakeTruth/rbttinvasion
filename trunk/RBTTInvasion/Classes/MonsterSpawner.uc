@@ -97,7 +97,7 @@ simulated event TakeDamage(int DamageAmount, Controller EventInstigator, vector 
 	//if(PlayerController(UTPawn(DamageCauser).Controller) != None)
 	if(DamageCauser.Instigator.Controller.IsA('PlayerController'))
 	{
-		LogInternal(">>>DamageCauser == "@DamageCauser);
+		`log(">>>DamageCauser == "@DamageCauser);
 		super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 		
 		Health-=DamageAmount;
@@ -207,61 +207,65 @@ state PhysicsVortex // Taken from UTGame.UTEmit_ShockCombo
 
 defaultproperties
 {
-   NeutralFloorColor=(R=0.000000,G=0.000000,B=0.000000,A=1.000000)
-   Begin Object Class=ParticleSystemComponent Name=ParticleSystemComponent0 ObjName=ParticleSystemComponent0 Archetype=ParticleSystemComponent'Engine.Default__ParticleSystemComponent'
-      Name="ParticleSystemComponent0"
-      ObjectArchetype=ParticleSystemComponent'Engine.Default__ParticleSystemComponent'
-   End Object
-   PortalEffect=ParticleSystemComponent0
-   Begin Object Class=ParticleSystemComponent Name=ParticleSystemComponent1 ObjName=ParticleSystemComponent1 Archetype=ParticleSystemComponent'Engine.Default__ParticleSystemComponent'
-      Translation=(X=0.000000,Y=0.000000,Z=64.000000)
-      Name="ParticleSystemComponent1"
-      ObjectArchetype=ParticleSystemComponent'Engine.Default__ParticleSystemComponent'
-   End Object
-   VortexEffect=ParticleSystemComponent1
-   PortalMaterial=Material'PICKUPS.Base_Teleporter.Material.M_T_Pickups_Teleporter_Portal_Destination'
-   TeamPortalEffectTemplates(0)=ParticleSystem'PICKUPS.Base_Teleporter.Effects.P_Pickups_Teleporter_Idle_Red'
-   TeamPortalEffectTemplates(1)=ParticleSystem'PICKUPS.Base_Teleporter.Effects.P_Pickups_Teleporter_Idle_Blue'
-   ConstructedSound=SoundCue'A_Gameplay.ONS.A_Gameplay_ONS_ConduitActivated'
-   ActiveSound=SoundCue'A_Gameplay.Portal.Portal_Loop01Cue'
-   Begin Object Class=AudioComponent Name=AmbientSoundComponent0 ObjName=AmbientSoundComponent0 Archetype=AudioComponent'Engine.Default__AudioComponent'
-      bAutoPlay=True
-      bStopWhenOwnerDestroyed=True
-      Name="AmbientSoundComponent0"
-      ObjectArchetype=AudioComponent'Engine.Default__AudioComponent'
-   End Object
-   AmbientSoundComponent=AmbientSoundComponent0
-   SpawnArray(0)=Class'RBTTInvasion.RBTTMiningRobot'
-   SpawnArray(1)=Class'RBTTInvasion.RBTTMiningRobot'
-   SpawnArray(2)=Class'RBTTInvasion.RBTTMiningRobot'
-   SpawnArray(3)=Class'RBTTInvasion.RBTTMiningRobot'
-   SpawnArray(4)=Class'RBTTInvasion.RBTTMiningRobot'
-   SpawnArray(5)=Class'RBTTInvasion.RBTTMiningRobot'
-   Begin Object Class=CylinderComponent Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'Engine.Default__CylinderComponent'
-      CollisionHeight=64.000000
-      CollisionRadius=32.000000
-      CollideActors=True
-      BlockActors=True
-      Translation=(X=0.000000,Y=0.000000,Z=64.000000)
-      Name="CollisionCylinder"
-      ObjectArchetype=CylinderComponent'Engine.Default__CylinderComponent'
-   End Object
-   CylinderComponent=CollisionCylinder
-   Health=150
-   VortexForcePerSecond=50.000000
-   VortexRadius=512.000000
-   VortexDuration=2.500000
-   Components(0)=ParticleSystemComponent0
-   Components(1)=ParticleSystemComponent1
-   Components(2)=AmbientSoundComponent0
-   Components(3)=CollisionCylinder
-   RemoteRole=ROLE_SimulatedProxy
-   bAlwaysRelevant=True
-   bCollideActors=True
-   bBlockActors=True
-   NetUpdateFrequency=1.000000
-   CollisionComponent=CollisionCylinder
-   MessageClass=Class'UTGameContent.UTOnslaughtMessage'
-   Name="Default__MonsterSpawner"
-   ObjectArchetype=Actor'Engine.Default__Actor'
+	Health = 150
+	VortexRadius=512.0
+	VortexForcePerSecond=50.0
+	VortexDuration=2.5
+
+	Begin Object Class=ParticleSystemComponent Name=ParticleSystemComponent0
+	End Object
+	Components.Add(ParticleSystemComponent0)
+	PortalEffect=ParticleSystemComponent0
+	PortalMaterial=MaterialInterface'Pickups.Base_Teleporter.Material.M_T_Pickups_Teleporter_Portal_Destination'
+	
+	Begin Object Class=ParticleSystemComponent Name=ParticleSystemComponent1
+		Translation=(X=0,Y=0,Z=64)
+	End Object
+	Components.Add(ParticleSystemComponent1)
+	VortexEffect=ParticleSystemComponent1
+	VortexEffectTemplate=ParticleSystem'RBTTInvasionTex.PortalVortex'
+
+	ConstructedSound=SoundCue'A_Gameplay.ONS.A_Gameplay_ONS_ConduitActivated'
+	ActiveSound=SoundCue'A_Gameplay.Portal.Portal_Loop01Cue'
+
+	Begin Object Class=AudioComponent Name=AmbientSoundComponent0
+		bAutoPlay=true
+		bStopWhenOwnerDestroyed=true
+	End Object
+	AmbientSoundComponent=AmbientSoundComponent0
+	Components.Add(AmbientSoundComponent0)
+
+ 	bStatic=false
+ 	bCollideActors=True
+ 	bBlockActors=True
+
+	RemoteRole=ROLE_SimulatedProxy
+	NetUpdateFrequency=1.0
+	bAlwaysRelevant=true
+
+	TeamPortalEffectTemplates[0]=ParticleSystem'Pickups.Base_Teleporter.Effects.P_Pickups_Teleporter_Idle_Red'
+	TeamPortalEffectTemplates[1]=ParticleSystem'Pickups.Base_Teleporter.Effects.P_Pickups_Teleporter_Idle_Blue'
+
+	MessageClass=class'UTOnslaughtMessage'
+
+	SpawnArray(0)=Class'RBTTInvasion.RBTTMiningRobot'
+	SpawnArray(1)=Class'RBTTInvasion.RBTTMiningRobot'
+	SpawnArray(2)=Class'RBTTInvasion.RBTTMiningRobot'
+	SpawnArray(3)=Class'RBTTInvasion.RBTTMiningRobot'
+	SpawnArray(4)=Class'RBTTInvasion.RBTTMiningRobot'
+	SpawnArray(5)=Class'RBTTInvasion.RBTTMiningRobot'
+	
+	
+	Begin Object Class=CylinderComponent Name=CollisionCylinder
+		CollisionRadius=0032.000000
+		CollisionHeight=0064.000000
+		Translation=(X=0,Y=0,Z=64)
+		BlockNonZeroExtent=true
+		BlockZeroExtent=true
+		BlockActors=true
+		CollideActors=true
+	End Object
+	CollisionComponent=CollisionCylinder
+	CylinderComponent=CollisionCylinder
+	Components.Add(CollisionCylinder)
 }

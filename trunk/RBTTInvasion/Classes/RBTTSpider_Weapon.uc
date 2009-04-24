@@ -339,94 +339,133 @@ simulated function StopFireEffects(byte FireModeNum);
 
 defaultproperties
 {
-   MinDamage=20.000000
-   MaxDamage=140.000000
-   MinForce=40000.000000
-   MaxForce=100000.000000
-   MinSelfDamage=8.000000
-   SelfForceScale=-1.200000
-   SelfDamageScale=0.300000
-   ChargeAnim="weaponcharge"
-   ChargeIdleAnim="weaponchargedidle"
-   MaxChargeTime=2.500000
-   MinChargeTime=1.000000
-   WeaponChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireLoop_Cue'
-   WeaponEMPChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFireLoop_Cue'
-   ImpactJumpSound=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireBodyThrow_Cue'
-   AutoFireRange=110.000000
-   EMPDamage=150.000000
-   ChargeEffect(0)=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Charge_Primary'
-   ChargeEffect(1)=ParticleSystem'WP_ImpactHammer.Particles.P_WP_Impact_Charge_Secondary'
-   AltHitEffect=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit_Impact'
-   ImpactKillCameraAnim=CameraAnim'Camera_FX.Gameplay.C_Impact_CharacterGib_Near'
-   bExportMenuData=False
-   bMuzzleFlashPSCLoops=True
-   bFastRepeater=True
-   MaxAmmoCount=5
-   ShotCost(0)=0
-   FireCameraAnim(0)=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Primary_Fire_Shake'
-   FireCameraAnim(1)=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Alt_Fire_Shake'
-   IconCoordinates=(U=453.000000,V=327.000000,UL=135.000000,VL=57.000000)
-   CrossHairCoordinates=(U=64.000000,V=0.000000)
-   InventoryGroup=1
-   AmmoDisplayType=EAWDS_None
-   AttachmentClass=Class'UTGame.UTAttachment_ImpactHammer'
-   GroupWeight=0.700000
-   WeaponFireAnim(2)="WeaponFire"
-   WeaponFireAnim(3)="WeaponFire"
-   ArmFireAnim(2)="WeaponFire"
-   ArmFireAnim(3)="WeaponFire"
-   ArmsAnimSet=AnimSet'WP_ImpactHammer.Anims.K_WP_Impact_1P_Arms'
-   WeaponFireSnd(0)=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFire_Cue'
-   WeaponFireSnd(1)=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltImpact_Cue'
-   WeaponPutDownSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Lower_Cue'
-   WeaponEquipSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Raise_Cue'
-   WeaponColor=(B=128,G=255,R=255,A=255)
-   WeaponCanvasXPct=0.450000
-   WeaponCanvasYPct=0.450000
-   MuzzleFlashPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Primary_Hit'
-   MuzzleFlashAltPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit'
-   SmallWeaponsOffset=(X=12.000000,Y=6.000000,Z=-6.000000)
-   CurrentRating=0.450000
-   WeaponFireTypes(2)=EWFT_None
-   WeaponFireTypes(3)=EWFT_None
-   FiringStatesArray(0)="WeaponChargeUp"
-   FiringStatesArray(1)="WeaponChargeUp"
-   FireInterval(0)=1.100000
-   FireInterval(1)=1.100000
-   FireInterval(2)=1.100000
-   FireInterval(3)=1.100000
-   Spread(2)=0.000000
-   InstantHitDamage(0)=10.000000
-   InstantHitDamage(1)=10.000000
-   InstantHitDamageTypes(0)=Class'UTGame.UTDmgType_ImpactHammer'
-   InstantHitDamageTypes(1)=Class'UTGame.UTDmgType_EMP'
-   InstantHitDamageTypes(2)=None
-   InstantHitDamageTypes(3)=Class'UTGame.UTDmgType_ImpactHammer'
-   FireOffset=(X=20.000000,Y=0.000000,Z=0.000000)
-   bCanThrow=False
-   bInstantHit=True
-   bMeleeWeapon=True
-   WeaponRange=110.000000
-   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonMesh ObjName=FirstPersonMesh Archetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
-      FOV=75.000000
-      SkeletalMesh=SkeletalMesh'WP_ImpactHammer.Mesh.SK_WP_Impact_1P'
-      Begin Object Class=AnimNodeSequence Name=MeshSequenceA ObjName=MeshSequenceA Archetype=AnimNodeSequence'Engine.Default__AnimNodeSequence'
-         Name="MeshSequenceA"
-         ObjectArchetype=AnimNodeSequence'Engine.Default__AnimNodeSequence'
-      End Object
-      Animations=AnimNodeSequence'RBTTInvasion.Default__RBTTSpider_Weapon:MeshSequenceA'
-      AnimSets(0)=AnimSet'WP_ImpactHammer.Anims.K_WP_Impact_1P_Base'
-      Materials(0)=Material'WP_ImpactHammer.Materials.M_WP_ImpactHammer_Base'
-      ObjectArchetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
-   End Object
-   Mesh=FirstPersonMesh
-   AIRating=0.350000
-   Begin Object Class=SkeletalMeshComponent Name=PickupMesh ObjName=PickupMesh Archetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
-      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
-   End Object
-   DroppedPickupMesh=PickupMesh
-   PickupFactoryMesh=PickupMesh
-   Name="Default__RBTTSpider_Weapon"
-   ObjectArchetype=UTWeapon'UTGame.Default__UTWeapon'
+	bExportMenuData=False // dont have data on this weapon! >_<
+
+	WeaponColor=(R=255,G=255,B=128,A=255)
+	PlayerViewOffset=(X=0,Y=0.0,Z=0)
+	SmallWeaponsOffset=(X=12.0,Y=6.0,Z=-6.0)
+
+	WeaponCanvasXPct=0.45
+	WeaponCanvasYPct=0.45
+
+	Begin Object class=AnimNodeSequence Name=MeshSequenceA
+	End Object
+
+	Begin Object Name=FirstPersonMesh
+		SkeletalMesh=SkeletalMesh'WP_ImpactHammer.Mesh.SK_WP_Impact_1P'
+		Materials(0)=Material'WP_ImpactHammer.Materials.M_WP_ImpactHammer_Base'
+		PhysicsAsset=None
+		AnimSets(0)=AnimSet'WP_ImpactHammer.Anims.K_WP_Impact_1P_Base'
+		Animations=MeshSequenceA
+		FOV=75
+	End Object
+	AttachmentClass=class'UTGame.UTAttachment_ImpactHammer'
+
+	Components.Remove(PickupMesh)
+
+	WeaponChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireLoop_Cue'
+	WeaponEMPChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFireLoop_Cue'
+	WeaponFireSnd[0]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFire_Cue'
+	WeaponFireSnd[1]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltImpact_Cue'
+	WeaponPutDownSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Lower_Cue'
+	WeaponEquipSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Raise_Cue'
+
+	WeaponFireTypes(0)=EWFT_InstantHit
+	WeaponFireTypes(1)=EWFT_InstantHit
+	WeaponFireTypes(2)=EWFT_None
+	WeaponFireTypes(3)=EWFT_None
+	Spread(2)=0.0
+
+	FiringStatesArray(0)=WeaponChargeUp
+	FiringStatesArray(1)=WeaponChargeUp
+
+	WeaponRange=110.0
+	AutoFireRange=110.0
+
+	FireInterval[0]=1.1//+0.1
+	FireInterval[1]=1.1//+0.1
+	FireInterval[2]=1.1
+	FireInterval[3]=1.1
+
+	FireOffset=(X=20)
+
+	InstantHitDamageTypes(0)=class'UTDmgType_ImpactHammer'
+	InstantHitDamage(0)=10
+	InstantHitDamageTypes(1)=class'UTDmgType_EMP'
+	InstantHitDamage(1)=10
+	InstantHitDamageTypes(2)=none
+	InstantHitDamageTypes(3)=class'UTDmgType_ImpactHammer' // 3 is when bloody from firetype 0
+
+	MuzzleFlashSocket=MuzzleFlashSocket
+	MuzzleFlashPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Primary_Hit'
+	MuzzleFlashAltPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit'
+	bMuzzleFlashPSCLoops=true
+	MuzzleFlashDuration=0.33
+	ChargeEffect[0]=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Charge_Primary'
+	ChargeEffect[1]=ParticleSystem'WP_ImpactHammer.Particles.P_WP_Impact_Charge_Secondary'
+
+
+	AIRating=+0.35
+	CurrentRating=+0.45
+	bFastRepeater=true
+	bInstantHit=true
+	bSplashJump=false
+	bRecommendSplashDamage=false
+	bSniping=false
+	ShouldFireOnRelease(0)=0
+	ShouldFireOnRelease(1)=0
+	bCanThrow=false
+	bMeleeWeapon=true
+
+	InventoryGroup=1
+	GroupWeight=0.7
+
+	ShotCost(0)=0
+	ShotCost(1)=1
+
+	FireCameraAnim[0]=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Primary_Fire_Shake'
+	FireCameraAnim[1]=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Alt_Fire_Shake'
+
+ 	WeaponFireAnim(0)=WeaponFire
+	WeaponFireAnim(1)=WeaponFire
+	WeaponFireAnim(2)=WeaponFire
+	WeaponFireAnim(3)=WeaponFire
+	ArmFireAnim(0)=WeaponFire
+	ArmFireAnim(1)=WeaponFire
+	ArmFireAnim(2)=WeaponFire
+	ArmFireAnim(3)=WeaponFire
+
+ 	WeaponPutDownAnim=WeaponPutDown
+	ArmsPutDownAnim=WeaponPutDown
+	WeaponEquipAnim=WeaponEquip
+	ArmsEquipAnim=WeaponEquip
+
+	ChargeAnim=weaponcharge
+	ChargeIdleAnim=weaponchargedidle
+
+	MaxDamage=140.0
+	MinDamage=20.0
+	MinForce=40000.0
+	MaxForce=100000.0
+	MinSelfDamage=8
+	SelfForceScale=-1.2
+	SelfDamageScale=0.3
+
+	MaxChargeTime=2.5
+	MinChargeTime=1.0
+
+	CrossHairCoordinates=(U=64,V=0,UL=64,VL=64)
+	IconCoordinates=(U=453,V=327,UL=135,VL=57)
+
+	AmmoCount=0;
+	MaxAmmoCount=5;
+	EMPDamage=150.0
+	AmmoDisplayType=EAWDS_None
+
+	ArmsAnimSet=AnimSet'WP_ImpactHammer.Anims.K_WP_Impact_1P_Arms'
+	ImpactJumpSound=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireBodyThrow_Cue'
+
+	AltHitEffect=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit_Impact'
+
+	ImpactKillCameraAnim=CameraAnim'Camera_FX.Gameplay.C_Impact_CharacterGib_Near'
 }

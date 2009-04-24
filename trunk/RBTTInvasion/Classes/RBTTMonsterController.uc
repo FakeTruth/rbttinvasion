@@ -97,7 +97,7 @@ function ChooseAttackMode()
 	GoalString = " ChooseAttackMode last seen "$(WorldInfo.TimeSeconds - LastSeenTime);
 	// should I run away?
 	if ( (Squad == None) || (Enemy == None) || (Pawn == None) )
-		LogInternal("HERE 1 Squad "$Squad$" Enemy "$Enemy$" pawn "$Pawn);
+		`log("HERE 1 Squad "$Squad$" Enemy "$Enemy$" pawn "$Pawn);
 	EnemyStrength = RelativeStrength(Enemy);
 	if ( EnemyStrength > RetreatThreshold && (PlayerReplicationInfo.Team != None) && (FRand() < 0.25)
 		&& (WorldInfo.TimeSeconds - LastInjuredVoiceMessageTime > 45.0) )
@@ -204,11 +204,11 @@ function Destroyed()
 {
 	// Don't let monsters respawn into the game. Just remove them.
 	bIsPlayer = false;
-	LogInternal(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	PlayerReplicationInfo.Destroy();
-	LogInternal(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	super.Destroyed();
 }
 
@@ -225,8 +225,8 @@ function PawnDied(Pawn P)
 
 	Super.PawnDied(P);
 	
-	LogInternal(">>>>>>>>>>>>>>        PAWN HAS DIED        <<<<<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>>>>>> ABOUT TO DESTROY CONTROLLER <<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>        PAWN HAS DIED        <<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>> ABOUT TO DESTROY CONTROLLER <<<<<<<<<<<<<<<");
 	Destroy();
 }
 
@@ -242,7 +242,7 @@ event WhatToDoNext()
 	{
 		if ( ( WorldInfo.TimeSeconds - LastRespawnTime > 5) && ((LastSeenTime == 0) || (WorldInfo.TimeSeconds - LastSeenTime) > 15) && !Pawn.PlayerCanSeeMe() )
 		{
-			LogInternal("@@@@ TELEPORTING MONSTER @@@@");
+			`log("@@@@ TELEPORTING MONSTER @@@@");
 			LastRespawnTime = WorldInfo.TimeSeconds;
 			EnemyVisibilityTime = 0;
 			N = WorldInfo.Game.FindPlayerStart(self,1);
@@ -258,11 +258,12 @@ defaultproperties
 {
    ReactionTime=0.500000
    Jumpiness=1.000000
-   Begin Object Class=UTBotDecisionComponent Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
+   Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
       ObjectArchetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
    End Object
    DecisionComponent=TheDecider
-   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
+   //bIsPlayer=False
+   Begin Object Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
       ObjectArchetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
    End Object
    Components(0)=Sprite

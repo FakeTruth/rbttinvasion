@@ -37,11 +37,13 @@ static function int GetFontSize( int Switch, PlayerReplicationInfo RelatedPRI1, 
 
 defaultproperties
 {
-   AddColor=(B=0,G=255,R=255,A=255)
-   RemoveColor=(B=255,G=128,R=128,A=255)
-   Lifetime=5.000000
-   DrawColor=(B=0,G=255,R=255,A=255)
-   FontSize=2
-   Name="Default__RBTTMutatorMessage"
-   ObjectArchetype=UTLocalMessage'UTGame.Default__UTLocalMessage'
+	FontSize=2
+	Lifetime=5
+	MessageArea=1
+	bIsConsoleMessage=False
+	bIsUnique=FALSE
+	//bBeep=false
+	DrawColor=(R=255,G=255,B=0,A=255)
+	Addcolor=(R=255,G=255,B=0,A=255)
+	RemoveColor=(R=128,G=128,B=255,A=255)
 }

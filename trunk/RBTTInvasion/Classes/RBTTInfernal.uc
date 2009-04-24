@@ -45,7 +45,7 @@ simulated function PostBeginPlay()
 	{
 		if ( HeroGroundPoundEmitter == None || GroundPoundTemplate != HeroGroundPoundEmitter.Template )
 		{
-			LogInternal(">> CREATING EMITTER IN POSTBEGINPLAY <<");
+			`log(">> CREATING EMITTER IN POSTBEGINPLAY <<");
 			HeroGroundPoundEmitter = new(self) class'UTParticleSystemComponent';
 			HeroGroundPoundEmitter.SetTemplate(GroundPoundTemplate);
 			HeroGroundPoundEmitter.bAutoActivate = false;
@@ -412,103 +412,102 @@ simulated function bool ShouldGib(class<UTDamageType> UTDamageType)
 
 defaultproperties
 {
-   HeroGroundPoundTemplate=ParticleSystem'UN_HeroEffects.Effects.FX_GroundPoundHands'
-   MeleeSound=SoundCue'A_Titan_Extras.SoundCues.A_Vehicle_Goliath_Collide'
-   MeleeRadius=900.000000
-   FootStepShake=CameraAnim'Camera_FX.DarkWalker.C_VH_DarkWalker_Step_Shake'
-   FootStepShakeRadius=1000.000000
-   FootSound=SoundCue'A_Titan_Extras.Cue.A_Vehicle_DarkWalker_FootstepCue'
-   MeleeDmgClass=Class'UTGame.UTDmgType_HeroMelee'
-   PlasmaDamage=50.000000
-   PoundDamage=50.000000
-   DeResBoneNames(0)="b_RightForeArm"
-   DeResBoneNames(1)="b_LeftForeArm"
-   DeResBoneNames(2)="b_Neck"
-   DeResBoneNames(3)="b_RightHand"
-   DeResBoneNames(4)="b_LeftHand"
-   DeResBoneNames(5)="b_Spine1"
-   DeResBoneNames(6)="b_RightLeg"
-   DeResBoneNames(7)="b_LeftLeg"
-   MonsterName="Infernal"
-   bEmptyHanded=True
-   Begin Object Class=DynamicLightEnvironmentComponent Name=MyLightEnvironment ObjName=MyLightEnvironment Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:MyLightEnvironment'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:MyLightEnvironment'
-   End Object
-   LightEnvironment=MyLightEnvironment
-   Begin Object Class=ParticleSystemComponent Name=GooDeath ObjName=GooDeath Archetype=ParticleSystemComponent'RBTTInvasion.Default__RBTTMonster:GooDeath'
-      ObjectArchetype=ParticleSystemComponent'RBTTInvasion.Default__RBTTMonster:GooDeath'
-   End Object
-   BioBurnAway=GooDeath
-   Begin Object Class=DynamicLightEnvironmentComponent Name=DeathVisionLightEnv ObjName=DeathVisionLightEnv Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:DeathVisionLightEnv'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:DeathVisionLightEnv'
-   End Object
-   FirstPersonDeathVisionLightEnvironment=DeathVisionLightEnv
-   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonArms ObjName=FirstPersonArms Archetype=UTSkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:FirstPersonArms'
-      Begin Object Class=AnimNodeSequence Name=MeshSequenceA ObjName=MeshSequenceA Archetype=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms.MeshSequenceA'
-         ObjectArchetype=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms.MeshSequenceA'
-      End Object
-      Animations=AnimNodeSequence'RBTTInvasion.Default__RBTTInfernal:FirstPersonArms.MeshSequenceA'
-      ObjectArchetype=UTSkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:FirstPersonArms'
-   End Object
-   ArmsMesh(0)=FirstPersonArms
-   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonArms2 ObjName=FirstPersonArms2 Archetype=UTSkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:FirstPersonArms2'
-      Begin Object Class=AnimNodeSequence Name=MeshSequenceB ObjName=MeshSequenceB Archetype=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms2.MeshSequenceB'
-         ObjectArchetype=AnimNodeSequence'RBTTInvasion.Default__RBTTMonster:FirstPersonArms2.MeshSequenceB'
-      End Object
-      Animations=AnimNodeSequence'RBTTInvasion.Default__RBTTInfernal:FirstPersonArms2.MeshSequenceB'
-      ObjectArchetype=UTSkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:FirstPersonArms2'
-   End Object
-   ArmsMesh(1)=FirstPersonArms2
-   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent ObjName=AmbientSoundComponent Archetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent'
-      ObjectArchetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent'
-   End Object
-   PawnAmbientSound=AmbientSoundComponent
-   Begin Object Class=UTAmbientSoundComponent Name=AmbientSoundComponent2 ObjName=AmbientSoundComponent2 Archetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent2'
-      ObjectArchetype=UTAmbientSoundComponent'RBTTInvasion.Default__RBTTMonster:AmbientSoundComponent2'
-   End Object
-   WeaponAmbientSound=AmbientSoundComponent2
-   Begin Object Class=SkeletalMeshComponent Name=OverlayMeshComponent0 ObjName=OverlayMeshComponent0 Archetype=SkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:OverlayMeshComponent0'
-      ObjectArchetype=SkeletalMeshComponent'RBTTInvasion.Default__RBTTMonster:OverlayMeshComponent0'
-   End Object
+	DeResBoneNames(0)=b_RightForeArm
+	DeResBoneNames(1)=b_LeftForeArm
+	DeResBoneNames(2)=b_Neck
+	DeResBoneNames(3)=b_RightHand
+	DeResBoneNames(4)=b_LeftHand
+	DeResBoneNames(5)=b_Spine1
+	DeResBoneNames(6)=b_RightLeg
+	DeResBoneNames(7)=b_LeftLeg
+
+	health = 1000
+
+	PlasmaDamage = 50.0
+	PoundDamage = 50.0
+
+	FootStepShakeRadius=1000.0
+	FootStepShake=CameraAnim'Camera_FX.DarkWalker.C_VH_DarkWalker_Step_Shake'
+	FootSound=SoundCue'A_Titan_Extras.Cue.A_Vehicle_DarkWalker_FootstepCue'
+	
+	MeleeDmgClass=class'UTDmgType_HeroMelee'
+
+	HeroGroundPoundTemplate=ParticleSystem'UN_HeroEffects.Effects.FX_GroundPoundHands'
+	MeleeSound=SoundCue'A_Titan_Extras.SoundCues.A_Vehicle_Goliath_Collide'
+	MeleeRadius=900.0
+	
+	bEmptyHanded = True
+	bNeedWeapon = False
+	bCanPickupInventory = False
+	
+	LeftFootControlName="LeftFrontFootControl"
+ 
+	RightFootControlName="RightFrontFootControl"
+
+	MonsterName = "Infernal"
+   
+	MonsterSkill=1
+
+	LightEnvironment=MyLightEnvironment
+
+	BioBurnAway=GooDeath
+
+	ArmsMesh(0)=FirstPersonArms
+
+	ArmsMesh(1)=FirstPersonArms2
+
+	PawnAmbientSound=AmbientSoundComponent
+
+	WeaponAmbientSound=AmbientSoundComponent2
+   
    OverlayMesh=OverlayMeshComponent0
-   Begin Object Class=DynamicLightEnvironmentComponent Name=XRayEffectLightEnv ObjName=XRayEffectLightEnv Archetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:XRayEffectLightEnv'
-      ObjectArchetype=DynamicLightEnvironmentComponent'RBTTInvasion.Default__RBTTMonster:XRayEffectLightEnv'
-   End Object
-   XRayEffectLightEnvironment=XRayEffectLightEnv
-   LeftFootControlName="LeftFrontFootControl"
-   RightFootControlName="RightFrontFootControl"
-   DefaultFamily=Class'RBTTInvasion.RBTTInfernalFamilyInfo'
-   DefaultMesh=None
-   DefaultRadius=85.000000
-   DefaultHeight=171.000000
+   
+   DefaultFamily=Class'RBTTInfernalFamilyInfo'
+   
+   DefaultMesh=SkeletalMesh'RBTTInfernal.Infernal'
+   
    WalkableFloorZ=0.800000
-   Health=1000
-   ControllerClass=Class'RBTTInvasion.RBTTMonsterControllerNoWeapon'
-   Begin Object Class=SkeletalMeshComponent Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-      PhysicsAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
+   
+   ControllerClass=Class'RBTTMonsterControllerNoWeapon'
+ 
+   Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+      Scale3D=(X=4,Y=4,Z=4)
+      
+      SkeletalMesh=SkeletalMesh'RBTTInfernal.Infernal'
+      AnimTreeTemplate=AnimTree'CH_AnimHuman_Tree.AT_CH_Human'
       AnimSets(0)=AnimSet'CH_AnimHuman.Anims.K_AnimHuman_BaseMale'
-      Scale3D=(X=4.000000,Y=4.000000,Z=4.000000)
-      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+      PhysicsAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
+      bHasPhysicsAssetInstance=True
+      Name="WPawnSkeletalMeshComponent"
+	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
    End Object
    Mesh=WPawnSkeletalMeshComponent
-   Begin Object Class=CylinderComponent Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
+   
+   DefaultRadius = 85.0000
+   DefaultHeight = 171.0000
+   
+   Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
       CollisionHeight=171.000000
       CollisionRadius=85.000000
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder
+   
    Components(0)=CollisionCylinder
-   Begin Object Class=ArrowComponent Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
+   
+   Begin Object Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
       ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
    End Object
+   
+   
    Components(1)=Arrow
    Components(2)=MyLightEnvironment
    Components(3)=WPawnSkeletalMeshComponent
    Components(4)=AmbientSoundComponent
    Components(5)=AmbientSoundComponent2
    Components(6)=MyLightEnvironment
-   Components(7)=None
    Components(8)=CollisionCylinder
    CollisionComponent=CollisionCylinder
-   Name="Default__RBTTInfernal"
+   Name="RBTTInfernal"
+   ObjectArchetype=UTPawn'UTGame.Default__UTPawn'
 }

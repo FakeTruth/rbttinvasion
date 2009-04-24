@@ -15,7 +15,7 @@ simulated function Tick( float DeltaTime )
 		return;
 
 	VeryOldGoalString = GoalString;
-	LogInternal(GoalString);
+	`log(GoalString);
 }
 
 /* ChooseAttackMode()
@@ -35,7 +35,7 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 event WhatToDoNext()
@@ -45,7 +45,7 @@ event WhatToDoNext()
 	if(Pawn.Velocity.Z < 128)
 	{
 		Pawn.Velocity.Z += 50;
-		LogInternal(">>Monster goes up!<<");
+		`log(">>Monster goes up!<<");
 	}
 }
 
@@ -278,18 +278,24 @@ function EnemyChanged(bool bNewEnemyVisible)
 
 defaultproperties
 {
-   bUsingSquadRoute=False
-   Aggressiveness=1.000000
-   BaseAggressiveness=1.000000
-   CombatStyle=0.400000
-   Begin Object Class=UTBotDecisionComponent Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
+	Aggressiveness=1.0000
+	BaseAggressiveness=1.0000
+	CombatStyle=0.4000 // 1 = melee, 2 = snipe
+	bUsingSquadRoute=False
+
+   ReactionTime=0.500000
+   Jumpiness=1.000000
+   Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
       ObjectArchetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
    End Object
    DecisionComponent=TheDecider
-   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
+   //bIsPlayer=False
+   Begin Object Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
       ObjectArchetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
    End Object
    Components(0)=Sprite
    Components(1)=TheDecider
-   Name="Default__RBTTMonsterControllerGasBag"
+   RotationRate=(Pitch=65535,Yaw=65535,Roll=2048)
+   Name="Default__RBTTMonsterControllerStinger"
+   ObjectArchetype=UTBot'UTGame.Default__UTBot'
 }

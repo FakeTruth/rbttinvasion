@@ -15,11 +15,14 @@ static function string GetString(
 
 defaultproperties
 {
-   OutString="is OUT"
-   MessageArea=2
-   Lifetime=5.000000
-   DrawColor=(B=64,G=255,R=255,A=255)
-   FontSize=3
-   Name="Default__OutMessage"
-   ObjectArchetype=UTLocalMessage'UTGame.Default__UTLocalMessage'
+    bIsUnique=False
+    bIsConsoleMessage=False
+    Lifetime=5
+
+    DrawColor=(R=255,G=255,B=64,A=255)
+    FontSize=3
+
+    MessageArea=2
+    
+    OutString = "is OUT"
 }

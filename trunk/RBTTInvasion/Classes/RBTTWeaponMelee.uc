@@ -174,13 +174,13 @@ simulated event float GetPowerPerc()
 }
 
 // not needed, so clear it!
-event ImpactAutoFire(){ LogInternal(">>> ImpactAutoFire() <<<"); }
-simulated function ImpactFire(){ LogInternal(">>> ImpactFire() <<<"); }
-reliable client function ClientAutoFire(){ LogInternal(">>> ClientAutoFire() <<<"); }
+event ImpactAutoFire(){ `log(">>> ImpactAutoFire() <<<"); }
+simulated function ImpactFire(){ `log(">>> ImpactFire() <<<"); }
+reliable client function ClientAutoFire(){ `log(">>> ClientAutoFire() <<<"); }
 
 simulated function FireAmmunition()
 {
-	LogInternal(">>>FireAmmunition()<<<");
+	`log(">>>FireAmmunition()<<<");
 	
 	// Use ammunition to fire
 	ConsumeAmmo( CurrentFireMode );
@@ -213,7 +213,7 @@ simulated function InstantFire()
 	local ImpactInfo RealImpact, NearImpact;
 	local int i, FinalImpactIndex;
 
-	LogInternal(">>>>>>>>>>InstantFire()<<<<<<<<<");
+	`log(">>>>>>>>>>InstantFire()<<<<<<<<<");
 	
 	// define range to use for CalcWeaponFire()
 	StartTrace = InstantFireStartTrace();
@@ -270,50 +270,82 @@ simulated function AttachWeaponTo( SkeletalMeshComponent MeshCpnt, optional Name
 
 defaultproperties
 {
-   MinDamage=15.000000
-   MinForce=20000.000000
-   AutoFireRange=110.000000
-   ChargeEffect(0)=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Charge_Primary'
-   ChargeEffect(1)=ParticleSystem'WP_ImpactHammer.Particles.P_WP_Impact_Charge_Secondary'
-   ImpactKillCameraAnim=CameraAnim'Camera_FX.Gameplay.C_Impact_CharacterGib_Near'
-   bExportMenuData=False
-   bMuzzleFlashPSCLoops=True
-   bFastRepeater=True
-   ShotCost(0)=0
-   ShotCost(1)=0
-   FireCameraAnim(0)=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Primary_Fire_Shake'
-   FireCameraAnim(1)=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Alt_Fire_Shake'
-   InventoryGroup=1
-   GroupWeight=0.700000
-   WeaponFireAnim(2)="WeaponFire"
-   WeaponFireAnim(3)="WeaponFire"
-   ArmFireAnim(2)="WeaponFire"
-   ArmFireAnim(3)="WeaponFire"
-   MuzzleFlashPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Primary_Hit'
-   MuzzleFlashAltPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit'
-   CurrentRating=0.450000
-   FireInterval(0)=0.500000
-   Spread(2)=0.000000
-   InstantHitDamage(0)=10.000000
-   InstantHitDamageTypes(0)=Class'RBTTInvasion.MeleeDamage'
-   InstantHitDamageTypes(1)=None
-   InstantHitDamageTypes(2)=None
-   InstantHitDamageTypes(3)=None
-   FireOffset=(X=20.000000,Y=0.000000,Z=0.000000)
-   bCanThrow=False
-   bInstantHit=True
-   bMeleeWeapon=True
-   WeaponRange=110.000000
-   Begin Object Class=UTSkeletalMeshComponent Name=FirstPersonMesh ObjName=FirstPersonMesh Archetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
-      ObjectArchetype=UTSkeletalMeshComponent'UTGame.Default__UTWeapon:FirstPersonMesh'
-   End Object
-   Mesh=FirstPersonMesh
-   AIRating=0.350000
-   Begin Object Class=SkeletalMeshComponent Name=PickupMesh ObjName=PickupMesh Archetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
-      ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTWeapon:PickupMesh'
-   End Object
-   DroppedPickupMesh=PickupMesh
-   PickupFactoryMesh=PickupMesh
-   Name="Default__RBTTWeaponMelee"
-   ObjectArchetype=UTWeapon'UTGame.Default__UTWeapon'
+	bExportMenuData=False // dont have data on this weapon! >_<
+
+	Begin Object class=AnimNodeSequence Name=MeshSequenceA
+	End Object
+
+	Begin Object Name=FirstPersonMesh
+	End Object
+	//AttachmentClass=class'UTGame.UTAttachment_ImpactHammer'
+
+	Components.Remove(PickupMesh)
+
+	//WeaponChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_FireLoop_Cue'
+	//WeaponEMPChargeSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFireLoop_Cue'
+	//WeaponFireSnd[0]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltFire_Cue'
+	//WeaponFireSnd[1]=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_AltImpact_Cue'
+	//WeaponPutDownSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Lower_Cue'
+	//WeaponEquipSnd=SoundCue'A_Weapon_ImpactHammer.ImpactHammer.A_Weapon_ImpactHammer_Raise_Cue'
+
+	WeaponFireTypes(0)=EWFT_InstantHit
+	Spread(2)=0.0
+
+	WeaponRange=110.0
+	AutoFireRange=110.0
+
+	FireInterval[0]=0.5
+
+	FireOffset=(X=20)
+
+	InstantHitDamageTypes(0)=class'RBTTInvasion.MeleeDamage'
+	InstantHitDamage(0)=10
+	InstantHitDamageTypes(1)=none
+	InstantHitDamageTypes(2)=none
+	InstantHitDamageTypes(3)=none
+
+	MuzzleFlashSocket=MuzzleFlashSocket
+	MuzzleFlashPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Primary_Hit'
+	MuzzleFlashAltPSCTemplate=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Secondary_Hit'
+	bMuzzleFlashPSCLoops=true
+	MuzzleFlashDuration=0.33
+	ChargeEffect[0]=ParticleSystem'WP_ImpactHammer.Particles.P_WP_ImpactHammer_Charge_Primary'
+	ChargeEffect[1]=ParticleSystem'WP_ImpactHammer.Particles.P_WP_Impact_Charge_Secondary'
+
+
+	AIRating=+0.35
+	CurrentRating=+0.45
+	bFastRepeater=true
+	bInstantHit=true
+	bSplashJump=false
+	bRecommendSplashDamage=false
+	bSniping=false
+	ShouldFireOnRelease(0)=0
+	ShouldFireOnRelease(1)=0
+	bCanThrow=false
+	bMeleeWeapon=true
+
+	InventoryGroup=1
+	GroupWeight=0.7
+
+	ShotCost(0)=0
+	ShotCost(1)=0
+
+	FireCameraAnim[0]=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Primary_Fire_Shake'
+	FireCameraAnim[1]=CameraAnim'Camera_FX.ImpactHammer.C_WP_ImpactHammer_Alt_Fire_Shake'
+
+ 	WeaponFireAnim(0)=WeaponFire
+	WeaponFireAnim(1)=WeaponFire
+	WeaponFireAnim(2)=WeaponFire
+	WeaponFireAnim(3)=WeaponFire
+	ArmFireAnim(0)=WeaponFire
+	ArmFireAnim(1)=WeaponFire
+	ArmFireAnim(2)=WeaponFire
+	ArmFireAnim(3)=WeaponFire
+
+	MinDamage=15.0
+	MinForce=20000.0
+
+	ImpactKillCameraAnim=CameraAnim'Camera_FX.Gameplay.C_Impact_CharacterGib_Near'
 }
+

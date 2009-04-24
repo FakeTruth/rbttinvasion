@@ -38,18 +38,18 @@ function bool PickRetreatDestination() // Retreat is for pussies
 
 function DoRetreat()
 {
-	LogInternal(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
+	`log(">>>>>>ITS TRYING TO GET AWAY!!!<<<<<<<<<");
 }
 
 function Destroyed() 
 {
 	// Don't let monsters respawn into the game. Just remove them.
 	bIsPlayer = false;
-	LogInternal(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	PlayerReplicationInfo.Destroy();
-	LogInternal(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
-	LogInternal(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	`log(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
+	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
 	super.Destroyed();
 }
 
@@ -157,18 +157,24 @@ function bool WeaponFireAgain(bool bFinishedFire)
 
 defaultproperties
 {
-   bUsingSquadRoute=False
-   Aggressiveness=1.000000
-   BaseAggressiveness=1.000000
-   CombatStyle=1.000000
-   Begin Object Class=UTBotDecisionComponent Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
+	Aggressiveness=1.0000
+	BaseAggressiveness=1.0000
+	CombatStyle=1.0000
+	bUsingSquadRoute=False
+
+   ReactionTime=0.500000
+   Jumpiness=1.000000
+   Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
       ObjectArchetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'
    End Object
    DecisionComponent=TheDecider
-   Begin Object Class=SpriteComponent Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
+   //bIsPlayer=False
+   Begin Object Name=Sprite ObjName=Sprite Archetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
       ObjectArchetype=SpriteComponent'UTGame.Default__UTBot:Sprite'
    End Object
    Components(0)=Sprite
    Components(1)=TheDecider
+   RotationRate=(Pitch=65535,Yaw=65535,Roll=2048)
    Name="Default__RBTTMonsterControllerMelee"
+   ObjectArchetype=UTBot'UTGame.Default__UTBot'
 }

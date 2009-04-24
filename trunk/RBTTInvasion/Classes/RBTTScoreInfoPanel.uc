@@ -158,13 +158,8 @@ event DrawPanel()
 	}
 }
 
+
+
 defaultproperties
 {
-   BarColor=(R=0.000000,G=0.000000,B=0.000000,A=1.000000)
-   Begin Object Class=UIComp_Event Name=WidgetEventComponent ObjName=WidgetEventComponent Archetype=UIComp_Event'UTGame.Default__UTDrawPanel:WidgetEventComponent'
-      ObjectArchetype=UIComp_Event'UTGame.Default__UTDrawPanel:WidgetEventComponent'
-   End Object
-   EventProvider=WidgetEventComponent
-   Name="Default__RBTTScoreInfoPanel"
-   ObjectArchetype=UTDrawPanel'UTGame.Default__UTDrawPanel'
 }

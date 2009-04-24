@@ -11,29 +11,30 @@ class RBTTHumanSkeletonFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
+
    FamilyID="HumanSkeleton"
    Faction="RBTTMonster"
    PhysAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
-   AnimSets(0)=AnimSet'CH_AnimHuman.Anims.K_AnimHuman_BaseMale'
    MasterSkeleton=SkeletalMesh'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male'
-   Gibs(0)=(BoneName="b_LeftForeArm",GibClass=Class'UTGame.UTGib_HumanArm')
-   Gibs(1)=(BoneName="b_RightForeArm",GibClass=Class'UTGame.UTGib_HumanArm',bHighDetailOnly=True)
-   Gibs(2)=(BoneName="b_LeftLeg",GibClass=Class'UTGame.UTGib_HumanChunk')
-   Gibs(3)=(BoneName="b_RightLeg",GibClass=Class'UTGame.UTGib_HumanChunk',bHighDetailOnly=True)
-   Gibs(4)=(BoneName="b_Spine",GibClass=Class'UTGame.UTGib_HumanTorso')
-   Gibs(5)=(BoneName="b_Spine1",GibClass=Class'UTGame.UTGib_HumanChunk')
-   Gibs(6)=(BoneName="b_Spine2",GibClass=Class'UTGame.UTGib_HumanBone')
-   Gibs(7)=(BoneName="b_LeftLegUpper",GibClass=Class'UTGame.UTGib_HumanChunk',bHighDetailOnly=True)
-   Gibs(8)=(BoneName="b_RightLegUpper",GibClass=Class'UTGame.UTGib_HumanChunk',bHighDetailOnly=True)
-   HeadGib=(BoneName="b_Head",GibClass=Class'UTGame.UTGib_HumanHead')
+   AnimSets(0)=AnimSet'CH_AnimHuman.Anims.K_AnimHuman_BaseMale'
+
    DeathMeshSkelMesh=SkeletalMesh'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male'
    DeathMeshPhysAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
    DeathMeshNumMaterialsToSetResident=1
-   DeathMeshBreakableJoints(0)="b_LeftArm"
-   DeathMeshBreakableJoints(1)="b_RightArm"
-   DeathMeshBreakableJoints(2)="b_LeftLegUpper"
-   DeathMeshBreakableJoints(3)="b_RightLegUpper"
    SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
+
+	DeathMeshBreakableJoints=("b_LeftArm","b_RightArm","b_LeftLegUpper","b_RightLegUpper")
+	HeadGib=(BoneName=b_Head,GibClass=class'UTGib_HumanHead',bHighDetailOnly=false)
+	Gibs[0]=(BoneName=b_LeftForeArm,GibClass=class'UTGib_HumanArm',bHighDetailOnly=false)
+ 	Gibs[1]=(BoneName=b_RightForeArm,GibClass=class'UTGib_HumanArm',bHighDetailOnly=true)
+ 	Gibs[2]=(BoneName=b_LeftLeg,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=false)
+ 	Gibs[3]=(BoneName=b_RightLeg,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=true)
+ 	Gibs[4]=(BoneName=b_Spine,GibClass=class'UTGib_HumanTorso',bHighDetailOnly=false)
+ 	Gibs[5]=(BoneName=b_Spine1,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=false)
+ 	Gibs[6]=(BoneName=b_Spine2,GibClass=class'UTGib_HumanBone',bHighDetailOnly=false)
+ 	Gibs[7]=(BoneName=b_LeftLegUpper,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=true)
+ 	Gibs[8]=(BoneName=b_RightLegUpper,GibClass=class'UTGib_HumanChunk',bHighDetailOnly=true)
+
    Name="Default__RBTTHumanSkeletonFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'
 }

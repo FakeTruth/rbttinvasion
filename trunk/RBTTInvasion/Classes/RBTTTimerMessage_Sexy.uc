@@ -69,27 +69,28 @@ static function int GetFontSize( int Switch, PlayerReplicationInfo RelatedPRI1, 
 
 defaultproperties
 {
-   Announcements(0)=
-   Announcements(1)=
-   Announcements(2)=
-   Announcements(3)=
-   Announcements(4)=
-   Announcements(5)=
-   Announcements(6)=
-   Announcements(7)=
-   Announcements(8)=
-   Announcements(9)=
-   Announcements(10)=
-   Announcements(11)=
-   Announcements(12)=
-   Announcements(13)=
-   Announcements(14)=
-   Announcements(15)=
-   Announcements(16)=
-   bIsUnique=True
-   Lifetime=1.000000
-   DrawColor=(B=64,G=255,R=255,A=255)
-   FontSize=3
-   Name="Default__RBTTTimerMessage_Sexy"
-   ObjectArchetype=UTLocalMessage'UTGame.Default__UTLocalMessage'
+	FontSize=3
+	Lifetime=1
+	//MessageArea=2
+	bIsConsoleMessage=False
+	bIsUnique=true
+	//bBeep=false
+	DrawColor=(R=255,G=255,B=64,A=255)
+
+	Announcements[1]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.one') //,AnnouncementText="Yo mama...")
+	Announcements[2]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.two')
+	Announcements[3]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.three')
+	Announcements[4]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.four')
+	Announcements[5]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.five')
+	Announcements[6]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.six')
+	Announcements[7]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.seven')
+	Announcements[8]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.eight')
+	Announcements[9]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.nine')
+	Announcements[10]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.ten')
+	Announcements[12]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.30_seconds_remain')
+	Announcements[13]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.1_minute_remains')
+	Announcements[14]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.2_minutes_remain')
+	Announcements[15]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.3_minutes_remain')
+	Announcements[16]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.5_minute_warning')
+	//Announcements[17]=(AnnouncementSound=SoundNodeWave'InvasionSounds.SEXY.A_SEXYAnnouncer_overtime')
 }

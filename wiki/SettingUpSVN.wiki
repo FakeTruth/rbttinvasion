@@ -1,4 +1,7 @@
-A short guide on setting up svn / ut3 to compile rbttinvasion on your machine 
+#summary A short guide on setting up svn / ut3 to compile rbttinvasion on your machine
+
+= Table of Contents =
+<wiki:toc max_depth="1" />
 
 = Introduction =
 

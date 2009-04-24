@@ -3,8 +3,20 @@ MonsterClassName a varible from the MonsterTable
 
 = MonsterClassName =
 
-http://images.allprog.nl/img/5565_1240350742.jpg
-
+{{{
+[RBTTInvasion.RBTTInvasionGameRules]
+PortalSpawnInterval=60
+MonsterTable=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab",MonsterClass=Class'RBTTInvasion.RBTTSkullCrab')
+MonsterTable=(MonsterName="HumanSkeleton",MonsterClassName="RBTTInvasion.RBTTHumanSkeleton",MonsterClass=Class'RBTTInvasion.RBTTHumanSkeleton')
+MonsterTable=(MonsterName="KrallSkeleton",MonsterClassName="RBTTInvasion.RBTTKrallSkeleton",MonsterClass=Class'RBTTInvasion.RBTTKrallSkeleton')
+MonsterTable=(MonsterName="MiningRobot",MonsterClassName="RBTTInvasion.RBTTMiningRobot",MonsterClass=Class'RBTTInvasion.RBTTMiningRobot')
+MonsterTable=(MonsterName="WeldingRobot",MonsterClassName="RBTTInvasion.RBTTWeldingRobot",MonsterClass=Class'RBTTInvasion.RBTTWeldingRobot')
+MonsterTable=(MonsterName="Spider",MonsterClassName="RBTTInvasion.RBTTSpider",MonsterClass=Class'RBTTInvasion.RBTTSpider')
+MonsterTable=(MonsterName="Slime",MonsterClassName="RBTTInvasion.RBTTSlime",MonsterClass=Class'RBTTInvasion.RBTTSlime')
+MonsterTable=(MonsterName="ScarySkull",MonsterClassName="RBTTInvasion.RBTTScarySkull",MonsterClass=Class'RBTTInvasion.RBTTScarySkull')
+MonsterTable=(MonsterName="AePhoenix",MonsterClassName="RBTTInvasion.AePhoenix",MonsterClass=Class'RBTTInvasion.AePhoenix')
+MonsterTable=(MonsterName="Infernal",MonsterClassName="RBTTInvasion.RBTTInfernal",MonsterClass=Class'RBTTInvasion.RBTTInfernal')
+}}}
 
 <table border=1 width=800>
 <tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>

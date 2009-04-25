@@ -1,4 +1,4 @@
-#FriendlyFire a Per-Wave Mutator
+#summary FriendlyFire a Per-Wave Mutator
 
 = FriendlyFire =
 

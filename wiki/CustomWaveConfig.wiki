@@ -1,6 +1,6 @@
 #summary CustomWaveConfig that applys to  maps
 
-= [Default CustomWaveConfig] =
+= [CustomWaveConfig] =
 
 {{{
 [Default CustomWaveConfig]

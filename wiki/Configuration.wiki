@@ -70,6 +70,7 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 ||*MaxMonsters* ||This is the maxium number of monsters allowed in the map at one time. Only the Invasion Mutator minds this variable, if something else would be spawning monsters they don't necessarily have to abide this. So you CAN have more monsters in your game then this variable would allow ||
 ||*bAllowPortals* ||Setting this variable to true allows portals to be spawned on this wave ||
 
+
 = Configuring the Portals =
 
 this is done in both the MonsterTable and the WaveConfig Sections, Setting the time between each portal spawning is done in the RBTTInvasion.RBTTInvasionGameRules section, try to keep this number resonable as you might find the portals spawn faster than you can find and kill them!
@@ -87,3 +88,19 @@ WaveConfig=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,MonstersPerPlaye
 }}}
 
 You set the bAllowPortals To true and portals will spawn in this wave Simple :)
+
+= Adding PerWave Mutators =
+
+[RBTTInvasion.RBTTInvasionMutator]
+MutatorConfig=(MutatorClass="UTGame.UTMutator_FriendlyFire",bSpawned=False,BeginWave=1,EndWave=2)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_LowGrav",BeginWave=1,EndWave=2)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_Slomo",BeginWave=2,EndWave=3)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_LowGrav",BeginWave=7,EndWave=8)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_Instagib",BeginWave=4,EndWave=5)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_Instagib",BeginWave=11,EndWave=12)
+MutatorConfig=(MutatorClass="UTGame.UTMutator_SpeedFreak",bSpawned=False,BeginWave=2,EndWave=3)
+
+||*MutatorConfig*||this is the line that holds the data for each session of the mutator|| 
+||*MutatorClass*||the Actual class name of the the mutator||
+||*BeginWave*||this is the wave you first want the mutator to appear||
+||*EndWave*||this is the wave you want the mutator to be removed||

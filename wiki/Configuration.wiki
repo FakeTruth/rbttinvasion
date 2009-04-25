@@ -119,6 +119,9 @@ RBTTInvasion Currently has 5 Per-Wave mutators which will increase with time her
 ||*UTMutator_SpeedFreak*||Need that little boost then this mtators for you!||
 ||*UTMutator_Instagib*||wanna spice things up then give evryone a insta gib rifle!||
 
+
+<hr>
+
 = Finally =
 
 We hope this helps you understand the configuration of RBTTInvasion and look forward to playing alot of varied servers out there :)

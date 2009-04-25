@@ -30,10 +30,10 @@ MonsterTable=(MonsterName="Infernal",MonsterClassName="RBTTInvasion.RBTTInfernal
 
 Now in the RBTTInvasion.RBTTInvasionGameRules section just add your own monster tale line the variables are explained in the table below
 
-||*MonsterTable*||the data for each monster is held on its own monstertable line||
-||*MonsterName*||the name of the monster (mainly for config intergration)||
-||*MonsterClassName*||the actual name of the pawns Class||
-||*MonsterClass*|| As Above||
+||*MonsterTable*|| The data for each monster is held on its own monstertable line ||
+||*MonsterName*|| The name of the monster (mainly for config integration), monsters will show up in the game with this name ||
+||*MonsterClassName*|| The actual name of the pawns Class, you are required to fill this in ||
+||*MonsterClass*|| As Above, you don't need to fill this in as it won't have any effect ||
 
 any pawn can be added to UT3Invasion but if it's not using our AI the the pawn should spawn its own otherwise it'll just stand there.. failure to correctly specify the monsters or missing packages will hang your waves 
 
@@ -58,12 +58,13 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8),BossMonsters=(9,9,9,9,9,9,9,9),WaveLe
 WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9,2),WaveLength=150,WaveCountdown=30,MonstersPerPlayer=20.000000,bIgnoreMPP=False,bIsQueue=False,MaxMonsters=16,bAllowPortals=True)
 }}}
 
-||*WaveConfig*||this variable holds the configuration details for this specific wave mutiple WaveConfig lines will add extra waves||
-||*MonsterNum*||this is where you specify which mosters you want to spawn, the numbers represent the postion of the monster in the *MonsterTable* the first line in the *MonsterTable* above will spawn all infernals, when invasion is in random spawn mode it picks mosters from the *MonsterNum* variable like a pool so if you had a line whch had, MonsterNum=(9,9,0,0) you would get a 50/50 split of skullcrab and infernals||
-||*WaveLength*||the amount of time monsters will be spawned for in a wave(the wave will not end till the last monster dies||
-||*WaveCountDown*||how much time the players have between each wave to collect ammo etc.. a timer will be displayed during this time ||
-||*MonstersPerPlayer* ||the ratio of monsters vs players||
-||*bIgnoreMPP*||like it says settig this to false will let invasion just keep spawning monsters until *MaxMonsters* is reached ||
-||*bIsQueue* ||this is a little piece of invasion magic by setting this to true the *MonsterNum* Variable is no longer a pool of monsters that invasion randomly spawns from but an ordered list! this means you can specify in exaclty wot order you want your monsters spawn in||
-||*MaxMonsters* ||this is the maxium number of monsters allowed in the map at one time||
-||*bAllowPortals* ||Setting this veriable to true allows portals to be spawned on this wave||
+||*`[Default CustomWaveConfig]`*|| This is the default wave configuration, this will apply to all maps. Creating another CustomWaveConfig, but with DM-HeatRay instead of Default, causes this wave configuration only to work on DM-HeatRay. This way you can have map specific wave configurations.||
+||*WaveConfig*||This variable holds the configuration details for this specific wave an extra WaveConfig line means an extra wave, you have as much waves as you have WaveConfig lines||
+||*MonsterNum*||This is where you specify which mosters you want to spawn, the numbers represent the postion of the monster in the MonsterTable the first line in the MonsterTable above will spawn [Slime Slimes] and [ScarySkull ScarySkulls], when invasion is in random spawn mode it picks monsters from the MonsterNum variable like a pool so if you had a line which had, MonsterNum=(9,9,0,0) you would get a 50/50 split of [SkullCrab SkullCrabs] and [Infernal Infernals]||
+||*WaveLength*||The total amount of time monsters that will be spawned in a wave (the wave will not end till the last monster dies)||
+||*WaveCountDown*||How much time the players have between each wave to collect ammo etc. a timer will be displayed during this time ||
+||*MonstersPerPlayer* ||The ratio of monsters vs players||
+||*bIgnoreMPP*||Like it says settig this to TRUE will let invasion just keep spawning monsters until MaxMonsters is reached, ignoring the MonstersPerPlayer ratio ||
+||*bIsQueue* ||This is a little piece of invasion magic, by setting this to true the MonsterNum Variable is no longer a pool of monsters that invasion randomly spawns from but an ordered list! this means you can specify in exaclty what order you want your monsters spawn in||
+||*MaxMonsters* ||This is the maxium number of monsters allowed in the map at one time. Only the Invasion Mutator minds this variable, if something else would be spawning monsters they don't necessarily have to abide this. So you CAN have more monsters in your game then this variable would allow ||
+||*bAllowPortals* ||Setting this variable to true allows portals to be spawned on this wave ||

@@ -91,6 +91,8 @@ You set the bAllowPortals To true and portals will spawn in this wave Simple :)
 
 = Adding Per-Wave Mutators =
 
+These are RBTTInvasion Specific Mutators that are designed to be added a removed during invasion waves more mutators will be added in time, To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BeginWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table below for an example.
+
 {{{
 [RBTTInvasion.RBTTInvasionMutator]
 MutatorConfig=(MutatorClass="UTGame.UTMutator_FriendlyFire",bSpawned=False,BeginWave=1,EndWave=2)

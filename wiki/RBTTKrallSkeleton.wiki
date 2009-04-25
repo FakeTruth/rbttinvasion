@@ -2,9 +2,12 @@
 
 = Introduction =
 
-This is the monster that looks like a Krall Skeleton
+Another boney mother who likes to throw stuff (this time rockets) he too will steal your vehicle should you happen to leave it lying around  
 
-= Details =
+<a href='http://rbttinvasion.googlecode.com/svn/trunk/Screenshots/RBTTKrallSkeleton.jpg'>
+<img src='http://rbttinvasion.googlecode.com/svn/trunk/Screenshots/RBTTKrallSkeleton.jpg' width=400></a>
+
+= Classes =
 
 Core.Object
 |   
@@ -20,6 +23,7 @@ Core.Object
                |   
                +-- RBTTMonsters.RBTTKrallSkeleton
 
+= Bone Nmaes =
 
 {{{
   0: b_Root

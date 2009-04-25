@@ -1,0 +1,10 @@
+#summary SpeedFreak a Per-Wave Mutator
+
+= SpeedFreak =
+
+{{{
+[RBTTInvasion.RBTTInvasionMutator]
+MutatorConfig=(MutatorClass="UTGame.UTMutator_SpeedFreak",bSpawned=False,BeginWave=1,EndWave=2)
+}}}
+
+||*UTMutator_SpeedFreak*||Need that little boost then this mtators for you!||

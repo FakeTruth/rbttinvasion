@@ -91,6 +91,7 @@ You set the bAllowPortals To true and portals will spawn in this wave Simple :)
 
 = Adding PerWave Mutators =
 
+{{{
 [RBTTInvasion.RBTTInvasionMutator]
 MutatorConfig=(MutatorClass="UTGame.UTMutator_FriendlyFire",bSpawned=False,BeginWave=1,EndWave=2)
 MutatorConfig=(MutatorClass="UTGame.UTMutator_LowGrav",BeginWave=1,EndWave=2)
@@ -99,6 +100,7 @@ MutatorConfig=(MutatorClass="UTGame.UTMutator_LowGrav",BeginWave=7,EndWave=8)
 MutatorConfig=(MutatorClass="UTGame.UTMutator_Instagib",BeginWave=4,EndWave=5)
 MutatorConfig=(MutatorClass="UTGame.UTMutator_Instagib",BeginWave=11,EndWave=12)
 MutatorConfig=(MutatorClass="UTGame.UTMutator_SpeedFreak",bSpawned=False,BeginWave=2,EndWave=3)
+}}}
 
 ||*MutatorConfig*||this is the line that holds the data for each session of the mutator|| 
 ||*MutatorClass*||the Actual class name of the the mutator||

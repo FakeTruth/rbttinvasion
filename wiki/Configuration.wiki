@@ -63,7 +63,7 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 ||*WaveLength*||the amount of time monsters will be spawned for in a wave(the wave will not end till the last monster dies||
 ||*WaveCountDown*||how much time the players have between each wave to collect ammo etc.. a timer will be displayed during this time ||
 ||*MonstersPerPlayer* ||the ratio of monsters vs players||
-||*bIgnoreMPP*||like it says settig this to false will let invasion just keep spwning mosters so be careful with this  ||
+||*bIgnoreMPP*||like it says settig this to false will let invasion just keep spawning monsters until *MaxMonsters* is reached ||
 ||*bIsQueue* ||this is a little piece of invasion magic by setting this to true the *MonsterNum* Variable is no longer a pool of monsters that invasion randomly spawns from but an ordered list! this means you can specify in exaclty wot order you want your monsters spawn in||
 ||*MaxMonsters* ||this is the maxium number of monsters allowed in the map at one time||
 ||*bAllowPortals* ||Setting this veriable to true allows portals to be spawned on this wave||

@@ -1,6 +1,7 @@
 class RBTTScarySkull extends RBTTMonster;
 
-var ParticleSystemComponent ScarySkullEmitters;
+var ParticleSystemComponent ScarySkullEmitter;
+var ParticleSystem EmitterTemplate;
 
 simulated function PostBeginPlay()
 {	
@@ -8,9 +9,12 @@ simulated function PostBeginPlay()
 	
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
-		ScarySkullEmitters = new(self) class'UTParticleSystemComponent';
-		Mesh.AttachComponent(ScarySkullEmitters, 'jaw');
-		ScarySkullEmitters.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
+		Mesh.AttachComponent(ScarySkullEmitter, 'jaw');
+		ScarySkullEmitter.SetTemplate(EmitterTemplate);
+	
+	//	ScarySkullEmitters = new(self) class'UTParticleSystemComponent';
+	//	Mesh.AttachComponent(ScarySkullEmitters, 'jaw');
+	//	ScarySkullEmitters.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
 	}
 }
 function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
@@ -54,6 +58,13 @@ simulated function SetHandIKEnabled(bool bEnabled); // It doesn't have hands >_<
 
 defaultproperties
 {
+	Begin Object Class=ParticleSystemComponent Name=ScarySkullPSC
+		Translation=(X=0,Y=0,Z=0)
+	End Object
+	Components.Add(ScarySkullPSC)
+	ScarySkullEmitter=ScarySkullPSC
+	EmitterTemplate=ParticleSystem'RBTTInfernal.InfernalFire'
+
 	bMeleeMonster = True;
 	AccelRate=+500.000000
 

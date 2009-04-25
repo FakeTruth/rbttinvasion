@@ -18,12 +18,9 @@ MonsterTable=(MonsterName="AePhoenix",MonsterClassName="RBTTInvasion.AePhoenix",
 MonsterTable=(MonsterName="Infernal",MonsterClassName="RBTTInvasion.RBTTInfernal",MonsterClass=Class'RBTTInvasion.RBTTInfernal')
 }}}
 
-
-
-<table border=1 width=800>
-<tr><td><b>MonsterTable</b></td><td>the data for each monster is held on its own monstertable line</td></tr>
-<tr><td><b>MonsterName</b></td><td>the name of the monster (mainly for config intergration) </td></tr>
-<tr><td><b>MonsterClassName</b></td><td>the actual name of the pawns Class</td></tr>
-<tr><td><b>MonsterClass</b> </td><td> As Above </td></tr></table>
+||*MonsterTable*|| The data for each monster is held on its own monstertable line ||
+||*MonsterName*|| The name of the monster (mainly for config integration), monsters will show up in the game with this name ||
+||*MonsterClassName*|| The actual name of the pawns Class, you are required to fill this in ||
+||*MonsterClass*|| As Above, you don't need to fill this in as it won't have any effect ||
 
 More information about the MonsterTable and how to use it can be found on the [Configuration] page 

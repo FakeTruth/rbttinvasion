@@ -1,4 +1,4 @@
- * Home
+ * [HowToInstall Home]
  * Tutorials
   * [HowToInstall How to install]
   * [Configuration Configure Waves]

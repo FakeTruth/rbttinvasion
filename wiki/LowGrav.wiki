@@ -1,0 +1,11 @@
+#summary LowGrav a Per-Wave Mutator
+
+= LowGrav =
+
+{{{
+[RBTTInvasion.RBTTInvasionMutator]
+MutatorConfig=(MutatorClass="UTGame.UTMutator_LowGrav",bSpawned=False,BeginWave=1,EndWave=2)
+}}}
+
+
+||*UTMutator_LowGrav*||Makes everything floaty like||

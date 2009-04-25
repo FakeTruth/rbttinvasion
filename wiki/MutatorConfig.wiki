@@ -13,7 +13,7 @@ MutatorConfig=(MutatorClass="UTGame.UTMutator_Instagib",BeginWave=11,EndWave=12)
 MutatorConfig=(MutatorClass="UTGame.UTMutator_SpeedFreak",bSpawned=False,BeginWave=2,EndWave=3)
 }}}
 
-These are RBTTInvasion Specific Mutators that are designed to be added a removed during invasion waves more mutators will be added in time, To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BegiWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table above for and example
+These are RBTTInvasion Specific Mutators that are designed to be added a removed during invasion waves more mutators will be added in time, To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BeginWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table above for and example
 
 ||*MutatorConfig*||this is the line that holds the data for each session of the mutator|| 
 ||*MutatorClass*||the Actual class name of the the mutator||

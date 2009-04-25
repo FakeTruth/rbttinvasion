@@ -69,3 +69,21 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 ||*bIsQueue* ||This is a little piece of invasion magic, by setting this to true the MonsterNum Variable is no longer a pool of monsters that invasion randomly spawns from but an ordered list! this means you can specify in exaclty what order you want your monsters spawn in||
 ||*MaxMonsters* ||This is the maxium number of monsters allowed in the map at one time. Only the Invasion Mutator minds this variable, if something else would be spawning monsters they don't necessarily have to abide this. So you CAN have more monsters in your game then this variable would allow ||
 ||*bAllowPortals* ||Setting this variable to true allows portals to be spawned on this wave ||
+
+= Configuring the Portals =
+
+this is done in both the MonsterTable and the WaveConfig Sections, Setting the time between each portal spawning is done in the RBTTInvasion.RBTTInvasionGameRules section, try to keep this number resonable as you might find the portals spawn faster than you can find and kill them!
+
+{{{
+[RBTTInvasion.RBTTInvasionGameRules]
+PortalSpawnInterval=60
+}}}
+
+Setting which wave you want your portals to spawn on is done in the CustomWaveConfig section 
+
+{{{
+[Default CustomWaveConfig]
+WaveConfig=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,MonstersPerPlayer=3.000000,bIgnoreMPP=False,bIsQueue=False,MaxMonsters=16,bAllowPortals=True)
+}}}
+
+You set the bAllowPortals To true and portals will spawn in this wave Simple :)

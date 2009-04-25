@@ -20,5 +20,4 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 }}}
 
 
-<table border=1 width=800>
-<tr><td><b>WaveConfig</b></td><td>this variable holds the configuration details for this specific wave mutiple WaveConfig lines will add extra waves</td></tr></table>
+||*WaveConfig*||this variable holds the configuration details for this specific wave mutiple WaveConfig lines will add extra waves||

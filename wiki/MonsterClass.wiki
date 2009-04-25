@@ -18,10 +18,7 @@ MonsterTable=(MonsterName="AePhoenix",MonsterClassName="RBTTInvasion.AePhoenix",
 MonsterTable=(MonsterName="Infernal",MonsterClassName="RBTTInvasion.RBTTInfernal",MonsterClass=Class'RBTTInvasion.RBTTInfernal')
 }}}
 
-
-<table border=1 width=800>
-<tr><td><b>MonsterClass</b></td><td>the actual name of the pawns Class</td></tr>
-</table>
+||*MonsterClass*||the actual name of the pawns Class||
 
 this can be found by search the RBTTInvasion Source found here
 

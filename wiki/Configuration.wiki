@@ -89,7 +89,7 @@ WaveConfig=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,MonstersPerPlaye
 
 You set the bAllowPortals To true and portals will spawn in this wave Simple :)
 
-= Adding PerWave Mutators =
+= Adding Per-Wave Mutators =
 
 {{{
 [RBTTInvasion.RBTTInvasionMutator]

@@ -5,7 +5,7 @@
 
 This page is a brief decription of the UTRBTTInvasion.ini file and how to configure it to your pleasing 
 To the veteran players of ut2004 invasion the config of UT3 Invasion should be pretty straight forward to new players Welcome!
-<hr>
+
 = Adding New Monsters =
 
 as of revision 99 this is for instant action or servers using a seperate mutator to push thier custom content  
@@ -36,7 +36,7 @@ Now in the RBTTInvasion.RBTTInvasionGameRules section just add your own monster 
 ||*MonsterClass*|| As Above, you don't need to fill this in as it won't have any effect ||
 
 any pawn can be added to UT3Invasion but if it's not using our AI the the pawn should spawn its own otherwise it'll just stand there.. failure to correctly specify the monsters or missing packages will hang your waves 
-<hr>
+
 = Configuring The Waves =
 
 the fist thing to understand is that ureal takes each of the monster table lines and assigns it a number starting at zero, this means in the table above the skullcrab is 0 and the infernal is 9 
@@ -70,7 +70,6 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 ||*MaxMonsters* ||This is the maxium number of monsters allowed in the map at one time. Only the Invasion Mutator minds this variable, if something else would be spawning monsters they don't necessarily have to abide this. So you CAN have more monsters in your game then this variable would allow ||
 ||*bAllowPortals* ||Setting this variable to true allows portals to be spawned on this wave ||
 
-<hr>
 = Configuring the Portals =
 
 this is done in both the MonsterTable and the WaveConfig Sections, Setting the time between each portal spawning is done in the RBTTInvasion.RBTTInvasionGameRules section, try to keep this number resonable as you might find the portals spawn faster than you can find and kill them!
@@ -88,7 +87,7 @@ WaveConfig=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,MonstersPerPlaye
 }}}
 
 You set the bAllowPortals To true and portals will spawn in this wave Simple :)
-<hr>
+
 = Adding Per-Wave Mutators =
 
 These are RBTTInvasion Specific Mutators that are designed to be added a removed during invasion waves more mutators will be added in time, To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BeginWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table below for an example.

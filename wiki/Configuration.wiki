@@ -61,7 +61,7 @@ WaveConfig=(MonsterNum=(0,1,2,3,4,5,6,7,8,9),BossMonsters=(9,2,9,2,9,2,9,2,9,2,9
 ||*`[Default CustomWaveConfig]`*|| This is the default wave configuration, this will apply to all maps. Creating another CustomWaveConfig, but with DM-HeatRay instead of Default, causes this wave configuration only to work on DM-HeatRay. This way you can have map specific wave configurations.||
 ||*WaveConfig*||This variable holds the configuration details for this specific wave an extra WaveConfig line means an extra wave, you have as much waves as you have WaveConfig lines||
 ||*MonsterNum*||This is where you specify which mosters you want to spawn, the numbers represent the postion of the monster in the MonsterTable the first line in the MonsterTable above will spawn [Slime Slimes] and [ScarySkull ScarySkulls], when invasion is in random spawn mode it picks monsters from the MonsterNum variable like a pool so if you had a line which had, MonsterNum=(9,9,0,0) you would get a 50/50 split of [SkullCrab SkullCrabs] and [Infernal Infernals]||
-||*BossMonster*||This works like the MonsterNum (a pool of monsters) the differenc is they all spawn at once at the end of a wave||
+||*BossMonsters*||This works like the MonsterNum (a pool of monsters) the differenc is they all spawn at once at the end of a wave||
 ||*WaveLength*||The total amount of time monsters that will be spawned in a wave (the wave will not end till the last monster dies)||
 ||*WaveCountDown*||How much time the players have between each wave to collect ammo etc. a timer will be displayed during this time ||
 ||*MonstersPerPlayer* ||The ratio of monsters vs players||

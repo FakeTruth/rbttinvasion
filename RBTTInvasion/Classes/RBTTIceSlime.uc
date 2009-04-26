@@ -1,5 +1,21 @@
 class RBTTIceSlime extends RBTTSlime;
 
+/** Particle Emitters */
+var ParticleSystemComponent SlimeEmitter;
+
+simulated function PostBeginPlay()
+{
+	super.PostBeginPlay();
+	
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+	{
+
+		SlimeEmitter = new(self) class'UTParticleSystemComponent';
+		Mesh.AttachComponent(SlimeEmitter, 'joint3');
+		SlimeEmitter.SetTemplate(ParticleSystem'RBTTSlime.effects.RBTTIceSlimeSmoke');
+	}
+}
+
 defaultproperties
 {
 	HitDamage = 10
@@ -44,6 +60,7 @@ defaultproperties
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'
   
+   SlimeGlobClass=Class'RBTTIceSlimeGlob'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'RBTTSlime.RBTTSlime'

@@ -44,6 +44,7 @@ defaultproperties
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'
   
+  SlimeGlobClass=Class'RBTTFireSlimeGlob'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'RBTTSlime.RBTTSlime'

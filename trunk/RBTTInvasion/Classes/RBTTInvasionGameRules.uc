@@ -321,6 +321,22 @@ function CountMonstersLeft()
 	`log(">> MONSTERS HAVE BEEN COUNTED, THIS MANY LEFT:: "@NewMonsterNum@"<<<");
 }
 
+function bool IsMonster(Pawn P)
+{
+	local int i;
+
+	foreach WorldInfo.AllPawns(class'Pawn', P)
+	{
+		for(i=MonsterTable.Length-1; i >= 0; i--)
+		{
+			if(P.class == MonsterTable[i].MonsterClass)
+			{
+				return True;
+			}
+		}
+	}
+}
+
 function bool AddMonster(class<UTPawn> UTP)
 {
 	local NavigationPoint StartSpot;
@@ -478,6 +494,15 @@ function KillRandomMonster()
 	}
 }
 
+function bool PreventDeath(Pawn KilledPawn, Controller Killer, class<DamageType> damageType, vector HitLocation)
+{
+	if(KilledPawn.Controller != None)
+		if(KilledPawn.Controller.bIsPlayer)
+			if(IsMonster(KilledPawn))
+				KilledPawn.Controller.bIsPlayer = False;
+
+	return Super.PreventDeath(KilledPawn,Killer, damageType,HitLocation);
+}
 
 function ScoreKill(Controller Killer, Controller Other)
 {

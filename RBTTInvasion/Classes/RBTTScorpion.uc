@@ -1,4 +1,4 @@
-class RBTTScorpian extends RBTTMonster;
+class RBTTScorpion extends RBTTMonster;
 
 /** Enable or disable IK that keeps hands on IK bones. */
 simulated function SetHandIKEnabled(bool bEnabled); // It doesn't have hands

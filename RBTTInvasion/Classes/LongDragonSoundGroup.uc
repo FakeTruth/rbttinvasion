@@ -5,15 +5,15 @@ class LongDragonSoundGroup extends UTPawnSoundGroup;
 
 defaultproperties
 {
-   DodgeSound=SoundCue'ScarySkullSnds.TortureLoop2Cue'
-   DoubleJumpSound=SoundCue'ScarySkullSnds.TortureLoop2Cue'
-   DefaultJumpingSound=SoundCue'ScarySkullSnds.TortureLoop2Cue'
-   LandSound=SoundCue'ScarySkullSnds.TortureLoop2Cue'
-   FallingDamageLandSound=SoundCue'ScarySkullSnds.TortureLoop1Cue'
-   DyingSound=SoundCue'ScarySkullSnds.TortureLoop1Cue'
-   HitSounds(0)=SoundCue'ScarySkullSnds.TortureLoop1Cue'
-   HitSounds(1)=SoundCue'ScarySkullSnds.TortureLoop1Cue'
-   HitSounds(2)=SoundCue'ScarySkullSnds.TortureLoop1Cue'
+   DodgeSound=None
+   DoubleJumpSound=None
+   DefaultJumpingSound=None
+   LandSound=None
+   FallingDamageLandSound=None
+   DyingSound=None
+   HitSounds(0)=None
+   HitSounds(1)=None
+   HitSounds(2)=None
    GibSound=SoundCue'A_Character_IGMale_Cue.Efforts.A_Effort_IGMale_DeathInstant_Cue'
    DrownSound=SoundCue'A_Character_IGMale_Cue.Efforts.A_Effort_IGMale_MaleDrowning_Cue'
    GaspSound=SoundCue'A_Character_IGMale_Cue.Efforts.A_Effort_IGMale_MGasp_Cue'

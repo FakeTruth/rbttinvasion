@@ -71,6 +71,8 @@ defaultproperties
 
 	BioBurnAway=GooDeath
 
+        DrawScale=5
+
 	ArmsMesh(0)=FirstPersonArms
 
 	ArmsMesh(1)=FirstPersonArms2

@@ -10,6 +10,8 @@ simulated function PostBeginPlay()
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{
 		Mesh.AttachComponent(ScarySkullEmitter, 'jaw');
+		//ScarySkullEmitter.Base = self;
+		ScarySkullEmitter.SetRotation(Rotator(vect(0,0,1)));
 		ScarySkullEmitter.SetTemplate(EmitterTemplate);
 	
 	//	ScarySkullEmitters = new(self) class'UTParticleSystemComponent';
@@ -63,7 +65,7 @@ defaultproperties
 	End Object
 	Components.Add(ScarySkullPSC)
 	ScarySkullEmitter=ScarySkullPSC
-	EmitterTemplate=ParticleSystem'RBTTInfernal.InfernalFire'
+	EmitterTemplate=ParticleSystem'RBTTScarySkull.FireEmitter'
 
 	bMeleeMonster = True;
 	AccelRate=+500.000000

@@ -2,7 +2,7 @@ class RBTTSlime extends RBTTMonster;
 
 var() skeletalMeshComponent DefaultMonsterMesh;
 var() class<UTWeapon> DefaultMonsterWeapon;
-
+var() class<UTProj_BioGlob>SlimeGlobClass;
 //var() int MonsterSkill, 
 var() int monsterTeam;
 //var() string MonsterName;
@@ -173,7 +173,7 @@ simulated function SpawnGibs(class<UTDamageType> UTDamageType, vector HitLocatio
 	
 	super.SpawnGibs(UTDamageType, HitLocation);
 
-	BioGlobSpawn = Spawn(Class'UTGameContent.UTProj_BioGlob',,,self.Location);
+	BioGlobSpawn = Spawn(SlimeGlobClass,,,self.Location);
 	BioGlobSpawn.InitBio(None, 25); //make its strength 25
 	
 	BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
@@ -190,7 +190,7 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 	local UTProj_BioGlob BioGlobSpawn;
 	local Vector VNorm;
 
-	BioGlobSpawn = self.Spawn(Class'UTGameContent.UTProj_BioGlob',,,self.Location);
+	BioGlobSpawn = self.Spawn(SlimeGlobClass,,,self.Location);
 	BioGlobSpawn.InitBio(None, 25); //make its strength 25
 	//BioGlobSpawn.Instigator = self; // Slime made it, so it should be the instigator
 	
@@ -272,7 +272,8 @@ defaultproperties
    
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'
-  
+	
+	SlimeGlobClass=Class'UTGameContent.UTProj_BioGlob'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'RBTTSlime.RBTTSlime'

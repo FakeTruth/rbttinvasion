@@ -591,8 +591,7 @@ function EndInvasionGame(Optional string Reason)
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndInvasionGame<<<<<<<<<<<<<<<<<<<<");
 	
-	foreach WorldInfo.AllControllers(class'RBTTMonsterController', MC)
-		MC.Destroy();
+	KillAllMonsters();
 	
 	if(Reason ~= "TimeLimit")
 	{

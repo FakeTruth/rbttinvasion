@@ -19,6 +19,20 @@ simulated function PostBeginPlay()
 	//	ScarySkullEmitters.SetTemplate(ParticleSystem'RBTTInfernal.InfernalFire');
 	}
 }
+
+simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
+	super.PlayDying(DamageType, HitLoc);
+
+	if (WorldInfo.NetMode != NM_DedicatedServer)
+		SetTimer(2, False, 'RemoveSkullEffects');	// Remove fire after 2 seconds to make it look more  real
+}
+
+simulated function RemoveSkullEffects()
+{
+	ScarySkullEmitter.DeactivateSystem();
+}
+
 function bool PerformDodge(eDoubleClickDir DoubleClickMove, vector Dir, vector Cross)
 {
 	super.PerformDodge(DoubleClickMove, Dir, Cross);

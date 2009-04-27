@@ -9,6 +9,14 @@ var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 var config bool bAllowTranslocator;	// Add translocator ??
 var config bool bForceAllRed;		// Force all players to the red team?
 
+struct MonsterNames
+{
+	var string 				MonsterName;		// The name of the monster, so we can set it's name in the PRI
+	var string 				MonsterClassName;	// The class of the monster as a string
+	var class<Pawn> 			MonsterClass;		// The dynamically loaded class of the corresponding MonsterClassName
+};
+var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
+
 struct MutatorList
 {
 	var string	 			MutatorClass;		// The class of the mutator you want in the game
@@ -127,6 +135,13 @@ function InitMutator(string Options, out string ErrorMessage)
 			
 		
 		}
+	}
+	
+	`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
+	for(i=0;i < MonsterTable.length;i++)
+	{
+		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
+		MonsterTable[i].MonsterClass = class<Pawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
 	}
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things

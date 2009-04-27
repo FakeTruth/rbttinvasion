@@ -123,12 +123,12 @@ simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
 		{	// Deactivate all the emitters on the Infernal
 			InfernalEmitters[i].DeactivateSystem();
 		}
-	}
-	
-	for(i = DeResBoneNames.length-1; i >= 0; i--)
-	{
-		WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
-		//WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'RBTTInfernal.DeRez_Emitter', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
+		
+		for(i = DeResBoneNames.length-1; i >= 0; i--)
+		{
+			WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'WP_LinkGun.Effects.P_WP_Linkgun_Skeleton_Dissolve', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
+			//WorldInfo.MyEmitterPool.SpawnEmitter( ParticleSystem'RBTTInfernal.DeRez_Emitter', Mesh.GetBoneLocation( DeResBoneNames[i] ), Rotator(vect(0,0,1)), self );
+		}
 	}
 	
 	SetTimer(2, False, 'Destroy');

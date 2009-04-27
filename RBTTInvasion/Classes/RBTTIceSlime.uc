@@ -12,7 +12,7 @@ simulated function PostBeginPlay()
 
 		SlimeEmitter = new(self) class'UTParticleSystemComponent';
 		Mesh.AttachComponent(SlimeEmitter, 'joint3');
-		SlimeEmitter.SetTemplate(ParticleSystem'RBTTSlime.effects.RBTTIceSlimeSmoke');
+		SlimeEmitter.SetTemplate(ParticleSystem'RBTTSlime.Effects.RBTTIceSlimeSmoke');
 	}
 }
 

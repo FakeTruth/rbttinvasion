@@ -325,16 +325,9 @@ function bool IsMonster(Pawn P)
 {
 	local int i;
 
-	foreach WorldInfo.AllPawns(class'Pawn', P)
-	{
-		for(i=MonsterTable.Length-1; i >= 0; i--)
-		{
-			if(P.class == MonsterTable[i].MonsterClass)
-			{
+	for(i=MonsterTable.Length-1; i >= 0; i--)
+		if(P.class == MonsterTable[i].MonsterClass)
 				return True;
-			}
-		}
-	}
 }
 
 function bool AddMonster(class<UTPawn> UTP)

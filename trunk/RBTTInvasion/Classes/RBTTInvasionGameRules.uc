@@ -106,24 +106,13 @@ simulated function PostBeginPlay()
 	//SaveConfig();
 }
 
-// FIXME - HUD ISN'T ALWAYS WORKING LIKE THIS!
 // So just use it to set the team..
 function NotifyLogin(Controller NewPlayer)
 {
-	//local RBTTClientReplicator ClientReplicator;
-	
 	`log(">> RBTTInvasionGameRules.NotifyLogin <<");
 
 	if(NewPlayer.PlayerReplicationInfo.Team == UTTeamGame(WorldInfo.Game).Teams[1]) // Put the players in one team, the other team is for monsters
 		UTTeamGame(WorldInfo.Game).SetTeam(NewPlayer, UTTeamGame(WorldInfo.Game).Teams[0], TRUE);
-	
-	/*
-	if(UTPlayerController(NewPlayer) != None)
-	{
-		ClientReplicator = NewPlayer.Spawn(Class'RBTTClientReplicator');
-		ClientReplicator.OwnerController = NewPlayer;
-	}
-	*/
 }
 
 function KillAllMonsters()

@@ -382,10 +382,10 @@ defaultproperties
 	WallHit=none
 
 	Begin Object Name=HitWallFX
-		Template=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Alt_Blob_Impact'
+		Template=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Blob_hits_Blob_Burst'
 		bAutoActivate=false
 		SecondsBeforeInactive=1.0f
 	End Object
 	HitWallEffect=HitWallFX
-	ProjExplosionTemplate=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Alt_Blob_POP'
+	ProjExplosionTemplate=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Primary_PoP'
 }

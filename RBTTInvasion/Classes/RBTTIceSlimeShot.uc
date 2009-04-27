@@ -20,9 +20,9 @@ defaultproperties
 
 
 	//	ProjFlightTemplate=ParticleSystem'Envy_Effects.FX.Bio_Splat'
-	ProjExplosionTemplate=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Primary_PoP'
-	HitPawnTemplate=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Player_Hit'
-	HitBioTemplate=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Blob_hits_Blob_Burst'
+	ProjExplosionTemplate=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Primary_PoP'
+	HitPawnTemplate=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Player_Hit'
+	HitBioTemplate=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Blob_hits_Blob_Burst'
 	ExplosionLightClass=class'UTGame.UTBioExplosionLight'
 
 	Explosionsound=SoundCue'A_Weapon_BioRifle.Weapon.A_BioRifle_FireImpactExplode_Cue'
@@ -49,16 +49,16 @@ defaultproperties
 	Components.Add(ProjectileMesh)
 	GooMesh=ProjectileMesh
 
-	WallHit=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Impact_Primary_Wall';
-	FloorHit=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Impact_Primary_Floor';
-	CeilingHit=ParticleSystem'WP_BioRifle.Particles.P_WP_Bio_Impact_Primary_Ceiling';
+	WallHit=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Impact_Primary_Wall';
+	FloorHit=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Impact_Primary_Floor';
+	CeilingHit=ParticleSystem'RBTTSlime.Particles.Ice_Bio_Impact_Primary_Ceiling';
 
 	WallThreshold = 0.3f;
-	GooDecalTemplate=MaterialInterface'WP_BioRifle.Materials.Bio_Splat_Decal'
+	GooDecalTemplate=MaterialInterface'RBTTSlime.Materials.Ice_Bio_Splat_DecalBio_Splat_Decal'
 	bWaitForEffects=false
 
-	GooDecalChoices[0]=MaterialInterface'WP_BioRifle.Materials.Bio_Splat_Decal'
-	GooDecalChoices[1]=MaterialInterface'WP_BioRifle.Materials.Bio_Splat_Decal_001'
+	GooDecalChoices[0]=MaterialInterface'RBTTSlime.Materials.Ice_Bio_Splat_DecalBio_Splat_Decal'
+	GooDecalChoices[1]=MaterialInterface'RBTTSlime.Materials.Ice_Bio_Splat_DecalBio_Splat_Decal'
 	SteppedInSound=SoundCue'A_Weapon_BioRifle.Weapon.A_BioRifle_FireImpactFizzle_Cue'
 	HitMode=HIT_None
 }

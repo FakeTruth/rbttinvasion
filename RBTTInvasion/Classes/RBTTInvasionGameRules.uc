@@ -1,13 +1,19 @@
 class RBTTInvasionGameRules extends GameRules
+	DependsOn(RBTTInvasionMutator)
 	config(RBTTInvasion);
 
+/* DELETEME
 struct MonsterNames
 {
 	var string 				MonsterName;		// The name of the monster, so we can set it's name in the PRI
 	var string 				MonsterClassName;	// The class of the monster as a string
 	var class<UTPawn> 			MonsterClass;		// The dynamically loaded class of the corresponding MonsterClassName
 };
-var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
+*/
+//var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
+
+var Array<RBTTInvasionMutator.MonsterNames>	MonsterTable;		// Hold all monsternames and classes
+
 
 struct PortalStruct
 {
@@ -79,8 +85,6 @@ replication
 
 simulated function PostBeginPlay()
 {
-	local int i;
-
 	Super.PostBeginPlay();
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.PostBeginPlay<<<<<<<<<<<<<<<<<<<<");
 
@@ -88,12 +92,14 @@ simulated function PostBeginPlay()
 		`log("Custom Wave Configuration has been loaded");
 	
 	
-	`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
+	//`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
+	/* DELETEME
 	for(i=0;i < MonsterTable.length;i++)
 	{
 		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
 		MonsterTable[i].MonsterClass = class<UTPawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
 	}
+	*/
 	
 	WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
 	
@@ -152,6 +158,9 @@ function MatchStarting()
 	
 	//#### GET CURRENT WAVE FROM MUTATOR ####\\
 	CurrentWave = InvasionMut.CurrentWave;
+	
+	//#### GET MONSTERTABLE FROM MUTATOR ####\\
+	MonsterTable = InvasionMut.MonsterTable;
 	
 	CreateMonsterTeam();
 	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
@@ -319,7 +328,7 @@ function bool IsMonster(Pawn P)
 				return True;
 }
 
-function bool AddMonster(class<UTPawn> UTP)
+function bool AddMonster(class<Pawn> P)
 {
 	local NavigationPoint StartSpot;
 	//local Class<UTPawn> NewMonsterPawnClass;
@@ -337,11 +346,11 @@ function bool AddMonster(class<UTPawn> UTP)
 	
 	//NewMonsterPawnClass = MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass;
 	//NewMonsterPawnClass = MonsterTable[Rand(MonsterTable.Length)].MonsterClass;
-	return SpawnMonster(UTP, StartSpot.Location, StartSpot.Rotation);
+	return SpawnMonster(P, StartSpot.Location, StartSpot.Rotation);
 }
 
 // This function will force a monster into the game
-function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
+function bool InsertMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.InsertMonster<<<<<<<<<<<<<<<<<<<<");
 
@@ -350,7 +359,7 @@ function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Ro
 	   || (NumMonsters >= 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))))
 		return False;
 
-	if(!SpawnMonster(UTP, SpawnLocation, SpawnRotation))
+	if(!SpawnMonster(P, SpawnLocation, SpawnRotation))
 	{
 		return False;
 	}
@@ -360,22 +369,22 @@ function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Ro
 }
 
 // Do all the checks before spawning a monster
-function bool SafeSpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation)
+function bool SafeSpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SafeSpawnMonster<<<<<<<<<<<<<<<<<<<<");
 
 	if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters) 
 		if ( NumMonsters < 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
 		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
-			return SpawnMonster(UTP, SpawnLocation, SpawnRotation);
+			return SpawnMonster(P, SpawnLocation, SpawnRotation);
 	
 	return false;
 }
 
 // Spawn a monster of given class at given location
-function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation)
+function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
 {
-	local UTPawn NewMonster;
+	local Pawn NewMonster;
 	local UTTeamGame Game;
 	local Controller Bot;
 	local CharacterInfo MonsterBotInfo;
@@ -385,7 +394,7 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
 	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
-	NewMonster = Spawn(UTP,,,SpawnLocation+(UTP.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
+	NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 	
 	if (NewMonster != None)
 	{
@@ -417,7 +426,8 @@ function bool SpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rot
 		}
 		
 		NumMonsters++;
-		NewMonster.SpawnTransEffect(0);
+		if(UTPawn(NewMonster) != None)
+			UTPawn(NewMonster).SpawnTransEffect(0);
 		`log("This many monsters in the game now:"@NumMonsters);
 		return True;
 	}
@@ -576,8 +586,6 @@ function DropItemFrom(Pawn P, Class<Actor> PickupClass, optional int MiscOption1
 
 function EndInvasionGame(Optional string Reason)
 {
-	local RBTTMonsterController MC;
-	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndInvasionGame<<<<<<<<<<<<<<<<<<<<");
 	
 	KillAllMonsters();
@@ -760,14 +768,14 @@ state BetweenWaves
 		`log("##################RBTTInvasionGameRules.BetweenWaves.BeginState####################");
 	}
 	
-	function bool InsertMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
+	function bool InsertMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation, optional bool bIgnoreMaxMonsters)
 	{
 		// GotoState('MatchInProgress');
 		// return Global.InsertMonster(UTP, SpawnLocation, SpawnRotation, bIgnoreMaxMonsters);	
 		return false;
 	}
 	
-	function bool SafeSpawnMonster(class<UTPawn> UTP, Vector SpawnLocation, optional Rotator SpawnRotation)
+	function bool SafeSpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
 	{
 		return false; // This function is not allowed to spawn monsters between waves
 	}

@@ -6,14 +6,14 @@
 
 = Introduction =
 
-This page is a brief decription of the UTRBTTInvasion.ini file and how to configure it to your pleasing 
+This page is a brief decription of the [UTRBTTInvasionINI UTRBTTInvasion.ini] file and how to configure it to your pleasing 
 To the veteran players of ut2004 invasion the config of UT3 Invasion should be pretty straight forward to new players Welcome!
 
 = Adding New Monsters =
 
 To add your own custom monsters first install your new packages, read the ReadMe file that comes with those packages on how to install them
 
-UTRBTTInvasion.ini file 
+[UTRBTTInvasionINI UTRBTTInvasion.ini] file 
 {{{
 [RBTTInvasion.RBTTInvasionMutator]
 MonsterTable=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab",MonsterClass=Class'RBTTInvasion.RBTTSkullCrab')

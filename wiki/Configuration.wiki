@@ -11,14 +11,11 @@ To the veteran players of ut2004 invasion the config of UT3 Invasion should be p
 
 = Adding New Monsters =
 
-as of revision 99 this is for instant action or servers using a seperate mutator to push thier custom content  
-
-to add your own custom monsters first install your new packages 
+To add your own custom monsters first install your new packages, read the ReadMe file that comes with those packages on how to install them
 
 UTRBTTInvasion.ini file 
 {{{
-[RBTTInvasion.RBTTInvasionGameRules]
-PortalSpawnInterval=60
+[RBTTInvasion.RBTTInvasionMutator]
 MonsterTable=(MonsterName="SkullCrab",MonsterClassName="RBTTInvasion.RBTTSkullCrab",MonsterClass=Class'RBTTInvasion.RBTTSkullCrab')
 MonsterTable=(MonsterName="HumanSkeleton",MonsterClassName="RBTTInvasion.RBTTHumanSkeleton",MonsterClass=Class'RBTTInvasion.RBTTHumanSkeleton')
 MonsterTable=(MonsterName="KrallSkeleton",MonsterClassName="RBTTInvasion.RBTTKrallSkeleton",MonsterClass=Class'RBTTInvasion.RBTTKrallSkeleton')
@@ -31,7 +28,7 @@ MonsterTable=(MonsterName="AePhoenix",MonsterClassName="RBTTInvasion.AePhoenix",
 MonsterTable=(MonsterName="Infernal",MonsterClassName="RBTTInvasion.RBTTInfernal",MonsterClass=Class'RBTTInvasion.RBTTInfernal')
 }}}
 
-Now in the RBTTInvasion.RBTTInvasionGameRules section just add your own monster tale line the variables are explained in the table below
+Now in the RBTTInvasion.RBTTInvasionMutator section just add your own MonsterTable line, the variables are explained in the table below
 
 ||*MonsterTable*|| The data for each monster is held on its own monstertable line ||
 ||*MonsterName*|| The name of the monster (mainly for config integration), monsters will show up in the game with this name ||
@@ -42,7 +39,7 @@ any pawn can be added to UT3Invasion but if it's not using our AI the the pawn s
 
 = Configuring The Waves =
 
-the fist thing to understand is that ureal takes each of the monster table lines and assigns it a number starting at zero, this means in the table above the skullcrab is 0 and the infernal is 9 
+The fist thing to understand is that ureal takes each of the monster table lines and assigns it a number starting at zero, this means in the table above the skullcrab is 0 and the infernal is 9 
 
 {{{
 [Default CustomWaveConfig]
@@ -81,6 +78,7 @@ this is done in both the MonsterTable and the WaveConfig Sections, Setting the t
 [RBTTInvasion.RBTTInvasionGameRules]
 PortalSpawnInterval=60
 }}}
+Default value: `PortalSpawnInterval=60`
 
 Setting which wave you want your portals to spawn on is done in the CustomWaveConfig section 
 
@@ -91,9 +89,21 @@ WaveConfig=(MonsterNum=(0,5,2,1),WaveLength=20,WaveCountdown=20,MonstersPerPlaye
 
 You set the bAllowPortals To true and portals will spawn in this wave Simple :)
 
+= Monster Death Messages =
+
+This variable turns on/off the death messages for killed monsters, this also enables/disables multi-kill announces.
+
+{{{
+[RBTTInvasion.RBTTInvasionGameRules]
+bShowDeathMessages=True
+}}}
+Default Value: `bShowDeathMessages=True`
+
+
 = Adding Per-Wave Mutators =
 
-These are RBTTInvasion Specific Mutators that are designed to be added a removed during invasion waves more mutators will be added in time, To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BeginWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table below for an example.
+These are RBTTInvasion Specific Mutators that are designed to be added or removed during invasion waves. More mutators will be added in time.
+To add and remove mutators multiple times during a match simply add another copy of the MutatorConfig line with different BeginWave and EndWave variables see the UTMutator_LowGrav and UTMutator_Instagib in the table below for an example.
 
 {{{
 [RBTTInvasion.RBTTInvasionMutator]
@@ -111,7 +121,7 @@ MutatorConfig=(MutatorClass="UTGame.UTMutator_SpeedFreak",bSpawned=False,BeginWa
 ||*BeginWave*||this is the wave you first want the mutator to appear||
 ||*EndWave*||this is the wave you want the mutator to be removed||
 
-Unreal counts the WaveConfig the same way it does the MonsterTable assigning the first line as zero and counting on from there.. this means if you want your mutator to spawn on wave 5 then you need to set the BeginWave variable to 4 
+Unreal counts the WaveConfig the same way it does the MonsterTable assigning the first line as zero and counting on from there.. this means if you want your mutator to spawn on wave 5 then you need to set the BeginWave variable to 4. You should also know that the mutator will be removed at the <u>BEGINNING</u> of the EndWave, so if you set the BeginWave to 1, and the EndWave to 2, the mutator will be on for <u>ONE</u> wave
 
 RBTTInvasion Currently has 5 Per-Wave mutators which will increase with time here's a brief decription of each
 
@@ -119,7 +129,7 @@ RBTTInvasion Currently has 5 Per-Wave mutators which will increase with time her
 ||*UTMutator_LowGrav*||Makes everything floaty like!||
 ||*UTMutator_Slomo*||Slows the game speed slightly making everything a little slower||
 ||*UTMutator_SpeedFreak*||Need that little boost then this mtators for you!||
-||*UTMutator_Instagib*||wanna spice things up then give evryone a insta gib rifle!||
+||*UTMutator_Instagib*||Wanna spice things up then give everyone an Instagib Rifle!||
 
 
 <hr>

@@ -76,6 +76,7 @@ var int 					BetweenWavesCountdown;	// Goes from 10 to 0 every wave begin
 var config int					InitialRandomKillTime;	// The initial time before random monster killing happens!
 var config int					NextRandomKillTime;	// After one monster was killed, the next will die in this amount of seconds
 var config int					CountMonstersInterval;	// Seconds between each time the monsters get counted
+var config bool					bShowDeathMessages; 	// If true, monsters will show deathmessages on death
 
 replication
 {
@@ -488,10 +489,11 @@ function KillRandomMonster()
 
 function bool PreventDeath(Pawn KilledPawn, Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
-	if(KilledPawn.Controller != None)
-		if(KilledPawn.Controller.bIsPlayer)
-			if(IsMonster(KilledPawn))
-				KilledPawn.Controller.bIsPlayer = False;
+	if(bShowDeathMessages)
+		if(KilledPawn.Controller != None)
+			if(KilledPawn.Controller.bIsPlayer)
+				if(IsMonster(KilledPawn))
+					KilledPawn.Controller.bIsPlayer = False;
 
 	return Super.PreventDeath(KilledPawn,Killer, damageType,HitLocation);
 }
@@ -1001,6 +1003,8 @@ defaultproperties
    InitialRandomKillTime = 120
    NextRandomKillTime = 30
    CountMonstersInterval = 10
+   
+   bShowDeathMessages=True
    
    PortalSpawnInterval = 60 //Portal spawns every 60 seconds!
 

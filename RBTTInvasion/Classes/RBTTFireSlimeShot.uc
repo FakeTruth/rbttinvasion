@@ -1,11 +1,56 @@
 class RBTTFireSlimeShot extends UTProj_BioShot;
 
+var float FireTime;
+var int FireDamage;
+var float FireDamageInterval;
+
+function SetVictimOnFire(Pawn P)
+{
+	local RBTTFireAttachment FA;
+	local InventoryManager IM;
+
+	FA = RBTTFireAttachment(P.FindInventoryType(Class'RBTTFireAttachment', True)); // WARNING - Also looks for children of the class RBTTFireAttachment!
+	if(FA != None)
+	{
+		if(FA.DamageTime < FireTime)						// Add some fuel
+			FA.DamageTime = FireTime;
+		if(FA.Damage / FA.DamageInterval < FireDamage / FireDamageInterval ) 	// if current fire is weaker than new fire, use new fire
+		{
+			FA.Damage = FireDamage;
+			FA.DamageInterval = FireDamageInterval;
+		}
+		
+		FA.InitFire();
+	}
+	else
+	{
+		IM = P.InvManager;
+		if(IM == None)
+			return;
+			
+		FA = Spawn(class'RBTTFireAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		IM.AddInventory(FA);
+		FA.SetBase(P);
+		FA.Victim = P;
+		FA.InstigatorController = InstigatorController;
+		FA.Damage = FireDamage;
+		FA.DamageInterval = FireDamageInterval;
+		FA.DamageTime = FireTime;
+		FA.InitFire();
+		FA.InitFireClient();
+	}
+}
+
 defaultproperties
 {
+	FireTime = 2.f
+	FireDamage = 1.f
+	FireDamageInterval = 0.25f
+
 	Speed=2000.0
 	Damage=21.0
 	MomentumTransfer=40000
-	MyDamageType=class'UTDmgType_BioGoo'
+	MyDamageType=class'FireDamage'
 	LifeSpan=12.0
 	RotationRate=(Pitch=50000)
 	DesiredRotation=(Pitch=30000)

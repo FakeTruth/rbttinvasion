@@ -5,6 +5,9 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation, Vector HitNorma
 	if ( Other.bProjTarget && (RBTTFireSlimeGlob(Other) == None) && !bExploded )
 	{
 		Other.TakeDamage(Damage, InstigatorController, Location, MomentumTransfer * Normal(Velocity), MyDamageType,, self);
+		if(Pawn(Other) != None && RBTTSlime(Other) == None)
+			SetVictimOnFire(Pawn(Other));
+			
 		Explode( HitLocation, HitNormal );
 	}
 }

@@ -210,6 +210,16 @@ simulated function InstantFire()
 		}
 	}
 }
+//					It's FiringModeZ because otherwise it conflicts with Pawn.FiringMode
+simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
+{
+	if (Impact.HitActor != None)
+	{
+		Impact.HitActor.TakeDamage( Weapon.InstantHitDamage[Weapon.CurrentFireMode], Controller,
+						Impact.HitLocation, Weapon.InstantHitMomentum[FiringModeZ] * Impact.RayDir,
+						Weapon.InstantHitDamageTypes[FiringModeZ], Impact.HitInfo, Weapon );
+	}
+}
 
 
 /*

@@ -1,5 +1,10 @@
 class RBTTFireSlimeGlob extends UTProj_BioGlob;
 
+// Vars for setting people on fire!!
+var float FireTime;
+var int FireDamage;
+var float FireDamageInterval;
+
 function InitBio(UTWeap_BioRifle_Content FiringWeapon, int InGlobStrength)
 {
 	// adjust speed
@@ -329,9 +334,122 @@ state OnGround
 	}
 }
 
+/** ALTERED TO SET PLAYERS ON FIRE!! -FAKETRUTH
+ * Hurt locally authoritative actors within the radius.
+ * Projectile version if needed offsets the start of the radius check to prevent hits embedded in walls from failing to cause damage
+ */
+simulated function bool ProjectileHurtRadius( float DamageAmount, float InDamageRadius, class<DamageType> DamageType, float Momentum,
+						vector HurtOrigin, vector HitNormal, optional class<DamageType> ImpactedActorDamageType )
+{
+	local bool bCausedDamage, bInitializedAltOrigin, bFailedAltOrigin;
+	local Actor	Victim;
+	local vector AltOrigin;
+
+	// Prevent HurtRadius() from being reentrant.
+	if ( bHurtEntry || bShuttingDown )
+		return false;
+
+	bHurtEntry = true;
+	bCausedDamage = false;
+
+	// if ImpactedActor is set, we actually want to give it full damage, and then let him be ignored by super.HurtRadius()
+	if ( (ImpactedActor != None) && (ImpactedActor != self)  )
+	{
+		ImpactedActor.TakeRadiusDamage( InstigatorController, DamageAmount, InDamageRadius,
+						(ImpactedActorDamageType != None) ? ImpactedActorDamageType : DamageType,
+						Momentum, HurtOrigin, true, self );
+		// need to check again in case TakeRadiusDamage() did something that went through our explosion path a second time
+		if (ImpactedActor != None)
+		{
+			bCausedDamage = ImpactedActor.bProjTarget;
+		}
+	}
+
+	foreach CollidingActors( class'Actor', Victim, DamageRadius, HurtOrigin )
+	{
+		if ( !Victim.bWorldGeometry && (Victim != self) && (Victim != ImpactedActor) && (Victim.bProjTarget || (NavigationPoint(Victim) == None)) )
+		{
+			if ( !FastTrace(HurtOrigin, Victim.Location,, TRUE) )
+			{
+				// try out from wall, in case trace start was embedded
+				if ( !bInitializedAltOrigin )
+				{
+					// initialize alternate trace start
+					bInitializedAltOrigin = true;
+					AltOrigin = HurtOrigin + class'UTPawn'.Default.MaxStepHeight * HitNormal;
+					if ( !FastTrace(HurtOrigin, AltOrigin,, TRUE) )
+					{
+						if ( Velocity == vect(0,0,0) )
+						{
+							bFailedAltOrigin = true;
+						}
+						else
+						{
+							AltOrigin = HurtOrigin - class'UTPawn'.Default.MaxStepHeight * normal(Velocity);
+							bFailedAltOrigin = !FastTrace(HurtOrigin, AltOrigin,, TRUE);
+						}
+					}
+				}
+				if ( bFailedAltOrigin || !FastTrace(AltOrigin, Victim.Location,, TRUE) )
+				{
+					continue;
+				}
+			}
+			Victim.TakeRadiusDamage(InstigatorController, DamageAmount, DamageRadius, DamageType, Momentum, HurtOrigin, false, self);
+			if(Pawn(Victim) != None && RBTTSlime(Victim) == None)
+				SetVictimOnFire(Pawn(Victim));
+			bCausedDamage = bCausedDamage || Victim.bProjTarget;
+		}
+	}
+	bHurtEntry = false;
+
+	return bCausedDamage;
+}
+
+function SetVictimOnFire(Pawn P)
+{
+	local RBTTFireAttachment FA;
+	local InventoryManager IM;
+
+	FA = RBTTFireAttachment(P.FindInventoryType(Class'RBTTFireAttachment', True)); // WARNING - Also looks for children of the class RBTTFireAttachment!
+	if(FA != None)
+	{
+		if(FA.DamageTime < FireTime)						// Add some fuel
+			FA.DamageTime = FireTime;
+		if(FA.Damage / FA.DamageInterval < FireDamage / FireDamageInterval ) 	// if current fire is weaker than new fire, use new fire
+		{
+			FA.Damage = FireDamage;
+			FA.DamageInterval = FireDamageInterval;
+		}
+		
+		FA.InitFire();
+	}
+	else
+	{
+		IM = P.InvManager;
+		if(IM == None)
+			return;
+			
+		FA = Spawn(class'RBTTFireAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		IM.AddInventory(FA);
+		FA.SetBase(P);
+		FA.Victim = P;
+		FA.InstigatorController = InstigatorController;
+		FA.Damage = FireDamage;
+		FA.DamageInterval = FireDamageInterval;
+		FA.DamageTime = FireTime;
+		FA.InitFire();
+		FA.InitFireClient();
+	}
+}
+
 
 defaultproperties
 {
+	FireTime = 10.f
+	FireDamage = 1.f
+	FireDamageInterval = 0.25f
+
 	Components.Empty();
 	MaxRestingGlobStrength=6
 	GlobStrength=1
@@ -341,8 +459,8 @@ defaultproperties
 	bNetTemporary=false
 	DrawScale=0.5
 	LifeSpan=20.0
-	MyDamageType=class'UTDmgType_BioGoo_Charged'
-	GibDamageType=class'UTDmgType_BioGooGib'
+	MyDamageType=class'FireDamage'
+	GibDamageType=class'FireDamage'
 	bRotationFollowsVelocity=false
 
 	Begin Object Name=CollisionCylinder

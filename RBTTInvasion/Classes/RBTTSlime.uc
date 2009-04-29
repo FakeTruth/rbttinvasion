@@ -116,8 +116,9 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 	local Vector SpawnLocation;
 
 	
-	if(Class<UTDmgType_BioGoo>(DamageType) == None )
-		super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+	if(DamageType != Class'UTDmgType_BioGoo' &&
+		DamageType != Class'FireDamage')
+			super.TakeDamage(DamageAmount, EventInstigator, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 		
 	if(RBTTMonsterController(EventInstigator) != None)
 		return; // don't make it grow if it's a monster's goo
@@ -192,7 +193,8 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 
 	BioGlobSpawn = self.Spawn(SlimeGlobClass,,,self.Location);
 	BioGlobSpawn.InitBio(None, 25); //make its strength 25
-	//BioGlobSpawn.Instigator = self; // Slime made it, so it should be the instigator
+	BioGlobSpawn.SetOwner(self);
+	BioGlobSpawn.InstigatorController = controller; // Slime made it, so it should be the instigator
 	
 	BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
 	if (BioGlobSpawn.Physics == PHYS_Falling)

@@ -4,6 +4,7 @@
   * [Configuration Configure Waves]
   * [SettingUpSVN Setting up SVN]
  * Monsters
+  * [RBTTSlime Slime]
   * [Infernal Infernal]
   * [AePhoenix AePhoenix]
   * [SkullCrab SkullCrab]

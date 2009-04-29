@@ -207,6 +207,36 @@ simulated function float GetTraceRange()
 	return WeaponRange;
 }
 
+simulated function ProcessInstantHit( byte FiringMode, ImpactInfo Impact )
+{
+	local bool bFixMomentum;
+
+	if (Impact.HitActor != None && !Impact.HitActor.bStatic && (Impact.HitActor != Instigator) )
+	{
+		if ( Impact.HitActor.Role == ROLE_Authority && Impact.HitActor.bProjTarget
+			&& !WorldInfo.GRI.OnSameTeam(Instigator, Impact.HitActor)
+			&& Impact.HitActor.Instigator != Instigator
+			&& PhysicsVolume(Impact.HitActor) == None )
+		{
+			HitEnemy++;
+			LastHitEnemyTime = WorldInfo.TimeSeconds;
+		}
+		if ( (UTPawn(Impact.HitActor) == None) && (InstantHitMomentum[FiringMode] == 0) )
+		{
+			InstantHitMomentum[FiringMode] = 1;
+			bFixMomentum = true;
+		}
+		if(RBTTMonster(Instigator) != None)
+			RBTTMonster(Instigator).ProcessInstantHit(FiringMode, Impact);
+		else
+			Super.ProcessInstantHit(FiringMode, Impact);
+		if (bFixMomentum)
+		{
+			InstantHitMomentum[FiringMode] = 0;
+		}
+	}
+}
+
 simulated function FireAmmunition()
 {
 	// Use ammunition to fire

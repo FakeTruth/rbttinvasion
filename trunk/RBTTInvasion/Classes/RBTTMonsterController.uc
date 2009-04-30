@@ -12,19 +12,13 @@ event PostBeginPlay()
 	//InitPlayerReplicationInfo();
 	//GotoState('Roaming', 'Begin');
 }
-function InitPlayerReplicationInfo() {
-	
-	//local CustomCharData BotCharData;
-	
-	//BotCharData = BotInfo.CharData;
-	//		if(BotCharData.BasedOnCharID == "")
-	//	{
-	//		BotCharData.BasedOnCharID = BotInfo.CharID;
-	//	}
-
+function InitPlayerReplicationInfo() 
+{
+	`log(">> InitPlayerReplicationInfo() <<");
+		
 	PlayerReplicationInfo = Spawn(class'MonsterReplicationInfo', self,, vect(0,0,0), rot(0,0,0));
-	
-	if (PlayerReplicationInfo.PlayerName == "") {
+	if (PlayerReplicationInfo.PlayerName == "") 
+	{
 		PlayerReplicationInfo.SetPlayerName("RBTTMonster");
 	}
 }
@@ -205,11 +199,18 @@ function Destroyed()
 	// Don't let monsters respawn into the game. Just remove them.
 	bIsPlayer = false;
 	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
-	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
-	PlayerReplicationInfo.Destroy();
-	`log(">>>>>>>>>> Replicationinfo destroyed <<<<<<<<<<<<");
-	`log(">>>>>>>>>> PlayerReplicationInfo: "@PlayerReplicationInfo);
+	
+	if ( PlayerReplicationInfo != None )
+	{
+		// remove from team if applicable
+		if ( PlayerReplicationInfo.Team != None )
+			PlayerReplicationInfo.Team.RemoveFromTeam(self);
+		CleanupPRI();
+	}
+	
 	super.Destroyed();
+	
+
 }
 
 function GameHasEnded(optional Actor EndGameFocus, optional bool bIsWinner)

@@ -59,6 +59,12 @@ function PostBeginPlay()
 
 function Mutate (string MutateString, PlayerController Sender)
 {
+	local Actor A;
+	local Array<Class> 	ActorList;
+	local Array<Int>	ActorNumber;
+	local int i;
+	local bool bNoNew;
+	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.Mutate<<<<<<<<<<<<<<<<<<<<");
 
 	if (Sender.PlayerReplicationInfo.bAdmin || Sender.WorldInfo.NetMode == NM_Standalone) {
@@ -71,6 +77,35 @@ function Mutate (string MutateString, PlayerController Sender)
 			case "gotonextwave":
 				RBTTInvasionGameRules(CurrentRules).KillAllMonsters();
 				RBTTInvasionGameRules(CurrentRules).EndWave();
+				break;
+			case "listallactors":
+				LogInternal("############List of actors############");
+				ForEach WorldInfo.AllActors(Class'Actor', A)
+				{
+					bNoNew = False;
+					if(String(A.Class) == "BattlePRI")
+					{
+						Sender.ClientMessage ("BPRI Owner:"@PlayerReplicationInfo(A).Owner);
+						Sender.ClientMessage ("BPRI.PlayerName:"@PlayerReplicationInfo(A).PlayerName);
+						Sender.ClientMessage ("BPRI Instigator:"@PlayerReplicationInfo(A).Instigator);
+					}
+					For(i = 0; i < ActorList.length; i++)
+					{
+						if(ActorList[i] == A.Class)
+						{
+							bNoNew = True;
+							if(ActorNumber.length < i+1)
+								ActorNumber[i] = 1;
+							else
+								ActorNumber[i]++;
+						}
+					}
+					if(!bNoNew)
+						ActorList.AddItem(A.Class);
+				}
+				For(i = 0; i < ActorList.length; i++)
+					Sender.ClientMessage (ActorNumber[i]@"  :"@ActorList[i]);
+				LogInternal("######################################");
 				break;
 		}
 		

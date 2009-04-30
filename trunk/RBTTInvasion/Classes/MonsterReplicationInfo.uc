@@ -25,6 +25,20 @@ simulated function SetCharacterMesh(SkeletalMesh NewSkelMesh, optional bool bIsR
 	`log(">>>SetCharacterMesh()<<<");
 	return;
 }
+simulated event Destroyed()
+{
+	local UTLinkedReplicationInfo NextReplicationInfo;
+	
+	`log(">> MonsterReplicationInfo.Destroyed()<<");
+	While(CustomReplicationInfo != None)
+	{
+		NextReplicationInfo = CustomReplicationInfo.NextReplicationInfo;
+		`log(">> Gonna remove LRI:"@CustomReplicationInfo.class@"<<");
+		CustomReplicationInfo.Destroy();
+		CustomReplicationInfo = NextReplicationInfo;
+	}
+	Super.Destroyed();
+}
 
 
 DefaultProperties

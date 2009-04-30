@@ -489,7 +489,7 @@ function KillRandomMonster()
 
 function bool PreventDeath(Pawn KilledPawn, Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
-	if(bShowDeathMessages)
+	if(!bShowDeathMessages)
 		if(KilledPawn.Controller != None)
 			if(KilledPawn.Controller.bIsPlayer)
 				if(IsMonster(KilledPawn))

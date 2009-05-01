@@ -257,6 +257,8 @@ event WhatToDoNext()
 
 defaultproperties
 {
+	bKillDuringLevelTransition = TRUE
+
    ReactionTime=0.500000
    Jumpiness=1.000000
    Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'

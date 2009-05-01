@@ -590,7 +590,7 @@ function EndInvasionGame(Optional string Reason)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndInvasionGame<<<<<<<<<<<<<<<<<<<<");
 	
-	KillAllMonsters();
+	//KillAllMonsters(); // TEST TEST -FAKETRUTH
 	
 	if(Reason ~= "TimeLimit")
 	{
@@ -857,18 +857,27 @@ state BossWave
 	function BeginState(Name PreviousStateName)
 	{
 		local int i;
+		local int FailedSpawnCount;
 	
 		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BossWave.BeginState<<<<<<<<<<<<<<<<<<<<");
 		
 		WaveConfigBuffer = WaveConfig[CurrentWave].BossMonsters;
 		
 		// Make SURE ALL monsters have been spawned at once
-		for(i = WaveConfigBuffer.length-1; WaveConfigBuffer.length > 0; i--)
+		for(i = WaveConfigBuffer.length-1; WaveConfigBuffer.length > 0 && FailedSpawnCount < 5; i--)
 		{
 			if(i < 0)
 				i = WaveConfigBuffer.length;
 			if(AddMonster(MonsterTable[WaveConfigBuffer[i]].MonsterClass))
+			{
 				WaveConfigBuffer.Remove(i, 1);
+				FailedSpawnCount = 0;
+			}
+			else
+			{
+				FailedSpawnCount++;
+				WarnInternal("FAILED TO SPAWN MONSTER. FAILED"@FailedSpawnCount@"TIME(S)");
+			}
 		}
 	}
 

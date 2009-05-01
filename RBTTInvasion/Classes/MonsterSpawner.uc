@@ -207,6 +207,8 @@ state PhysicsVortex // Taken from UTGame.UTEmit_ShockCombo
 
 defaultproperties
 {
+	bKillDuringLevelTransition = TRUE // LOL!!! I hope this works!!
+
 	Health = 150
 	VortexRadius=512.0
 	VortexForcePerSecond=50.0

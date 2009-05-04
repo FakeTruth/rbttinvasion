@@ -58,6 +58,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 	local string configName;
 	local CustomWaveConfig CWaveConfig;
 	
+	local array<int> TempArrayInt;
 	local string TempString;
 
 	request.GetVariables(AllVars);
@@ -78,7 +79,74 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 		return false;
 	}
 	
-	if(request.GetVariable("SubmitTab2") ~= "True")
+	if(request.GetVariable("AddNewWave") ~= "True")
+	{
+		configName = CurrentEditMap;
+		CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+		`log("####### ADDING NEW WAVE #######");
+		CWaveConfig.WaveConfig.length = CWaveConfig.WaveConfig.length+1;
+		CurrentEditWave = CWaveConfig.WaveConfig.length;
+		CWaveConfig.SaveConfig();
+		LoadWaveConfig(CurrentEditMap); // Reload everything to render the updated config
+		return true;
+	}
+	
+	if(request.GetVariable("InsertWave") ~= "True")
+	{
+		TempString = request.GetVariable("CurrentEditWave");
+		if(TempString != "" && int(TempString) != 0)
+		{
+			CurrentEditWave = int(TempString);
+			
+			configName = CurrentEditMap;
+			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+			`log("####### INSERTING COPY OF WAVE BEFORE WAVE "$CurrentEditWave$" #######");
+			CWaveConfig.WaveConfig.InsertItem(CurrentEditWave-1, CWaveConfig.WaveConfig[CurrentEditWave-1]);
+			CWaveConfig.SaveConfig();
+			LoadWaveConfig(CurrentEditMap); // Reload everything to render the updated config
+			return true;
+		}
+		else
+		{	
+			ErrorCode = 3;
+			return false;
+		}
+	}
+
+	if(request.GetVariable("DeleteWave") ~= "True")
+	{
+		TempString = request.GetVariable("CurrentEditWave");
+		if(TempString != "" && int(TempString) != 0)
+		{
+			CurrentEditWave = int(TempString);
+			
+			configName = CurrentEditMap;
+			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+			`log("####### DELETING WAVE "$CurrentEditWave$" #######");
+			WaveConfig.length = 0;
+			for(i = 0; i < CWaveConfig.WaveConfig.length; i++)
+			{
+				if(i == CurrentEditWave-1)
+					continue;
+					
+				WaveConfig.AddItem(CWaveConfig.WaveConfig[i]);
+			}
+			if(WaveConfig.length < CurrentEditWave)
+				CurrentEditWave = WaveConfig.length;
+				
+			CWaveConfig.WaveConfig = WaveConfig;
+			CWaveConfig.SaveConfig();
+			LoadWaveConfig(CurrentEditMap); // Reload everything to render the updated config
+			return true;
+		}
+		else
+		{	
+			ErrorCode = 3;
+			return false;
+		}
+	}
+	
+	if(request.GetVariable("SubmitTab2") != "")
 	{
 		TempString = request.GetVariable("CurrentEditWave");
 		if(TempString != "" && int(TempString) != 0)
@@ -89,9 +157,33 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
 			if (CWaveConfig == None)
 			{
-				ErrorCode = 1;
+				ErrorCode = 2;
 				return false;
 			}
+			
+			TempArrayInt.length = 0;
+			for(i = 0; request.GetVariable("MonsterNum"$i) != ""; i++)
+			{
+				TempString = request.GetVariable("MonsterNum"$i);
+				
+				if(TempString ~= "None")
+					continue;
+					
+				TempArrayInt.AddItem(int(TempString));				
+			}
+			CWaveConfig.WaveConfig[CurrentEditWave-1].MonsterNum = TempArrayInt;
+			
+			TempArrayInt.length = 0;
+			for(i = 0; request.GetVariable("BossMonsters"$i) != ""; i++)
+			{
+				TempString = request.GetVariable("BossMonsters"$i);
+				
+				if(TempString ~= "None")
+					continue;
+					
+				TempArrayInt.AddItem(int(TempString));				
+			}
+			CWaveConfig.WaveConfig[CurrentEditWave-1].BossMonsters = TempArrayInt;
 			
 			TempString = request.GetVariable("bIsQueue");
 			if(TempString != "")
@@ -112,7 +204,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 			}
 			
 			TempString = request.GetVariable("WaveLength");
-			if(TempString != "" && int(TempString) != 0)
+			if(TempString != "" && string(int(TempString)) == TempString) // A different check here, because WaveLength may actually be 0
 			{
 				CWaveConfig.WaveConfig[CurrentEditWave-1].WaveLength = int(TempString);
 			}
@@ -129,12 +221,50 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 				CWaveConfig.WaveConfig[CurrentEditWave-1].MaxMonsters = int(TempString);
 			}
 			
+			TempString = request.GetVariable("WaveCountdown");
+			if(TempString != "" && int(TempString) != 0)
+			{
+				CWaveConfig.WaveConfig[CurrentEditWave-1].WaveCountdown = int(TempString);
+			}
+			
+			
 			CWaveConfig.SaveConfig();	// Save settings / Write them out to the ini file
 			LoadWaveConfig(CurrentEditMap); // Refresh settings
 		}
 		else
+		{	
+			ErrorCode = 3;
 			return false;
+		}
 		
+		
+		return true;
+	}
+	
+	if(request.GetVariable("RemoveMonster") != "")
+	{
+		for(i = 0; i < MonsterTable.length && request.GetVariable("RemoveMonster"$i) ~= ""; i++)
+		{ }	// Loop through all RemoveMonster, to find the one we need to remove
+		
+		if(i == MonsterTable.length) // it didn't find the monster that's supposed to be removed
+		{
+			ErrorCode = 4;
+			return false;
+		}
+		
+		TempString = MonsterTable[i].MonsterClassName; // Get the class of the monster
+		
+		MonsterTable.length = 0;
+		for(i = 0; i < class'RBTTInvasionMutator'.default.MonsterTable.length; i++)
+		{
+			if(class'RBTTInvasionMutator'.default.MonsterTable[i].MonsterClassName ~= TempString)
+				continue;
+				
+			MonsterTable.AddItem(class'RBTTInvasionMutator'.default.MonsterTable[i]);
+		}
+		
+		class'RBTTInvasionMutator'.default.MonsterTable = MonsterTable;
+		class'RBTTInvasionMutator'.static.StaticSaveConfig();
 		
 		return true;
 	}
@@ -148,11 +278,15 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 		class'RBTTInvasionMutator'.default.MonsterTable[i].MonsterClassName = NewMonsterClassName;
 		class'RBTTInvasionMutator'.default.MonsterTable[i].MonsterName = NewMonsterClassName;
 		class'RBTTInvasionMutator'.static.StaticSaveConfig();
+		
+		MonsterTable = class'RBTTInvasionMutator'.default.MonsterTable;
+		
+		return true;
 	}
 	else
 		ErrorCode = 1;
 		
-	return true;
+	return false;
 }
 
 /**
@@ -165,7 +299,6 @@ function renderSettings(WebResponse response, SettingsRenderer renderer, optiona
 	curSettings = substName;
 	curResponse = response;
 
-	//result $= "</form>";
 	
 	//for (i = 0; i < 3; i++)
 	//{
@@ -183,40 +316,52 @@ function renderSettings(WebResponse response, SettingsRenderer renderer, optiona
 		result $= entry;
 	//}
 	if(ErrorCode == 1)
-	{
-		result$="WTF YOU HAD AN ERROR, WTF!! WAAAA!!";
-		ErrorCode = 0;
-	}
+		result$="<font color=\"red\"><B>!!MONSTER CLASS COULD NOT BE FOUND!!</B></font>";
+	else if(ErrorCode == 2)
+		result$="<font color=\"red\"><B>!!WAVE CONFIGURATION COULD NOT BE FOUND!!</B></font>";
+	else if(ErrorCode == 3)
+		result$="<font color=\"red\"><B>!!NO CURRENTEDITWAVE SENT THROUGH POST!!</B></font>";
+	ErrorCode = 0;
 	curResponse.Subst("settings", result);
 	result = curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "wrapper_group.inc");
 	
-
-	result $= "<br><br><br><hr><form method=\"Post\" action=\""$renderer.getPath()$"\"><b>!!!DONT CLICK THE SAVE SETTINGS BUTTON BELOW!!!</b>";
+	result $= "<br><br><br>";
+	result $= "<div style=\"font-size:8pt;text-align:center;\">RBTTInvasion WebAdmin application created by FakeTruth<br>This WebAdmin application is compatible with WebAdmin v1.14.0, IE 7 and Google Chrome. RBTT is not responsible if this WebAdmin application breaks something.. anything.. even if it breaks your grandma, we will not be responsible. Seriously. I'm gonna shut up now.</div>";
+	result $= "<hr><form method=\"Post\" action=\""$renderer.getPath()$"\"><b>!!!DONT CLICK THE SAVE SETTINGS BUTTON BELOW!!!</b>";
 	curResponse.subst(substName, result);
 }
 
 function string renderGroup(WebResponse response, SettingsRenderer renderer, int idx)
 {
 	local string result;
-	local int i;
+	local int i, j;
 
 	if(idx == 0)
 	{
 		result$="</form>";
+		result$="<form action=\"#SettingsGroup0\" method=\"post\">";
+		result$="<input type=\"hidden\" name=\"action\" value=\"save\">";
+		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
+		result$="<input type=\"hidden\" name=\"RemoveMonster\" value=\"True\">";
 		result$="<table>";
 		for(i = 0; i < MonsterTable.length; i++)
 		{
-			result$="<tr><td>"$MonsterTable[i].MonsterClassName$"</td><td><button type=\"submit\" name=\"action\" value=\"save\" id=\"btnselect\">Remove Monster</button></td></tr>";
+			result$="<tr><td>"$MonsterTable[i].MonsterClassName$"</td><td><button type=\"submit\" name=\"RemoveMonster"$i$"\" value=\"True\" id=\"btnselect\">Remove Monster</button></td></tr>";
 		}
 		result$="</table><br><br>";
+		result$="</form>\n\n";
 		
-		response.subst("setting.formname", "NewMonsterClassName");
-		response.subst("setting.value", "");
-		response.subst("setting.maxlength", "200");
-		result $= response.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "string.inc");
+		result$="In here, type the classname of the pawn (monster) you want to add to the MonsterTable. It looks like this: Package.Class, for example: RBTTInvasion.RBTTSkullCrab<br>\n";
+		result$="<form action=\"#SettingsGroup0\" method=\"post\">";
+		result$="<input type=\"text\" id=\"NewMonsterClassName\" name=\"NewMonsterClassName\" value=\"\" maxlength=\"200\" size=\"60\">";
+		result$="<input type=\"hidden\" name=\"action\" value=\"save\">";
+		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
+		result$="<button type=\"submit\" name=\"submit\" value=\"True\" id=\"btnselect\">Add Monster</button>";
+		result$="</form>";
 	}
 	else if(idx == 1)
 	{
+		result$="<table><tr><td>";
 		result$="<form action=\"#SettingsGroup1\" method=\"post\" id=\"waveselect\">";
 		result$="<select id=\"CurrentEditWave\" name=\"CurrentEditWave\">";
 		for(i = 1; i <= WaveConfig.length; i++)
@@ -234,15 +379,38 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		result$="<button type=\"submit\" name=\"action\" value=\"save\" id=\"btnselect\">Change Wave</button>";
 		result$="</form>";
 		result$="<script type=\"text/javascript\">\n//<![CDATA[\n $(document).ready(function(){\n $('#CurrentEditWave').change(function(){\n $('#waveselect').submit();\n });\n });\n\n //]]>\n</script>\n";
+		result$="</td><td>";
 		
-		result$="<BR><BR>";
-		result$="<b>Monsters in wave"@CurrentEditWave$":</b><br>";
-		for(i = 0; i < WaveConfig[CurrentEditWave-1].MonsterNum.length; i++)
-		{
-			result$=MonsterTable[WaveConfig[CurrentEditWave-1].MonsterNum[i]].MonsterClassName$"<BR>";
-		}
-
-		result$="<br><br>";
+		result$="<form action=\"#SettingsGroup1\" method=\"post\">";
+		result$="<input type=\"hidden\" name=\"action\" value=\"save\">";
+		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
+		result$="<input type=\"hidden\" name=\"CurrentEditWave\" value=\""$CurrentEditWave$"\">";
+		result$="<input type=\"hidden\" name=\"AddNewWave\" value=\"True\">";
+		result$="<button type=\"submit\" id=\"btnselect\">Add New Wave</button>";
+		result$="</form>";
+		result$="</td><td>";
+		
+		result$="<form action=\"#SettingsGroup1\" method=\"post\">";
+		result$="<input type=\"hidden\" name=\"action\" value=\"save\">";
+		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
+		result$="<input type=\"hidden\" name=\"CurrentEditWave\" value=\""$CurrentEditWave$"\">";
+		result$="<input type=\"hidden\" name=\"InsertWave\" value=\"True\">";
+		result$="<button type=\"submit\" id=\"btnselect\">Insert Copy Of Current Wave</button>";
+		result$="</form>";
+		result$="</td><td>";
+		
+		result$="<form action=\"#SettingsGroup1\" method=\"post\">";
+		result$="<input type=\"hidden\" name=\"action\" value=\"save\">";
+		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
+		result$="<input type=\"hidden\" name=\"CurrentEditWave\" value=\""$CurrentEditWave$"\">";
+		result$="<input type=\"hidden\" name=\"DeleteWave\" value=\"True\">";
+		result$="<button type=\"submit\" id=\"btnselect\">Delete Current Wave</button>";
+		result$="</form>";
+		result$="</td></tr></table>";
+		
+		result$="<BR>";
+		
+		result$="<h1> Editing Wave"@CurrentEditWave$"</h1><br><br>";
 		
 		// ############ TAB 2 FORM  #############
 		result$="<form action=\"#SettingsGroup1\" method=\"post\">";
@@ -250,6 +418,60 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		result$="<input type=\"hidden\" name=\"mutator\" value=\"RBTTInvasion.RBTTInvasionMutator\">";
 		result$="<input type=\"hidden\" name=\"CurrentEditWave\" value=\""$CurrentEditWave$"\">";
 		// ######## END FORM DECLARATION ########
+		
+		//===========================
+		// WaveConfig
+		
+		result$="<b>Monsters:</b><br>";
+		result$="<table>";
+		for(i = 0; i < WaveConfig[CurrentEditWave-1].MonsterNum.length + 2; i++) // +x for amount of extra empty slots
+		{
+			result$="<tr><td><b>Monster"@i+1$":</b></td><td><select id=\"MonsterNum"$i$"\" name=\"MonsterNum"$i$"\">\n";
+			if(i >= WaveConfig[CurrentEditWave-1].MonsterNum.length)
+				result$="<option value=\"None\" selected=\"selected\">----------EMPTY----------</option>\n";
+			else
+				result$="<option value=\"None\">----------EMPTY----------</option>\n";
+				
+			for(j = 0; j < MonsterTable.length; j++)
+			{
+				if(i < WaveConfig[CurrentEditWave-1].MonsterNum.length && WaveConfig[CurrentEditWave-1].MonsterNum[i] == j)
+					result$="<option value=\""$j$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+				else
+					result$="<option value=\""$j$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+			}
+			
+			result$="</select></td></tr>";
+		}
+		
+		result$="</table>";
+		result$="<br><br>";
+		
+		//===========================
+		// BossMonsters
+		
+		result$="<b>Boss Monsters:</b><br>";
+		result$="<table>";
+		for(i = 0; i < WaveConfig[CurrentEditWave-1].BossMonsters.length + 2; i++) // +x for amount of extra empty slots
+		{
+			result$="<tr><td><b>Monster"@i+1$":</b></td><td><select id=\"BossMonsters"$i$"\" name=\"BossMonsters"$i$"\">\n";
+			if(i >= WaveConfig[CurrentEditWave-1].BossMonsters.length)
+				result$="<option value=\"None\" selected=\"selected\">----------EMPTY----------</option>\n";
+			else
+				result$="<option value=\"None\">----------EMPTY----------</option>\n";
+				
+			for(j = 0; j < MonsterTable.length; j++)
+			{
+				if(i < WaveConfig[CurrentEditWave-1].BossMonsters.length && WaveConfig[CurrentEditWave-1].BossMonsters[i] == j)
+					result$="<option value=\""$j$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+				else
+					result$="<option value=\""$j$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+			}
+			
+			result$="</select></td></tr>";
+		}
+		
+		result$="</table>";
+		result$="<br><br>";
 		
 		result$="<table>";
 		
@@ -267,7 +489,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 			result$="<option value=\"True\">True</option>\n";
 			result$="<option value=\"False\" selected=\"selected\">False</option>\n";
 		}
-		result$="</select></td></tr>";
+		result$="</select></td><td>If this is set to true, this wave will behave like it's a queue.</td></tr>";
 		
 		//===========================
 		// bTimedWave
@@ -283,7 +505,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 			result$="<option value=\"True\">True</option>\n";
 			result$="<option value=\"False\" selected=\"selected\">False</option>\n";
 		}
-		result$="</select></td></tr>";
+		result$="</select></td><td>If this is set to true, the wave will last a WaveLength of seconds.</td></tr>";
 		
 		//===========================
 		// bAllowPortals
@@ -299,7 +521,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 			result$="<option value=\"True\">True</option>\n";
 			result$="<option value=\"False\" selected=\"selected\">False</option>\n";
 		}
-		result$="</select></td></tr>";
+		result$="</select></td><td>If this is set to true, portals will spawn in this wave.</td></tr>";
 		
 		//===========================
 		// MonstersPerPlayer
@@ -315,7 +537,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		
 		result$=curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "int.inc");
 		
-		result$="</td></tr>";
+		result$="</td><td>The Monsters vs. Players ratio.</td></tr>";
 		
 		//===========================
 		// MaxMonsters
@@ -331,7 +553,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		
 		result$=curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "int.inc");
 		
-		result$="</td></tr>";
+		result$="</td><td>This wave's maximum amount of monsters, this amount of monsters in the game will not exeed this number.</td></tr>";
 		
 		//===========================
 		// WaveLength
@@ -340,14 +562,31 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		
 		curResponse.Subst("setting.formname", "WaveLength");
 		curResponse.Subst("setting.value", WaveConfig[CurrentEditWave-1].WaveLength);
-		curResponse.Subst("setting.minval", "1");
+		curResponse.Subst("setting.minval", "0");
 		curResponse.Subst("setting.maxval", "999999");
 		curResponse.Subst("setting.increment", "5");
 		curResponse.Subst("setting.asint", "5");
 		
 		result$=curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "int.inc");
 		
-		result$="</td></tr>";
+		result$="</td><td>During the wave, this amount of monsters will be spawned, or if bTimedWave is set to true the wave will last this time in seconds.</td></tr>";
+		
+		//===========================
+		// WaveCountdown
+		
+		result$="<tr><td><b>WaveCountdown:</b></td><td>";
+		
+		curResponse.Subst("setting.formname", "WaveCountdown");
+		curResponse.Subst("setting.value", WaveConfig[CurrentEditWave-1].WaveCountdown);
+		curResponse.Subst("setting.minval", "0");
+		curResponse.Subst("setting.maxval", "999999");
+		curResponse.Subst("setting.increment", "5");
+		curResponse.Subst("setting.asint", "5");
+		
+		result$=curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "int.inc");
+		
+		result$="</td><td>How many seconds before the monsters spawn.</td></tr>";
+		
 		
 		// Wrap things up ------------
 		

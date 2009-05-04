@@ -1,108 +1,74 @@
 class RBTTIceSlime extends RBTTSlime;
 
-/** Particle Emitters */
-var ParticleSystemComponent SlimeEmitter;
+var float IceTime;
+var int IceDamage;
+var float IceDamageInterval;
 
-simulated function PostBeginPlay()
+simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 {
-	super.PostBeginPlay();
-	
-	if (WorldInfo.NetMode != NM_DedicatedServer)
-	{
+	local Pawn P;
+	local RBTTIceAttachment IA;
+	local InventoryManager IM;
 
-		SlimeEmitter = new(self) class'UTParticleSystemComponent';
-		Mesh.AttachComponent(SlimeEmitter, 'joint3');
-		SlimeEmitter.SetTemplate(ParticleSystem'RBTTSlime.EParticles.RBTTIceSlimeSmoke');
+	if (Impact.HitActor == None)
+		return; 
+	
+	
+	Impact.HitActor.TakeDamage( HitDamage, Controller,
+				Impact.HitLocation, Weapon.InstantHitMomentum[FiringModeZ] * Impact.RayDir,
+				Class'FireDamage', Impact.HitInfo, Weapon );
+	
+	P = Pawn(Impact.HitActor);
+	if(P == None)
+		return;
+		
+	if(RBTTSlime(P) != None)
+		return;
+	
+	IA = RBTTIceAttachment(P.FindInventoryType(Class'RBTTIceAttachment', True)); // WARNING - Also looks for children of the class RBTTIceAttachment!
+	if(IA != None)
+	{
+		if(IA.DamageTime < IceTime)						// Add some fuel
+			IA.DamageTime = IceTime;
+		if(IA.Damage / IA.DamageInterval < IceDamage / IceDamageInterval ) 	// if current fire is weaker than new fire, use new fire
+		{
+			IA.Damage = IceDamage;
+			IA.DamageInterval = IceDamageInterval;
+		}
+		
+		IA.InitIce();
+	}
+	else
+	{
+		IM = P.InvManager;
+		if(IM == None)
+			return;
+			
+		IA = Spawn(class'RBTTIceAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		IM.AddInventory(IA);
+		IA.SetBase(P);
+		IA.Victim = P;
+		IA.InstigatorController = Controller;
+		IA.Damage = IceDamage;
+		IA.DamageInterval = IceDamageInterval;
+		IA.DamageTime = IceTime;
+		IA.InitIce();
+		IA.InitIceClient();
 	}
 }
 
 defaultproperties
 {
+	IceTime = 10.f
+	IceDamage = 1.f
+	IceDamageInterval = 0.25f
+	
 	HitDamage = 10
-	MonsterScale=(X=32,Y=32,Z=32)
-	MinMonsterScale=(X=8,Y=8,Z=8)
-	health = 500
-	bMotherSlime=True
+	
+	SlimeGlobClass=Class'RBTTIceSlimeGlob'
+  
+	Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
+		Materials(0)=MaterialInterface'RBTTSlime.IceSlimeMaterial'
+	End Object
 
-	bMeleeMonster = True
-	bEmptyHanded = True
-	bInvisibleWeapon = True
-	
-	//bCanStrafe=False // This screws things up!!!!!!!!!!!!
-	bCanSwim=False
-	bCanCrouch=False
-	bCanDoubleJump=False // If it doublejumps it looks silly! :P
-	MaxMultiJump = 0
-	
-	TorsoBoneName="Spine"
-	HeadBone="Head"
-	bEnableFootPlacement=False
-	LeftFootControlName="LeftFrontFootControl"
-	RightFootControlName="RightFrontFootControl"
-	MonsterName = "Slime"
-	MonsterSkill=5
-	LightEnvironment=MyLightEnvironment
-	BioBurnAway=GooDeath
-	ArmsMesh(0)=None
-	ArmsMesh(1)=None
-	PawnAmbientSound=AmbientSoundComponent
-	WeaponAmbientSound=AmbientSoundComponent2
-	GroundSpeed=200.000000
-	
-	OverlayMesh=OverlayMeshComponent0
-	
-   DefaultFamily=Class'RBTTSlimeFamilyInfo'
-   
-   DefaultMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
-   
-   WalkableFloorZ=0.800000
-   
-   ControllerClass=Class'RBTTMonsterControllerMelee'
-   InventoryManagerClass=class'RBTTInventoryManager'
-  
-   SlimeGlobClass=Class'RBTTIceSlimeGlob'
-  
-   Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-      SkeletalMesh=SkeletalMesh'RBTTSlime.RBTTSlime'
-      AnimTreeTemplate=AnimTree'RBTTSlime.RBTTSlimeTree'
-      AnimSets(0)=AnimSet'RBTTSlime.RBTTSlimeAnims'
-      bHasPhysicsAssetInstance=True
-      Scale3D=(X=32,Y=32,Z=32)
-      Rotation=(Yaw=49149) //(65535 = 360 degrees) (16383 = 90 degrees) | Yaw, Roll, Pitch
-      PhysicsAsset=PhysicsAsset'RBTTSlime.RBTTSlime_Physics'
-      Materials(0)=MaterialInterface'RBTTSlime.IceSlimeMaterial'
-	  Name="WPawnSkeletalMeshComponent"
-	  ObjectArchetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
-   End Object
-   Mesh=WPawnSkeletalMeshComponent
-   
-   Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=2.000000
-      CollisionRadius=2.000000
-      ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-   End Object
-   CylinderComponent=CollisionCylinder
-   
-   Components(0)=CollisionCylinder
-   
-   Begin Object Name=Arrow ObjName=Arrow Archetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
-      ObjectArchetype=ArrowComponent'UTGame.Default__UTPawn:Arrow'
-   End Object
-   
-   
-   Components(1)=Arrow
-   Components(2)=MyLightEnvironment
-   Components(3)=WPawnSkeletalMeshComponent
-   Components(4)=AmbientSoundComponent
-   Components(5)=AmbientSoundComponent2
-   Components(6)=MyLightEnvironment
-   Components(8)=CollisionCylinder
-   CollisionComponent=CollisionCylinder
-   Name="Default__RBTTSlime"
-   ObjectArchetype=UTPawn'UTGame.Default__UTPawn'
-	
-	// default bone names
-	WeaponSocket=WeaponPoint
-	WeaponSocket2=DualWeaponPoint
-	bNeedWeapon = false
 }

@@ -12,6 +12,8 @@ var String FrozenMessage;
 // IceEmitter
 var ParticleSystemComponent IceEmitter;
 var ParticleSystem EmitterTemplate;
+var class<UTEmitCameraEffect> InsideCameraEffect;
+
 
 replication
 {
@@ -65,6 +67,8 @@ function DamageTimer()
 
 function Timer()
 {
+	local UTPlayerController UTPC;
+	
 	DamageTime--;
 	if(DamageTime <= 0)
 	{
@@ -84,28 +88,23 @@ function Timer()
 		bChangedSettings = true;
 	}
 
-	if (Role == ROLE_Authority) 
+	if (InsideCameraEffect != None)
 	{
-		if (!bShownMessage) 
+		UTPC = UTPlayerController(Pawn(Owner).Controller);
+		if (UTPC != None)
 		{
-			if (InstigatorController != None) 
-			{
-				//Pawn(Owner).ReceiveLocalizedMessage(FrozenMessage);
-			} 
-			else 
-			{
-				//Pawn(Owner).ReceiveLocalizedMessage(FrozenMessage);
-			}
-			bShownMessage = true;
-		}	    
-	}	
+			UTPC.ClientSpawnCameraEffect(InsideCameraEffect);
+		}
+	}
 }
 
 simulated event Destroyed()
 {
   local Pawn P;
-  local UTPlayerController UPC;
+  local UTPlayerController PC;
 
+  PC = UTPlayerController(Pawn(Owner).Controller);
+  
 	if (Role == ROLE_Authority && Pawn(Owner) != None) 
 	{
 		P = Pawn (Owner);
@@ -113,13 +112,18 @@ simulated event Destroyed()
 		{
 			P.CustomTimeDilation = 1.0;
 		}
-		foreach WorldInfo.AllControllers(class'UTPlayerController', UPC)
+		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
 		{
 			if (P != None) 		
 			{
 				P.CustomTimeDilation = 1.0;
 			}
 		}
+	}
+	
+	if (InsideCameraEffect != None)
+	{
+		PC.ClearCameraEffect();
 	}
 	
 	Super.Destroyed();
@@ -145,6 +149,7 @@ function ClientServerSlowdown (Pawn P, int TheLevel)
 
 DefaultProperties
 {
+	InsideCameraEffect=Class'RBTTInvasion.RBTTCameraEffect_Frozen'
 	Begin Object Class=ParticleSystemComponent Name=IcePSC
 	End Object
 	Components.Add(IcePSC)

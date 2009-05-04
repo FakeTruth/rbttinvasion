@@ -1,0 +1,7 @@
+#summary ScarySkull Monster
+
+= Details =
+
+Based from the flaming skulls from doom3 they have an unnerving wail as they get shot!
+
+= Screenshots =

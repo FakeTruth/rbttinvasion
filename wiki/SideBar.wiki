@@ -11,6 +11,9 @@
   * [RBTTHumanSkeleton Human Skeleton]
   * [RBTTKrallSkeleton Krall Skeleton]
   * [RBTTMiningRobot Mining Robot]
+  * [Spider]
+  * [ScarySkull]
+  * [ScarySkullGhost]
  * Media
   * [Downloads Downloads]
   * [Screenshots Screenshots]

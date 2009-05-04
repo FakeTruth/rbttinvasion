@@ -13,7 +13,7 @@
   * [RBTTMiningRobot Mining Robot]
   * [Spider]
   * [ScarySkull]
-  * [ScarySkullGhost]
+   * [ScarySkullGhost]
  * Media
   * [Downloads Downloads]
   * [Screenshots Screenshots]

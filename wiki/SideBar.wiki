@@ -9,7 +9,7 @@
   * [AePhoenix AePhoenix]
   * [SkullCrab SkullCrab]
   * [RBTTHumanSkeleton Human Skeleton]
-  * [RBTTKrallSkeleton Krall Skeleton]
+   * [RBTTKrallSkeleton Krall Skeleton]
   * [RBTTMiningRobot Mining Robot]
   * [Spider]
   * [ScarySkull]

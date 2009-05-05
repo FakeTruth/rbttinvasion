@@ -11,6 +11,7 @@ var RBTTInvasionGameRules InvasionGameRules;
 
 var repnotify vector MonsterScale;	// How big the slime monsters is right now, used for replication
 var vector MinMonsterScale;		// The smallest the slime mother can become
+var int DefaultHealth;
 
 replication
 {
@@ -29,12 +30,25 @@ simulated event ReplicatedEvent(name VarName)
 		Super.ReplicatedEvent(VarName);
 }
 
+function Initialize()
+{
+	super.Initialize();
+
+	DefaultHealth = health;
+}
+
 simulated function PostBeginPlay()
 {
 	super.PostBeginPlay();
 
 	if(WorldInfo.NetMode == NM_Standalone || WorldInfo.NetMode == NM_DedicatedServer)
 		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+	
+	if(InvasionGameRules == None)
+	{
+		Destroy();
+		return;
+	}
 	
 	SetTimer(1, False, 'SpawnBabySlimes');
 		
@@ -82,7 +96,7 @@ function SpawnBabySlimes()
 				`log(">>New Slime is: "@NewSlime);
 				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
-				NewSlime.health = 65;
+				NewSlime.health = 65 * InvasionGameRules.WaveConfig[InvasionGameRules.CurrentWave].MonsterHealthMultiplier;
 				NewSlime.InitSize(Vect(8,8,8));
 				NewSlime.SpawnTransEffect(0);
 				InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
@@ -146,7 +160,7 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 			health+= DamageAmount*2;
 	
 		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
-		NewSize = ((default.MonsterScale-MinMonsterScale) / (float(default.health) / float(health))) + MinMonsterScale;
+		NewSize = ((default.MonsterScale-MinMonsterScale) / (float(DefaultHealth) / float(health))) + MinMonsterScale;
 		
 		if(NewSize != MonsterScale)
 			InitSize(NewSize);

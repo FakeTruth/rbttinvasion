@@ -39,6 +39,7 @@ struct WaveTable
 	var bool				bTimedWave;		// The wave will last WaveLength time in seconds
 	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
 	var bool				bAllowPortals;		// Should this wave have portals
+	var float				MonsterHealthMultiplier;// Monster's health will be multiplied by this
 	
 	structdefaultproperties			// Set the defaultproperties for the struct
 	{
@@ -49,6 +50,7 @@ struct WaveTable
 		bIsQueue = False
 		MaxMonsters = 16
 		bAllowPortals = False
+		MonsterHealthMultiplier = 1.f
 	}
 };
 var array<WaveTable>				WaveConfig;		// Wave configuration. When to spawn what monsters/portals
@@ -402,6 +404,8 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 		PRI = NewMonster.PlayerReplicationInfo;
 		Game = UTTeamGame(WorldInfo.Game);
 		
+		NewMonster.health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+		
 		if( Game == None )
 		{
 			return false;
@@ -414,6 +418,7 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 			Bot = NewMonster.Controller;
 			MonsterBotInfo = RBTTMonsterTeamInfo(Game.GameReplicationInfo.teams[1]).GetBotInfo(MonsterName);
 			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
+			RBTTMonster(NewMonster).Initialize();
 			PRI.PlayerName = MonsterName;
 			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 		}

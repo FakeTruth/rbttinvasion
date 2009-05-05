@@ -14,6 +14,8 @@ var bool bCanDrive;
 var bool bShotAnim;
 var float HitDamage;
 
+function Initialize(); // Something used by the slime..
+
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();

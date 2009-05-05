@@ -51,7 +51,7 @@ function cleanup()
 
 function bool saveSettings(WebRequest request, WebAdminMessages messages)
 {
-	local int i;
+	local int i, j;
 	local string NewMonsterClassName;
 	local array<string> AllVars;
 	local string VarKey;
@@ -279,11 +279,19 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 	`log(">>NewMonsterClassName: "@NewMonsterClassName);
 	if(NewMonsterClassName != "")
 	{
-		i = class'RBTTInvasionMutator'.default.MonsterTable.length;
-		class'RBTTInvasionMutator'.default.MonsterTable.length = i+1;
-		class'RBTTInvasionMutator'.default.MonsterTable[i].MonsterClassName = NewMonsterClassName;
-		class'RBTTInvasionMutator'.default.MonsterTable[i].MonsterName = NewMonsterClassName;
+		i = 1;
+		for(j = class'RBTTInvasionMutator'.default.MonsterTable.length-1; j > 0; j--)	// Find a unique MonsterID
+			if(class'RBTTInvasionMutator'.default.MonsterTable[j].MonsterID >= i)
+				i = class'RBTTInvasionMutator'.default.MonsterTable[j].MonsterID+1;
+		
+		j = class'RBTTInvasionMutator'.default.MonsterTable.length;
+		class'RBTTInvasionMutator'.default.MonsterTable.length = j+1;
+		class'RBTTInvasionMutator'.default.MonsterTable[j].MonsterClassName = NewMonsterClassName;
+		class'RBTTInvasionMutator'.default.MonsterTable[j].MonsterName = NewMonsterClassName;
+		class'RBTTInvasionMutator'.default.MonsterTable[j].MonsterID = i;
 		class'RBTTInvasionMutator'.static.StaticSaveConfig();
+		
+		
 		
 		MonsterTable = class'RBTTInvasionMutator'.default.MonsterTable;
 		
@@ -352,7 +360,7 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		result$="<table>";
 		for(i = 0; i < MonsterTable.length; i++)
 		{
-			result$="<tr><td>"$MonsterTable[i].MonsterClassName$"</td><td><button type=\"submit\" name=\"RemoveMonster"$i$"\" value=\"True\" id=\"btnselect\">Remove Monster</button></td></tr>";
+			result$="<tr><td>"$MonsterTable[i].MonsterClassName$"</td><td>ID: "$MonsterTable[i].MonsterID$" </td><td> <button type=\"submit\" name=\"RemoveMonster"$i$"\" value=\"True\" id=\"btnselect\">Remove Monster</button></td></tr>";
 		}
 		result$="</table><br><br>";
 		result$="</form>\n\n";
@@ -440,10 +448,10 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 				
 			for(j = 0; j < MonsterTable.length; j++)
 			{
-				if(i < WaveConfig[CurrentEditWave-1].MonsterNum.length && WaveConfig[CurrentEditWave-1].MonsterNum[i] == j)
-					result$="<option value=\""$j$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+				if(i < WaveConfig[CurrentEditWave-1].MonsterNum.length && WaveConfig[CurrentEditWave-1].MonsterNum[i] == MonsterTable[j].MonsterID)
+					result$="<option value=\""$MonsterTable[j].MonsterID$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
 				else
-					result$="<option value=\""$j$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+					result$="<option value=\""$MonsterTable[j].MonsterID$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
 			}
 			
 			result$="</select></td></tr>";
@@ -467,10 +475,10 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 				
 			for(j = 0; j < MonsterTable.length; j++)
 			{
-				if(i < WaveConfig[CurrentEditWave-1].BossMonsters.length && WaveConfig[CurrentEditWave-1].BossMonsters[i] == j)
-					result$="<option value=\""$j$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+				if(i < WaveConfig[CurrentEditWave-1].BossMonsters.length && WaveConfig[CurrentEditWave-1].BossMonsters[i] == MonsterTable[j].MonsterID)
+					result$="<option value=\""$MonsterTable[j].MonsterID$"\" selected=\"selected\">"$MonsterTable[j].MonsterClassName$"</option>\n";
 				else
-					result$="<option value=\""$j$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
+					result$="<option value=\""$MonsterTable[j].MonsterID$"\">"$MonsterTable[j].MonsterClassName$"</option>\n";
 			}
 			
 			result$="</select></td></tr>";

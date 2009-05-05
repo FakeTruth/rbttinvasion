@@ -1,5 +1,10 @@
 class RBTTIceSlimeGlob extends UTProj_BioGlob;
 
+// Vars for freezing people!!
+var float IceTime;
+var int IceDamage;
+var float IceDamageInterval;
+
 function InitBio(UTWeap_BioRifle_Content FiringWeapon, int InGlobStrength)
 {
 	// adjust speed
@@ -330,8 +335,90 @@ state OnGround
 }
 
 
+/** ALTERED TO FREEZE PEOPLE!! -FAKETRUTH
+ * Hurt locally authoritative actors within the radius.
+ * Projectile version if needed offsets the start of the radius check to prevent hits embedded in walls from failing to cause damage
+ */
+simulated function bool ProjectileHurtRadius( float DamageAmount, float InDamageRadius, class<DamageType> DamageType, float Momentum,
+						vector HurtOrigin, vector HitNormal, optional class<DamageType> ImpactedActorDamageType )
+{
+	local bool bCausedDamage, bInitializedAltOrigin, bFailedAltOrigin;
+	local Actor	Victim;
+	local vector AltOrigin;
+
+	// Prevent HurtRadius() from being reentrant.
+	if ( bHurtEntry || bShuttingDown )
+		return false;
+
+	bHurtEntry = true;
+	bCausedDamage = false;
+
+	// if ImpactedActor is set, we actually want to give it full damage, and then let him be ignored by super.HurtRadius()
+	if ( (ImpactedActor != None) && (ImpactedActor != self)  )
+	{
+		ImpactedActor.TakeRadiusDamage( InstigatorController, DamageAmount, InDamageRadius,
+						(ImpactedActorDamageType != None) ? ImpactedActorDamageType : DamageType,
+						Momentum, HurtOrigin, true, self );
+		// need to check again in case TakeRadiusDamage() did something that went through our explosion path a second time
+		if (ImpactedActor != None)
+		{
+			bCausedDamage = ImpactedActor.bProjTarget;
+		}
+	}
+
+	foreach CollidingActors( class'Actor', Victim, DamageRadius, HurtOrigin )
+	{
+		if ( !Victim.bWorldGeometry && (Victim != self) && (Victim != ImpactedActor) && (Victim.bProjTarget || (NavigationPoint(Victim) == None)) )
+		{
+			if ( !FastTrace(HurtOrigin, Victim.Location,, TRUE) )
+			{
+				// try out from wall, in case trace start was embedded
+				if ( !bInitializedAltOrigin )
+				{
+					// initialize alternate trace start
+					bInitializedAltOrigin = true;
+					AltOrigin = HurtOrigin + class'UTPawn'.Default.MaxStepHeight * HitNormal;
+					if ( !FastTrace(HurtOrigin, AltOrigin,, TRUE) )
+					{
+						if ( Velocity == vect(0,0,0) )
+						{
+							bFailedAltOrigin = true;
+						}
+						else
+						{
+							AltOrigin = HurtOrigin - class'UTPawn'.Default.MaxStepHeight * normal(Velocity);
+							bFailedAltOrigin = !FastTrace(HurtOrigin, AltOrigin,, TRUE);
+						}
+					}
+				}
+				if ( bFailedAltOrigin || !FastTrace(AltOrigin, Victim.Location,, TRUE) )
+				{
+					continue;
+				}
+			}
+			Victim.TakeRadiusDamage(InstigatorController, DamageAmount, DamageRadius, DamageType, Momentum, HurtOrigin, false, self);
+			if(Pawn(Victim) != None && RBTTIceSlime(Victim) == None)
+				FreezeVictim(Pawn(Victim));
+			bCausedDamage = bCausedDamage || Victim.bProjTarget;
+		}
+	}
+	bHurtEntry = false;
+
+	return bCausedDamage;
+}
+
+function FreezeVictim(Pawn P)
+{
+	class'RBTTIceSlime'.static.AttachIce(P, InstigatorController, WorldInfo, IceTime, IceDamage, IceDamageInterval);
+}
+
+
 defaultproperties
 {
+	IceTime = 5
+	IceDamage = 0.f
+	IceDamageInterval = 0.f
+
 	Components.Empty();
 	MaxRestingGlobStrength=6
 	GlobStrength=1

@@ -1,20 +1,8 @@
-class RBTTFireAttachment extends Inventory;
-
-var repnotify Pawn Victim;
-var Controller InstigatorController;
-var float Damage;
-var float DamageInterval;
-var int DamageTime;
+class RBTTFireAttachment extends RBTTDamageAttachment;
 
 // FireEmitter
 var ParticleSystemComponent FireEmitter;
 var ParticleSystem EmitterTemplate;
-
-replication
-{
-	if(Role == ROLE_Authority && bNetInitial)
-		Victim;
-}
 
 simulated event ReplicatedEvent(name VarName)
 {
@@ -38,45 +26,27 @@ simulated function PostBeginPlay()
 	}
 }
 
-function InitFire()
+function Init()
 {
 	`log(">>"@Victim@" Is on fire!! WAAAAA <<");
 
-	PostBeginPlay();
+	Super.Init();
 	
-	SetTimer(DamageInterval, True, 'DamageTimer');
-	SetTimer(1.f, True, 'Timer');
-}
-
-reliable client function InitFireClient()
-{
-	Victim = Instigator;
 	PostBeginPlay();
-}
-
-function DamageTimer()
-{
-	Victim.TakeDamage( Damage, InstigatorController, Victim.Location, Vect(0,0,0), Class'FireDamage');
-											// FireDamage!
-}
-
-function Timer()
-{
-	DamageTime--;
-	if(DamageTime <= 0)
-	{
-		Destroy();
-	}
 }
 
 simulated function Destroyed()
 {
+	super.Destroyed();
+
 	FireEmitter.DeactivateSystem();
 	FireEmitter.KillParticlesForced();
 }
 
 DefaultProperties
 {
+	MyDamageType=Class'FireDamage'
+
 	Begin Object Class=ParticleSystemComponent Name=FirePSC
 	End Object
 	Components.Add(FirePSC)

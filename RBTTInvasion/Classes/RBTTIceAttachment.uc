@@ -14,6 +14,9 @@ var ParticleSystemComponent IceEmitter;
 var ParticleSystem EmitterTemplate;
 var class<UTEmitCameraEffect> InsideCameraEffect;
 
+// Victim's parameters
+var float OldGroundSpeed;
+
 
 replication
 {
@@ -34,12 +37,23 @@ simulated event ReplicatedEvent(name VarName)
 
 simulated function PostBeginPlay()
 {
+	local UTPlayerController UTPC;
+
 	if (WorldInfo.NetMode != NM_DedicatedServer && Victim != None)
 	{
 		Victim.Mesh.AttachComponent(IceEmitter, 'b_Spine');
 		IceEmitter.SetRotation(Rotator(vect(0,0,-1)));
 		IceEmitter.SetTemplate(EmitterTemplate);
 		IceEmitter.ActivateSystem();
+		
+		if (InsideCameraEffect != None)
+		{
+			UTPC = UTPlayerController(Victim.Controller);
+			if (UTPC != None)
+			{
+				UTPC.ClientSpawnCameraEffect(InsideCameraEffect);
+			}
+		}
 	}
 }
 
@@ -48,6 +62,17 @@ function InitIce()
 	`log(">>"@Victim@" Is Frozen!! WAAAAA <<");
 
 	PostBeginPlay();
+	
+	if (Role == ROLE_Authority && !bChangedSettings) 
+	{
+		if (Victim == None)
+		{
+			Destroy();
+			return;
+		}
+		ClientServerSlowdown (Victim, 5);
+		bChangedSettings = True;
+	}
 	
 	SetTimer(DamageInterval, True, 'DamageTimer');
 	SetTimer(1.f, True, 'Timer');
@@ -67,63 +92,29 @@ function DamageTimer()
 
 function Timer()
 {
-	local UTPlayerController UTPC;
-	
 	DamageTime--;
 	if(DamageTime <= 0)
 	{
 		Destroy();
 	}
-	
-	if (Owner == None) return;
-
-	if (Role == ROLE_Authority && !bChangedSettings) 
-	{
-		if (Owner == None)
-		{
-			Destroy();
-			return;
-		}
-		ClientServerSlowdown (Pawn (Owner), 5);
-		bChangedSettings = true;
-	}
-
-	if (InsideCameraEffect != None)
-	{
-		UTPC = UTPlayerController(Pawn(Owner).Controller);
-		if (UTPC != None)
-		{
-			UTPC.ClientSpawnCameraEffect(InsideCameraEffect);
-		}
-	}
 }
 
 simulated event Destroyed()
 {
-  local Pawn P;
-  local UTPlayerController PC;
-
-  PC = UTPlayerController(Pawn(Owner).Controller);
+	local UTPlayerController UPC;
   
-	if (Role == ROLE_Authority && Pawn(Owner) != None) 
+	if (Role == ROLE_Authority && Victim != None && bChangedSettings) 
 	{
-		P = Pawn (Owner);
-		if (P != None) 
-		{
-			P.CustomTimeDilation = 1.0;
-		}
-		foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-		{
-			if (P != None) 		
-			{
-				P.CustomTimeDilation = 1.0;
-			}
-		}
+		//Victim.CustomTimeDilation = 1.0;
+		Victim.GroundSpeed = OldGroundSpeed;
+		`log(">>Victim.GroundSpeed = "@Victim.GroundSpeed);
 	}
 	
 	if (InsideCameraEffect != None)
 	{
-		PC.ClearCameraEffect();
+		UPC = UTPlayerController(Victim.Controller);
+		if(UPC != None)
+			UPC.ClearCameraEffect();
 	}
 	
 	Super.Destroyed();
@@ -133,18 +124,25 @@ simulated event Destroyed()
 
 function ClientServerSlowdown (Pawn P, int TheLevel)
 {
-  local UTPlayerController UPC;
+  //local UTPlayerController UPC;
 
-  if (P != None) {
-    P.CustomTimeDilation = 0.50 - 0.05 * Min (5, TheLevel);
-  }
-  foreach WorldInfo.AllControllers(class'UTPlayerController', UPC)
-  {  
-	if (P != None) 
-	{
-		P.CustomTimeDilation = 0.50 - 0.05 * Min (5, TheLevel);
+  //if (P != None) {
+  //  P.CustomTimeDilation = 0.50 - 0.05 * Min (5, TheLevel);
+  //}
+  
+	if (P != None)
+	{	
+		OldGroundSpeed = P.GroundSpeed;
+		P.GroundSpeed = 200.f;
 	}
-  }
+  
+  //foreach WorldInfo.AllControllers(class'UTPlayerController', UPC)
+  //{  
+//	if (P != None) 
+//	{
+//		P.CustomTimeDilation = 0.50 - 0.05 * Min (5, TheLevel);
+//	}
+//  }
 }
 
 DefaultProperties
@@ -156,7 +154,7 @@ DefaultProperties
 	IceEmitter=IcePSC
 	EmitterTemplate=ParticleSystem'RBTTSlime.Effects.FrozenEffect'
 	FrozenMessage="you have been frozen!"
-	Damage = 1.f
+	Damage = 10.f
 	DamageInterval = 0.25f
 	DamageTime = 2
 	

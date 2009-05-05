@@ -16,7 +16,7 @@ simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 	
 	Impact.HitActor.TakeDamage( HitDamage, Controller,
 				Impact.HitLocation, Weapon.InstantHitMomentum[FiringModeZ] * Impact.RayDir,
-				Class'FireDamage', Impact.HitInfo, Weapon );
+				Class'IceDamage', Impact.HitInfo, Weapon );
 	
 	P = Pawn(Impact.HitActor);
 	if(P == None)

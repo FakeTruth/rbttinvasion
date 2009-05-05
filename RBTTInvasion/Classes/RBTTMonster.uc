@@ -1,8 +1,8 @@
 class RBTTMonster extends UTPawn;
 
-var() float MonsterHealth;
-var() int MonsterSkill;
-var() string MonsterName;
+var(RBTTMonster) config float MonsterHealth;
+var(RBTTMonster) int MonsterSkill;
+var(RBTTMonster) string MonsterName;
 var Controller MonsterController;
 var bool bNeedWeapon;
 var class<UTWeapon> MonsterWeaponClass;

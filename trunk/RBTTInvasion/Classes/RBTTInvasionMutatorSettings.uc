@@ -215,6 +215,12 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 				CWaveConfig.WaveConfig[CurrentEditWave-1].MonstersPerPlayer = float(TempString);
 			}
 			
+			TempString = request.GetVariable("MonsterHealthMultiplier");
+			if(TempString != "" && float(TempString) != 0)
+			{
+				CWaveConfig.WaveConfig[CurrentEditWave-1].MonsterHealthMultiplier = float(TempString);
+			}
+			
 			TempString = request.GetVariable("MaxMonsters");
 			if(TempString != "" && int(TempString) != 0)
 			{
@@ -571,6 +577,22 @@ function string renderGroup(WebResponse response, SettingsRenderer renderer, int
 		
 		result$="</td><td>During the wave, this amount of monsters will be spawned, or if bTimedWave is set to true the wave will last this time in seconds.</td></tr>";
 		
+		//===========================
+		// MonsterHealthMultiplier
+		
+		result$="<tr><td><b>MonsterHealthMultiplier:</b></td><td>";
+		
+		curResponse.Subst("setting.formname", "MonsterHealthMultiplier");
+		curResponse.Subst("setting.value", WaveConfig[CurrentEditWave-1].MonsterHealthMultiplier);
+		curResponse.Subst("setting.minval", "0");
+		curResponse.Subst("setting.maxval", "999999");
+		curResponse.Subst("setting.increment", "5");
+		curResponse.Subst("setting.asint", "5");
+		
+		result$=curResponse.LoadParsedUHTM(renderer.getPath() $ "/" $ renderer.getFilePrefix() $ "int.inc");
+		
+		result$="</td><td>On spawn the monster's health will be multiplied by this number.</td></tr>";
+
 		//===========================
 		// WaveCountdown
 		

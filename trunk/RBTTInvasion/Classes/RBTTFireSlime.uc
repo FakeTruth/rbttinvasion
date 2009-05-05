@@ -7,8 +7,6 @@ var float FireDamageInterval;
 simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 {
 	local Pawn P;
-	local RBTTFireAttachment FA;
-	local InventoryManager IM;
 
 	if (Impact.HitActor == None)
 		return; 
@@ -24,42 +22,57 @@ simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 		
 	if(RBTTSlime(P) != None)
 		return;
-	
-	FA = RBTTFireAttachment(P.FindInventoryType(Class'RBTTFireAttachment', True)); // WARNING - Also looks for children of the class RBTTFireAttachment!
-	if(FA != None)
+		
+	AttachFire(P, Controller, WorldInfo, FireTime, FireDamage, FireDamageInterval);
+}
+
+static function AttachFire(Pawn P, Controller IC, WorldInfo WI, int Time, float Damage, float Interval)
+{
+	local RBTTDamageAttachment DA;
+	local InventoryManager IM;
+
+	DA = RBTTDamageAttachment(P.FindInventoryType(Class'RBTTDamageAttachment', True)); // WARNING - Also looks for children of the class RBTTDamageAttachment!
+	if(DA != None && RBTTFireAttachment(DA) != None)
 	{
-		if(FA.DamageTime < FireTime)						// Add some fuel
-			FA.DamageTime = FireTime;
-		if(FA.Damage / FA.DamageInterval < FireDamage / FireDamageInterval ) 	// if current fire is weaker than new fire, use new fire
+		if(DA.DamageTime < Time)						// Add some fuel
+			DA.DamageTime = Time;
+		if(DA.Damage / DA.DamageInterval < Damage / Interval ) 	// if current fire is weaker than new fire, use new fire
 		{
-			FA.Damage = FireDamage;
-			FA.DamageInterval = FireDamageInterval;
+			DA.Damage = Damage;
+			DA.DamageInterval = Interval;
 		}
 		
-		FA.InitFire();
+		DA.InstigatorController = IC;
+		DA.Init();
 	}
 	else
 	{
+		if(DA != None)
+		{
+			DA.Destroy();
+		}
+		
 		IM = P.InvManager;
 		if(IM == None)
 			return;
 			
-		FA = Spawn(class'RBTTFireAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
-		IM.AddInventory(FA);
-		FA.SetBase(P);
-		FA.Victim = P;
-		FA.InstigatorController = Controller;
-		FA.Damage = FireDamage;
-		FA.DamageInterval = FireDamageInterval;
-		FA.DamageTime = FireTime;
-		FA.InitFire();
-		FA.InitFireClient();
+		DA = WI.Spawn(class'RBTTFireAttachment', WI.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		IM.AddInventory(DA);
+		DA.SetBase(P);
+		DA.Victim = P;
+		DA.InstigatorController = IC;
+		DA.Damage = Damage;
+		DA.DamageInterval = Interval;
+		DA.DamageTime = Time;
+		DA.Init();
+		DA.InitClient();
 	}
+
 }
 
 defaultproperties
 {
-	FireTime = 10.f
+	FireTime = 10
 	FireDamage = 1.f
 	FireDamageInterval = 0.25f
 	

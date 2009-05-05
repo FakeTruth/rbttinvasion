@@ -1,14 +1,7 @@
-class RBTTIceAttachment extends Inventory;
+class RBTTIceAttachment extends RBTTDamageAttachment;
 
-var repnotify Pawn Victim;
-var Controller InstigatorController;
-var float Damage;
-var float DamageInterval;
-var int DamageTime;
-var int Level; // Server
-var bool bShownMessage; // Client
-var bool bChangedSettings; // Client
-var String FrozenMessage;
+var bool bChangedSettings;
+
 // IceEmitter
 var ParticleSystemComponent IceEmitter;
 var ParticleSystem EmitterTemplate;
@@ -16,13 +9,6 @@ var class<UTEmitCameraEffect> InsideCameraEffect;
 
 // Victim's parameters
 var float OldGroundSpeed;
-
-
-replication
-{
-	if(Role == ROLE_Authority && bNetInitial)
-		Victim;
-}
 
 simulated event ReplicatedEvent(name VarName)
 {
@@ -57,10 +43,12 @@ simulated function PostBeginPlay()
 	}
 }
 
-function InitIce()
+function Init()
 {
-	`log(">>"@Victim@" Is Frozen!! WAAAAA <<");
+	super.Init();
 
+	`log(">>"@Victim@" Is Frozen!! WAAAAA <<");
+	
 	PostBeginPlay();
 	
 	if (Role == ROLE_Authority && !bChangedSettings) 
@@ -73,36 +61,12 @@ function InitIce()
 		ClientServerSlowdown (Victim, 5);
 		bChangedSettings = True;
 	}
-	
-	SetTimer(DamageInterval, True, 'DamageTimer');
-	SetTimer(1.f, True, 'Timer');
-}
-
-reliable client function InitIceClient()
-{
-	Victim = Instigator;
-	PostBeginPlay();
-}
-
-function DamageTimer()
-{
-	Victim.TakeDamage( Damage, InstigatorController, Victim.Location, Vect(0,0,0), Class'IceDamage');
-											// IceDamage!
-}
-
-function Timer()
-{
-	DamageTime--;
-	if(DamageTime <= 0)
-	{
-		Destroy();
-	}
 }
 
 simulated event Destroyed()
 {
 	local UTPlayerController UPC;
-  
+	
 	if (Role == ROLE_Authority && Victim != None && bChangedSettings) 
 	{
 		//Victim.CustomTimeDilation = 1.0;
@@ -133,7 +97,7 @@ function ClientServerSlowdown (Pawn P, int TheLevel)
 	if (P != None)
 	{	
 		OldGroundSpeed = P.GroundSpeed;
-		P.GroundSpeed = 200.f;
+		P.GroundSpeed = 150.f;
 	}
   
   //foreach WorldInfo.AllControllers(class'UTPlayerController', UPC)
@@ -147,16 +111,18 @@ function ClientServerSlowdown (Pawn P, int TheLevel)
 
 DefaultProperties
 {
+	MyDamageType=Class'IceDamage'
+
 	InsideCameraEffect=Class'RBTTInvasion.RBTTCameraEffect_Frozen'
 	Begin Object Class=ParticleSystemComponent Name=IcePSC
 	End Object
 	Components.Add(IcePSC)
 	IceEmitter=IcePSC
 	EmitterTemplate=ParticleSystem'RBTTSlime.Effects.FrozenEffect'
-	FrozenMessage="you have been frozen!"
-	Damage = 10.f
-	DamageInterval = 0.25f
-	DamageTime = 2
+
+	Damage = 0
+	DamageInterval = 0
+	DamageTime = 5
 	
 	RemoteRole=ROLE_SimulatedProxy
 	bAlwaysRelevant=true

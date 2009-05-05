@@ -7,8 +7,6 @@ var float IceDamageInterval;
 simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 {
 	local Pawn P;
-	local RBTTIceAttachment IA;
-	local InventoryManager IM;
 
 	if (Impact.HitActor == None)
 		return; 
@@ -25,43 +23,58 @@ simulated function ProcessInstantHit( byte FiringModeZ, ImpactInfo Impact )
 	if(RBTTSlime(P) != None)
 		return;
 	
-	IA = RBTTIceAttachment(P.FindInventoryType(Class'RBTTIceAttachment', True)); // WARNING - Also looks for children of the class RBTTIceAttachment!
-	if(IA != None)
+	AttachIce(P, Controller, WorldInfo, IceTime, IceDamage, IceDamageInterval);
+}
+
+static function AttachIce(Pawn P, Controller IC, WorldInfo WI, int Time, float Damage, float Interval)
+{
+	local RBTTDamageAttachment DA;
+	local InventoryManager IM;
+
+	DA = RBTTDamageAttachment(P.FindInventoryType(Class'RBTTDamageAttachment', True)); // WARNING - Also looks for children of the class RBTTDamageAttachment!
+	if(DA != None && RBTTIceAttachment(DA) != None)
 	{
-		if(IA.DamageTime < IceTime)						// Add some fuel
-			IA.DamageTime = IceTime;
-		if(IA.Damage / IA.DamageInterval < IceDamage / IceDamageInterval ) 	// if current fire is weaker than new fire, use new fire
+		if(DA.DamageTime < Time)						// Add some fuel
+			DA.DamageTime = Time;
+		if(DA.Damage / DA.DamageInterval < Damage / Interval ) 	// if current fire is weaker than new fire, use new fire
 		{
-			IA.Damage = IceDamage;
-			IA.DamageInterval = IceDamageInterval;
+			DA.Damage = Damage;
+			DA.DamageInterval = Interval;
 		}
 		
-		IA.InitIce();
+		DA.InstigatorController = IC;
+		DA.Init();
 	}
 	else
 	{
+		if(DA != None)
+		{
+			DA.Destroy();
+		}
+		
 		IM = P.InvManager;
 		if(IM == None)
 			return;
 			
-		IA = Spawn(class'RBTTIceAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
-		IM.AddInventory(IA);
-		IA.SetBase(P);
-		IA.Victim = P;
-		IA.InstigatorController = Controller;
-		IA.Damage = IceDamage;
-		IA.DamageInterval = IceDamageInterval;
-		IA.DamageTime = IceTime;
-		IA.InitIce();
-		IA.InitIceClient();
+		DA = WI.Spawn(class'RBTTIceAttachment', WI.Game, , vect(0, 0, 0), rot(0, 0, 0));
+		IM.AddInventory(DA);
+		DA.SetBase(P);
+		DA.Victim = P;
+		DA.InstigatorController = IC;
+		DA.Damage = Damage;
+		DA.DamageInterval = Interval;
+		DA.DamageTime = Time;
+		DA.Init();
+		DA.InitClient();
 	}
+
 }
 
 defaultproperties
 {
-	IceTime = 10.f
-	IceDamage = 1.f
-	IceDamageInterval = 0.25f
+	IceTime = 10
+	IceDamage = 0.f
+	IceDamageInterval = 0.f
 	
 	HitDamage = 10
 	

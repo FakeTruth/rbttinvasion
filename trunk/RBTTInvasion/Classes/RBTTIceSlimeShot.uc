@@ -1,7 +1,22 @@
 class RBTTIceSlimeShot extends UTProj_BioShot;
 
+// Vars for freezing people!!
+var float IceTime;
+var int IceDamage;
+var float IceDamageInterval;
+
+function FreezeVictim(Pawn P)
+{
+	class'RBTTIceSlime'.static.AttachIce(P, InstigatorController, WorldInfo, IceTime, IceDamage, IceDamageInterval);
+}
+
 defaultproperties
 {
+	IceTime = 2
+	IceDamage = 0.f
+	IceDamageInterval = 0.f
+
+
 	Speed=2000.0
 	Damage=21.0
 	MomentumTransfer=40000

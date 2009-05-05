@@ -1,49 +1,18 @@
 class RBTTFireSlimeShot extends UTProj_BioShot;
 
+// Vars for setting people on fire!!
 var float FireTime;
 var int FireDamage;
 var float FireDamageInterval;
 
 function SetVictimOnFire(Pawn P)
 {
-	local RBTTFireAttachment FA;
-	local InventoryManager IM;
-
-	FA = RBTTFireAttachment(P.FindInventoryType(Class'RBTTFireAttachment', True)); // WARNING - Also looks for children of the class RBTTFireAttachment!
-	if(FA != None)
-	{
-		if(FA.DamageTime < FireTime)						// Add some fuel
-			FA.DamageTime = FireTime;
-		if(FA.Damage / FA.DamageInterval < FireDamage / FireDamageInterval ) 	// if current fire is weaker than new fire, use new fire
-		{
-			FA.Damage = FireDamage;
-			FA.DamageInterval = FireDamageInterval;
-		}
-		
-		FA.InitFire();
-	}
-	else
-	{
-		IM = P.InvManager;
-		if(IM == None)
-			return;
-			
-		FA = Spawn(class'RBTTFireAttachment', WorldInfo.Game, , vect(0, 0, 0), rot(0, 0, 0));
-		IM.AddInventory(FA);
-		FA.SetBase(P);
-		FA.Victim = P;
-		FA.InstigatorController = InstigatorController;
-		FA.Damage = FireDamage;
-		FA.DamageInterval = FireDamageInterval;
-		FA.DamageTime = FireTime;
-		FA.InitFire();
-		FA.InitFireClient();
-	}
+	class'RBTTFireSlime'.static.AttachFire(P, InstigatorController, WorldInfo, FireTime, FireDamage, FireDamageInterval);
 }
 
 defaultproperties
 {
-	FireTime = 2.f
+	FireTime = 2
 	FireDamage = 1.f
 	FireDamageInterval = 0.25f
 

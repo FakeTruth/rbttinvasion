@@ -14,6 +14,7 @@ struct MonsterNames
 	var string 				MonsterName;		// The name of the monster, so we can set it's name in the PRI
 	var string 				MonsterClassName;	// The class of the monster as a string
 	var class<Pawn> 			MonsterClass;		// The dynamically loaded class of the corresponding MonsterClassName
+	var int					MonsterID;		// The ID of the monster, used in the wave configuration
 };
 var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
 

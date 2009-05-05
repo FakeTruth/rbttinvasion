@@ -196,10 +196,10 @@ function InvasionTimer()
 				if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
 				{
 					SetTimer(CountMonstersInterval, TRUE, 'CountMonstersLeft');
-					AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
+					AddMonster(MonsterTable[MonsterTable.Find('MonsterID', WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave].MonsterNum.length)])].MonsterClass);
 				}
 			
-			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[WaveConfigBuffer[0]].MonsterClass))
+			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[0])].MonsterClass))
 			{
 				WaveConfigBuffer.Remove(0, 1);
 				SetTimer(CountMonstersInterval, TRUE, 'CountMonstersLeft');
@@ -840,9 +840,9 @@ state TimedWave
 			{
 				if (!WaveConfig[CurrentWave].bIsQueue)
 					if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
-						AddMonster(MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass);
+						AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)])].MonsterClass);
 				
-				if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[WaveConfigBuffer[0]].MonsterClass))
+				if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[0])].MonsterClass))
 				{
 					WaveConfigBuffer.Remove(0, 1);
 				}
@@ -873,7 +873,7 @@ state BossWave
 		{
 			if(i < 0)
 				i = WaveConfigBuffer.length;
-			if(AddMonster(MonsterTable[WaveConfigBuffer[i]].MonsterClass))
+			if(AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[i])].MonsterClass))
 			{
 				WaveConfigBuffer.Remove(i, 1);
 				FailedSpawnCount = 0;

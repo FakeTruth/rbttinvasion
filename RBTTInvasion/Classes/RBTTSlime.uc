@@ -50,6 +50,7 @@ simulated function PostBeginPlay()
 		return;
 	}
 	
+	DefaultHealth = health;
 	SetTimer(1, False, 'SpawnBabySlimes');
 		
 	InitializeMonsterInfo();

@@ -81,9 +81,10 @@ simulated event Destroyed()
 			UPC.ClearCameraEffect();
 	}
 	
-	Super.Destroyed();
 	IceEmitter.DeactivateSystem();
 	IceEmitter.KillParticlesForced();
+	
+	Super.Destroyed();
 }
 
 function ClientServerSlowdown (Pawn P, int TheLevel)

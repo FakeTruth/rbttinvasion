@@ -3,6 +3,7 @@ class RBTTFireAttachment extends RBTTDamageAttachment;
 // FireEmitter
 var ParticleSystemComponent FireEmitter;
 var ParticleSystem EmitterTemplate;
+var class<UTEmitCameraEffect> InsideCameraEffect;
 
 simulated event ReplicatedEvent(name VarName)
 {
@@ -17,12 +18,23 @@ simulated event ReplicatedEvent(name VarName)
 
 simulated function PostBeginPlay()
 {
+	local UTPlayerController UTPC;
+
 	if (WorldInfo.NetMode != NM_DedicatedServer && Victim != None)
 	{
 		Victim.Mesh.AttachComponent(FireEmitter, 'b_Spine');
 		FireEmitter.SetRotation(Rotator(vect(0,0,-1)));
 		FireEmitter.SetTemplate(EmitterTemplate);
 		FireEmitter.ActivateSystem();
+		
+		if (InsideCameraEffect != None)
+		{
+			UTPC = UTPlayerController(Victim.Controller);
+			if (UTPC != None)
+			{
+				UTPC.ClientSpawnCameraEffect(InsideCameraEffect);
+			}
+		}
 	}
 }
 
@@ -37,14 +49,24 @@ function Init()
 
 simulated function Destroyed()
 {
-	super.Destroyed();
+	local UTPlayerController UPC;
+	
+	if (InsideCameraEffect != None)
+	{
+		UPC = UTPlayerController(Victim.Controller);
+		if(UPC != None)
+			UPC.ClearCameraEffect();
+	}
 
 	FireEmitter.DeactivateSystem();
 	FireEmitter.KillParticlesForced();
+	
+	super.Destroyed();
 }
 
 DefaultProperties
 {
+	InsideCameraEffect=Class'RBTTInvasion.RBTTCameraEffect_Fire'
 	MyDamageType=Class'FireDamage'
 
 	Begin Object Class=ParticleSystemComponent Name=FirePSC

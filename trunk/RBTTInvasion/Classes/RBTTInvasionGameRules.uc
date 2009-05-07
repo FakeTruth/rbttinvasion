@@ -70,6 +70,7 @@ var array<UTPlayerReplicationInfo> 		Queue; 			// This array holds dead players 
 var RBTTInvasionMutator 			InvasionMut; 		// The mutator, might be handy to cache it
 
 var class<UTTeamAI> 				MonsterTeamAIType;	// decides the squads and spawns the squad ai i believe
+var class<UTTeamAI>				MonsterCTFTeamAIType;	// for CTF
 var class<UTTeamInfo> 				MonsterEnemyRosterClass;// The monsters team info responsible for spawning the team ai
 var UTTeamInfo 					Teams[2];		// an array of team infos held within UTGame 
 
@@ -404,28 +405,35 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 		PRI = NewMonster.PlayerReplicationInfo;
 		Game = UTTeamGame(WorldInfo.Game);
 		
-		NewMonster.health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
-		
 		if( Game == None )
 		{
 			return false;
 			NewMonster.Destroy();
 		}
 		
+		NewMonster.health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+		
+		if(UTCTFGame(Game) != None)
+		{
+			NewMonster.bCanPickupInventory = True; // FOR CTF GAMES, OTHERWISE THEY CAN'T PICK UP TEH FLAG
+		}
+		
+		Bot = NewMonster.Controller;
+		
 		if ( NewMonster.IsA('RBTTMonster') )
 		{
 			MonsterName = RBTTMonster(NewMonster).MonsterName;
-			Bot = NewMonster.Controller;
-			MonsterBotInfo = RBTTMonsterTeamInfo(Game.GameReplicationInfo.teams[1]).GetBotInfo(MonsterName);
+			MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
 			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
 			RBTTMonster(NewMonster).Initialize();
 			PRI.PlayerName = MonsterName;
 			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+			RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
 		}
 		
 		if(PRI != None)
 		{
-			RBTTMonsterTeamInfo=UTTeamInfo(Game.GameReplicationInfo.teams[1]);
+			RBTTMonsterTeamInfo=Game.Teams[1];
 			RBTTMonsterTeamInfo.AddToTeam(Bot);
 			`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
 			RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
@@ -451,6 +459,10 @@ function CreateMonsterTeam()
 	Game = UTTeamGame(WorldInfo.Game);
 	Game.Teams[1].Destroy();
 
+	// SET THE CURRECT AI TYPE FOR CTF GAMES!!
+	if(UTCTFGame(Game) != None)
+		MonsterTeamAIType = MonsterCTFTeamAIType; 
+	
 	RosterClass = MonsterEnemyRosterClass;
 	`log(">>>>>>>>>>>>>>>> RosterClass = " @RosterClass@ " <<<<<<<<<<<<<<<<<");
 	Teams[1] = spawn(RosterClass);
@@ -461,6 +473,10 @@ function CreateMonsterTeam()
 	Game.Teams[1] = Teams[1];
 	Game.GameReplicationInfo.SetTeam(1, Teams[1]);
 	Game.Teams[1].AI.SetObjectiveLists();
+	
+	// FOR CTF GAMES!!!
+	if(UTCTFGame(Game) != None)
+		Game.PostBeginPlay(); // SO THAT THE FLAGS WILL WORK WITH THE MONSTERTEAM!
 }
 
 function KillRandomMonster()
@@ -1013,6 +1029,7 @@ defaultproperties
 {
    MonsterEnemyRosterClass=class'RBTTMonsterTeamInfo'
    MonsterTeamAIType=Class'UTMonsterTeamAI'
+   MonsterCTFTeamAIType=Class'MonsterCTFTeamAI' // Set to replace MonsterTeamAIType in PostBeginPlay()
 
    InitialRandomKillTime = 120
    NextRandomKillTime = 30

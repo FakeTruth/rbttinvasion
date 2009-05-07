@@ -84,35 +84,23 @@ defaultproperties
 	bMeleeMonster = True;
 	AccelRate=+500.000000
 
-	LeftFootControlName="LeftFrontFootControl"
- 
-	RightFootControlName="RightFrontFootControl"
-
+	
 	MonsterName = "ScarySkull"
 	
-	//DefaultMonsterWeapon=class'UTGame.UTWeap_LinkGun'
-	
-	bCanPickupInventory = False
-	
-	bCanJump=False
+	//bCanJump=False
 	bCanFly = True
 	
-	bCanWalk = False
+	//bCanWalk = False
 	
 	bInvisibleWeapon = True
-   
+
 	MonsterSkill=3
 
 	LightEnvironment=MyLightEnvironment
 
 	BioBurnAway=GooDeath
 
-	ArmsMesh(0)=FirstPersonArms
-
-	ArmsMesh(1)=FirstPersonArms2
-
 	PawnAmbientSound=AmbientSoundComponent
-
 	WeaponAmbientSound=AmbientSoundComponent2
    
    OverlayMesh=OverlayMeshComponent0
@@ -127,10 +115,7 @@ defaultproperties
    
    AirSpeed=400.00000
    
-   
    ControllerClass=Class'RBTTMonsterControllerStinger'
-   
-    // InventoryManagerClass=class'RBTTWRInvManager'
   
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'RBTTScarySkull.ScarySkull'

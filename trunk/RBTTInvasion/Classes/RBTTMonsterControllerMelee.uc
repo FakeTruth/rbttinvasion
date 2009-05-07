@@ -107,6 +107,10 @@ protected event ExecuteWhatToDoNext()
 	}
 
 	bIgnoreEnemyChange = false;
+	if ( bUseObjectives && AssignSquadResponsibility() )	// MAKES 'M PICK UP FLAGS, AND MAYBE DO MORE!!
+	{
+		return;
+	}
 	if ( Enemy != None )
 		ChooseAttackMode();
 	else

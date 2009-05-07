@@ -1,6 +1,7 @@
 Class RBTTMonsterController Extends UTBot;
 
 var bool bNeedWeapon;
+var bool bUseObjectives;
 
 event PostBeginPlay()
 {
@@ -26,8 +27,6 @@ function Initialize(float InSkill, const out CharacterInfo BotInfo)
 {
 	local UTPlayerReplicationInfo PRI;
 	local CustomCharData BotCharData;
-	//local UTGameReplicationInfo GRI;
-	
 	
 	Skill = FClamp(InSkill, 0, 7);
 
@@ -55,20 +54,7 @@ function Initialize(float InSkill, const out CharacterInfo BotInfo)
 	// copy visual properties
 	BotCharData = BotInfo.CharData;
 	PRI = UTPlayerReplicationInfo(PlayerReplicationInfo);
-	//GRI = UTGameReplicationInfo(GameReplicationInfo);
-	//if (PRI == None)
-	//{
-		//Spawn(WorldInfo.Game.PlayerReplicationInfoClass, self,, vect(0,0,0),rot(0,0,0));
-		//PRI.SetCharacterData(BotCharData);
-		//PlayerReplicationInfo.ClientInitialize(self);
-		//BotCharData.BasedOnCharID = BotInfo.CharID;
-		//PRI.SetCharacterData(BotCharData);
-		//GRI.ProcessCharacterData(self);
-		//InitPlayerReplicationInfo();
-		//`log(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		//`log(">>>>>>>>>>>>>>>>>>>>WTF Why ARE WE sPAWNING THE PRI HERE<<<<<<<<<<<<<<<<<<<<<<<<<<");
-	
-	//}
+
 	if (PRI != None)
 	{
 		// If we have no 'based on' char ref, just fill it in with this char. Thing like VoiceClass look at this.
@@ -259,6 +245,8 @@ defaultproperties
 {
 	bKillDuringLevelTransition = TRUE
 
+	bUseObjectives = FALSE
+	
    ReactionTime=0.500000
    Jumpiness=1.000000
    Begin Object Name=TheDecider ObjName=TheDecider Archetype=UTBotDecisionComponent'UTGame.Default__UTBot:TheDecider'

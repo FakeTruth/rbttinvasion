@@ -1,6 +1,14 @@
 class MonsterCTFTeamAI extends UTCTFTeamAI;
 
 
+function SetBotOrders(UTBot NewBot)
+{
+	if ( Objectives == None )
+		SetObjectiveLists();
+
+	PutOnOffense(NewBot);
+}
+
 defaultproperties
 {
 	OrderList(0)=ATTACK

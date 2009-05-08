@@ -187,23 +187,6 @@ simulated function Rotator GetAdjustedAim( vector StartFireLoc )
 	return R;
 }
 
-function bool NeedWeapon()
-{
-	return False;
-}
-
-function bool FindInventoryGoal(float BestWeight)
-{
-	return Super.FindInventoryGoal(BestWeight);
-}
-
-event float SuperDesireability(PickupFactory P)
-{
-	//return SuperDesireability(P);
-	return 0.000;
-}
-
-
 function Destroyed() 
 {
 	super.Destroyed();

@@ -180,6 +180,26 @@ event float SuperDesireability(PickupFactory P)
 */
 
 
+/* ******** SHOULD BE CONFIGURABLE -FIXME *** */
+function bool NeedWeapon()
+{
+	return false;
+}
+
+event float SuperDesireability(PickupFactory P)
+{
+	`log(">> SuperDesireability <<");
+	return -0.f;
+}
+
+
+event float RatePickup(Actor PickupHolder, class<Inventory> InvClass)
+{
+	`log(" >> PickupHolder:"@PickupHolder@" / InvClass: "@InvClass@" << ");
+	return 0.f;
+}
+/* *********** END OF FIXME *************** */
+
 function Destroyed() 
 {
 	// Don't let monsters respawn into the game. Just remove them.
@@ -225,7 +245,7 @@ event WhatToDoNext()
 {
 	local NavigationPoint N;
 
-	if ( Enemy == None )
+	if ( Enemy == None && !bUseObjectives)
 	{
 		if ( ( WorldInfo.TimeSeconds - LastRespawnTime > 5) && ((LastSeenTime == 0) || (WorldInfo.TimeSeconds - LastSeenTime) > 15) && !Pawn.PlayerCanSeeMe() )
 		{

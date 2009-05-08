@@ -25,6 +25,11 @@ function float VehicleDesireability(UTVehicle V, UTBot B)
 	return 0;
 }
 
+function bool AllowDetourTo(UTBot B,NavigationPoint N)
+{
+	return false;
+}
+
 defaultproperties
 {
 	MaxSquadSize=4

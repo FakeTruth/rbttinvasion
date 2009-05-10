@@ -206,17 +206,24 @@ function Destroyed()
 	bIsPlayer = false;
 	`log(">>>>>>>>>> Destroyed() called from Controller <<<<<<<<<<<<");
 	
-	if ( PlayerReplicationInfo != None )
+	if (Pawn != None)
+		Pawn.Suicide();
+	if ( Squad != None )
+		Squad.RemoveBot(self);
+	if ( DefensePoint != None )
+		DefensePoint.FreePoint();
+	
+	if (Role == ROLE_Authority)
 	{
-		// remove from team if applicable
-		if ( PlayerReplicationInfo.Team != None )
-			PlayerReplicationInfo.Team.RemoveFromTeam(self);
-		CleanupPRI();
+		if ( PlayerReplicationInfo != None )
+		{
+			// remove from team if applicable
+			if ( PlayerReplicationInfo.Team != None )
+				PlayerReplicationInfo.Team.RemoveFromTeam(self);
+			CleanupPRI();
+		}
 	}
-	
-	super.Destroyed();
-	
-
+	Super(Actor).Destroyed();
 }
 
 function GameHasEnded(optional Actor EndGameFocus, optional bool bIsWinner)

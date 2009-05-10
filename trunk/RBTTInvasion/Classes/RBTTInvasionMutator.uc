@@ -58,6 +58,14 @@ function PostBeginPlay()
 	`log("##################RBTTInvasionMutator.PostBeginPlay####################");
 }
 
+function bool CheckReplacement(Actor Other)
+{
+	if(UTCTFBlueFlagBase(Other) != None)	// Replace blue flag by our 'improved' flag.
+		UTCTFBlueFlagBase(Other).FlagType = Class'RBTTCTFMonsterFlag';
+
+	return True;
+}
+
 function Mutate (string MutateString, PlayerController Sender)
 {
 	local Actor A;
@@ -296,12 +304,14 @@ function SpawnNewGameRules()
 	}
 	else
 	{
-		G = spawn(class'RBTTInvasionGameRules');	// Spawn the Invasion rules
+		if(UTCTFGame(Game) != None)				// Special rules for CTF games
+			G = spawn(class'RBTTCTFInvasionGameRules');	// Spawn the CTF Invasion rules
+		else
+			G = spawn(class'RBTTInvasionGameRules');	// Spawn the regular Invasion rules
 		CurrentRules = G;				// Cache it to a global variable
 		G.InvasionMut = self;				// Quick reference to our mutator
-		//Game.HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 		if (Game.GameRulesModifiers != None)		// Put the rules in the rules list
-		G.NextGameRules = Game.GameRulesModifiers;	// Complete the chain
+			G.NextGameRules = Game.GameRulesModifiers;	// Complete the chain
 		Game.GameRulesModifiers = G;			// Set our GameRules as head of the chain
 		
 		if(bMatchHasStarted)				// See if the match has actually started

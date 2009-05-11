@@ -11,6 +11,8 @@ class RBTTSlimeFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
+	FamilyID="Slime"
+	Faction="RBTTMonster"
 	SoundGroupClass=Class'RBTTInvasion.RBTTSlimeSoundGroup'
 	LeftFootBone=L_FrontFoot //b_LeftAnkle
 	RightFootBone=R_FrontFoot //b_RightAnkle

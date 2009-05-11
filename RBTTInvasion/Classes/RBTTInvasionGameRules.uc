@@ -396,6 +396,7 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 	local PlayerReplicationInfo PRI;
 	local string MonsterName;
 	
+	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
 	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
 	NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
@@ -422,11 +423,12 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 		
 		if ( NewMonster.IsA('RBTTMonster') )
 		{
-			MonsterName = RBTTMonster(NewMonster).MonsterName;
+			MonsterName = MonsterTable[MonsterTable.Find('MonsterClass',NewMonster.class)].MonsterName;
 			MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
 			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
 			RBTTMonster(NewMonster).Initialize();
 			PRI.PlayerName = MonsterName;
+			`log("Setting MonsterName to" @ MonsterName @ "Was Successful");
 			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 			RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
 		}

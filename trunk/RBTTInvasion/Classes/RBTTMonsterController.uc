@@ -228,7 +228,8 @@ function Destroyed()
 
 function GameHasEnded(optional Actor EndGameFocus, optional bool bIsWinner)
 {
-	Self.Destroy();
+	//Self.Destroy();
+	bIsPlayer = False;
 	Super.GameHasEnded(EndGameFocus, bIsWinner);
 }
 

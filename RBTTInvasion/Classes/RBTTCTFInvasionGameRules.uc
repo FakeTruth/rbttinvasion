@@ -26,6 +26,18 @@ function MatchStarting()
 	GotoState('BetweenWaves'); 			// Initially start counting down for the first wave.
 }
 
+simulated function PostBeginPlay()
+{
+	Super(GameRules).PostBeginPlay();
+	
+	if(LoadCustomWaveConfig())
+		`log("Custom Wave Configuration has been loaded");
+	
+	//#### SET GAME INFORMATION ####\\
+	if(UTTeamGame(WorldInfo.Game) != None)
+		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
+			
+}
 
 defaultproperties
 {

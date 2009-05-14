@@ -40,8 +40,42 @@ simulated event Destroyed()
 	Super.Destroyed();
 }
 
+function Reset()
+{
+	`log(">> Reset() <<");
+	Super.Reset();
+	Destroy();
+}
+
+function PlayerReplicationInfo Duplicate()
+{
+	`log(">> PlayerReplicationInfo Duplicate() <<");
+	Destroy();
+	return None;
+}
+
+function OverrideWith(PlayerReplicationInfo PRI)
+{
+	`log(">> OverrideWith(PlayerReplicationInfo PRI) <<");
+	Destroy();
+}
+
+function CopyProperties(PlayerReplicationInfo PRI)
+{
+	`log(">> CopyProperties(PlayerReplicationInfo PRI) <<");
+	Destroy();
+}
+
+function SeamlessTravelTo(PlayerReplicationInfo NewPRI)
+{
+	`log(">> SeamlessTravelTo(PlayerReplicationInfo NewPRI) <<");
+	Destroy();
+	Owner.Destroy();
+}
 
 DefaultProperties
 {
+	bKillDuringLevelTransition = TRUE
+
 	VoiceClass=class'UTGame.UTVoice_DefaultMale' // Set this through postbeginplay in the Monster class, so people can specify their own voice set
 }

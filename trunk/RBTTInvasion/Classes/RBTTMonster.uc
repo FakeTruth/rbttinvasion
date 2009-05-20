@@ -328,8 +328,6 @@ simulated function WeaponChanged(UTWeapon NewWeapon); // This function only does
 
 defaultproperties
 {
-	bKillDuringLevelTransition = TRUE
-
 	MonsterHealth = 0
 	HitDamage = 10
 	WeaponSpeedMultiplier = 1.000 //0.5 = half speed, 1 = standard, 2 = twice as fast, etc.

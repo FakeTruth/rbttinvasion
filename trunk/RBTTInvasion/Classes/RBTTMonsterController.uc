@@ -200,6 +200,7 @@ event float RatePickup(Actor PickupHolder, class<Inventory> InvClass)
 }
 /* *********** END OF FIXME *************** */
 
+/*
 function Destroyed() 
 {
 	// Don't let monsters respawn into the game. Just remove them.
@@ -225,14 +226,21 @@ function Destroyed()
 	}
 	Super(Actor).Destroyed();
 }
+*/
 
 function GameHasEnded(optional Actor EndGameFocus, optional bool bIsWinner)
 {
 	//Self.Destroy();
 	bIsPlayer = False;
-	Super.GameHasEnded(EndGameFocus, bIsWinner);
+	//Super.GameHasEnded(EndGameFocus, bIsWinner);
 }
 
+function RoundHasEnded(optional Actor EndRoundFocus)
+{
+	bIsPlayer = False;
+}
+
+/*
 function PawnDied(Pawn P)
 {
 	if ( Pawn != P )
@@ -242,8 +250,9 @@ function PawnDied(Pawn P)
 	
 	`log(">>>>>>>>>>>>>>        PAWN HAS DIED        <<<<<<<<<<<<<<<");
 	`log(">>>>>>>>>>>>>> ABOUT TO DESTROY CONTROLLER <<<<<<<<<<<<<<<");
-	Destroy();
+	//Destroy();
 }
+*/
 
 /** triggers ExecuteWhatToDoNext() to occur during the next tick
  * this is also where logic that is unsafe to do during the physics tick should be added
@@ -271,7 +280,7 @@ event WhatToDoNext()
 
 defaultproperties
 {
-	bKillDuringLevelTransition = TRUE
+	bSpawnedByKismet=True
 
 	bUseObjectives = FALSE
 	

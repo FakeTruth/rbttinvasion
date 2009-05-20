@@ -75,7 +75,5 @@ function SeamlessTravelTo(PlayerReplicationInfo NewPRI)
 
 DefaultProperties
 {
-	bKillDuringLevelTransition = TRUE
-
 	VoiceClass=class'UTGame.UTVoice_DefaultMale' // Set this through postbeginplay in the Monster class, so people can specify their own voice set
 }

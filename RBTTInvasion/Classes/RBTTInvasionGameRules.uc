@@ -571,8 +571,7 @@ function ScoreKill(Controller Killer, Controller Other)
 		else
 			DropItemFrom(Other.Pawn, class'Pickup_Armor', 10, 1);
 		`log("Monster was killed, number of monsters now:"@NumMonsters);
-		`log("This wave's max monsters:"@WaveConfig[CurrentWave].WaveLength);
-		`log("WaveMonsters = "@WaveMonsters);		
+		`log("Monsters killed:"@WaveMonsters@"out of"@WaveConfig[CurrentWave].WaveLength);
 	}
 }
 

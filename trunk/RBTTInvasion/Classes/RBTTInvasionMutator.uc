@@ -181,11 +181,11 @@ function InitMutator(string Options, out string ErrorMessage)
 		}
 	}
 	
-	`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
-	for(i=0;i < MonsterTable.length;i++)
+	`log(">>>>>>>>>>>>>>>>>>default.MonsterTable.length:"@default.MonsterTable.Length);
+	for(i=0;i < default.MonsterTable.length;i++)
 	{
-		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
-		MonsterTable[i].MonsterClass = class<Pawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
+		`log("#####Loading monster"@i@": "@default.MonsterTable[i].MonsterClassName);
+		default.MonsterTable[i].MonsterClass = class<Pawn>(DynamicLoadObject(default.MonsterTable[i].MonsterClassName,class'Class'));
 	}
 	
 	//SpawnNewGameRules();				// Let the very first GameRules do things before playtime, enabling them to do special things
@@ -399,6 +399,20 @@ simulated static function RBTTInvasionMutator GetInvasionMutatorFrom(UTGame Game
 			return RBTTInvasionMutator(mut);			// Return the mutator we were looking for, for further handling
 
 	return None; 	// We couldn't find anything, so return None	
+}
+
+static function bool IsMonster(Pawn P)
+{
+	local int i;
+
+	if(P == None)
+		return false;
+	
+	for(i=default.MonsterTable.Length-1; i >= 0; i--)
+		if(P.class == default.MonsterTable[i].MonsterClass)
+				return True;
+	
+	return false;
 }
 
 //

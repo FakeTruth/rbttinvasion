@@ -164,7 +164,7 @@ function MatchStarting()
 	CurrentWave = InvasionMut.CurrentWave;
 	
 	//#### GET MONSTERTABLE FROM MUTATOR ####\\
-	MonsterTable = InvasionMut.MonsterTable;
+	MonsterTable = InvasionMut.default.MonsterTable;
 	
 	CreateMonsterTeam();
 	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
@@ -330,6 +330,8 @@ function bool IsMonster(Pawn P)
 	for(i=MonsterTable.Length-1; i >= 0; i--)
 		if(P.class == MonsterTable[i].MonsterClass)
 				return True;
+	
+	return false;
 }
 
 function bool AddMonster(class<Pawn> P)
@@ -412,7 +414,8 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 			NewMonster.Destroy();
 		}
 		
-		NewMonster.health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+		NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+		NewMonster.HealthMax = NewMonster.Health;
 		
 		if(UTCTFGame(Game) != None)
 		{

@@ -4,7 +4,7 @@ class RBTTInvasionMutator extends UTMutator
 var int CurrentWave; 			// Current wave we're in
 var bool bMatchHasStarted;		// A check to see if the match has actually started before we send MatchStarting to the gamerules
 var string InitMutatorOptionsString; 	// For sending the game options to other mutators/gameinfo's spawned by us
-var string InvasionVersion;		// Version of the invasion mutator, added in the serverdetails when querying server
+var int InvasionVersion;		// Version of the invasion mutator, added in the serverdetails when querying server
 var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 var config bool bAllowTranslocator;	// Add translocator ??
 var config bool bForceAllRed;		// Force all players to the red team?
@@ -15,6 +15,13 @@ struct MonsterNames
 	var string 				MonsterClassName;	// The class of the monster as a string
 	var class<Pawn> 			MonsterClass;		// The dynamically loaded class of the corresponding MonsterClassName
 	var int					MonsterID;		// The ID of the monster, used in the wave configuration
+	var int					Score;			// Points you get for killing this monster
+	
+	structdefaultproperties
+	{
+		MonsterName = "Monster"
+		Score = 1;
+	}
 };
 var config Array<MonsterNames> 			MonsterTable;		// Hold all monsternames and classes
 
@@ -401,18 +408,17 @@ simulated static function RBTTInvasionMutator GetInvasionMutatorFrom(UTGame Game
 	return None; 	// We couldn't find anything, so return None	
 }
 
-static function bool IsMonster(Pawn P)
+static function int IsMonster(Pawn P)
 {
-	local int i;
-
 	if(P == None)
-		return false;
+		return -1;
 	
-	for(i=default.MonsterTable.Length-1; i >= 0; i--)
-		if(P.class == default.MonsterTable[i].MonsterClass)
-				return True;
-	
-	return false;
+	return Default.MonsterTable.Find('MonsterClass', P.Class);
+}
+
+static function int GetMonsterScore(int Index)
+{
+	return Default.MonsterTable[Index].Score;
 }
 
 //
@@ -430,7 +436,7 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 	i++;
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "UT3 Invasion";
-	ServerState.ServerInfo[i].Value = InvasionVersion;
+	ServerState.ServerInfo[i].Value = "Rev."@InvasionVersion;
 	`log("##################RBTTInvasionMutator.GetServerDetails####################");
 }
 
@@ -438,9 +444,9 @@ defaultproperties
 {
    //MutatorConfig(0)=()
    
-   bForceAllRed=True;
-   bAllowTranslocator=True;
-   InvasionVersion="Rev 90"
+   bForceAllRed=True
+   bAllowTranslocator=True
+   InvasionVersion=292
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

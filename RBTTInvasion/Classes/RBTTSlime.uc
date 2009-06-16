@@ -216,7 +216,7 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 		// Slime made it, so it should be the instigator
 		BioGlobSpawn.InstigatorController = controller; 
 		BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
-		if (BioGlobSpawn.Physics == PHYS_Falling)
+		if (BioGlobSpawn != NONE && BioGlobSpawn.Physics == PHYS_Falling)
 		{
 			VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
 			BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;

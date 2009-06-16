@@ -93,7 +93,7 @@ defaultproperties
 	//bCanWalk = False
 	
 	bInvisibleWeapon = True
-
+	HeadBone="b_Root"
 	MonsterSkill=3
 
 	LightEnvironment=MyLightEnvironment

@@ -9,7 +9,7 @@ defaultproperties
 	bInvisibleWeapon = True;
 
 	TorsoBoneName="Spine"
-	HeadBone="Head"
+	HeadBone="HeadTop"
 	bEnableFootPlacement=False
 	LeftFootControlName="LeftFrontFootControl"
 	RightFootControlName="RightFrontFootControl"

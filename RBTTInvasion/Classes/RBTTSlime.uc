@@ -270,7 +270,7 @@ defaultproperties
 	MaxMultiJump = 0
 	
 	TorsoBoneName="Spine"
-	HeadBone="Head"
+	HeadBone="joint3"
 	bEnableFootPlacement=False
 	LeftFootControlName="LeftFrontFootControl"
 	RightFootControlName="RightFrontFootControl"

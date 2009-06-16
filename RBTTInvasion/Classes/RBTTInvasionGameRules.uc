@@ -243,19 +243,22 @@ function ReplenishAmmo()
 
 	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
 	{
-		InvManager = UTInventoryManager(PC.Pawn.InvManager);
-		
-		for (Item = InvManager.InventoryChain; Item != None; Item = Item.Inventory)
+		if(PC != NONE && PC.Pawn != NONE && PC.Pawn.InvManager != NONE)
 		{
-			if(!Item.IsA('UTWeap_Redeemer'))
+			InvManager = UTInventoryManager(PC.Pawn.InvManager);
+			
+			for (Item = InvManager.InventoryChain; Item != None; Item = Item.Inventory)
 			{
-				W = UTWeapon(Item);
-				if(W != None)
+				if(!Item.IsA('UTWeap_Redeemer'))
 				{
-					AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
-					
-					if(AmmoToAdd > 0)
-						InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
+					W = UTWeapon(Item);
+					if(W != None)
+					{
+						AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
+						
+						if(AmmoToAdd > 0)
+							InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
+					}
 				}
 			}
 		}

@@ -161,8 +161,10 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 			health+= DamageAmount*2;
 	
 		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
-		NewSize = ((default.MonsterScale-MinMonsterScale) / (float(DefaultHealth) / float(health))) + MinMonsterScale;
-		
+		if(float(DefaultHealth) > 0 && float(health) > 0)
+		{
+			NewSize = ((default.MonsterScale-MinMonsterScale) / (float(DefaultHealth) / float(health))) + MinMonsterScale;
+		}
 		if(NewSize != MonsterScale)
 			InitSize(NewSize);
 		

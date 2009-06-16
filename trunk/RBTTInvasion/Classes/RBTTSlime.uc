@@ -207,11 +207,23 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 	local Vector VNorm;
 
 	BioGlobSpawn = self.Spawn(SlimeGlobClass,,,self.Location);
-	BioGlobSpawn.InitBio(None, 25); //make its strength 25
-	BioGlobSpawn.SetOwner(self);
-	BioGlobSpawn.InstigatorController = controller; // Slime made it, so it should be the instigator
-	
-	BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
+	if (BioGlobSpawn != NONE)
+	{
+		BioGlobSpawn.InitBio(None, 25); //make its strength 25
+	}
+	if (BioGlobSpawn != NONE)
+	{
+		BioGlobSpawn.SetOwner(self);
+	}
+	if (BioGlobSpawn != NONE)
+	{
+		// Slime made it, so it should be the instigator
+		BioGlobSpawn.InstigatorController = controller; 
+	}
+	if (BioGlobSpawn != NONE)
+	{
+		BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
+	}
 	if (BioGlobSpawn.Physics == PHYS_Falling)
 	{
 		VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
@@ -238,7 +250,7 @@ function float SuggestAttackStyle() {	return 1.00;	}
 
 simulated function InstantFire()
 {
-	if(VSize(Controller.Enemy.Location - Location) > GetCollisionRadius() + 64)
+	if(Controller.Enemy != NONE && VSize(Controller.Enemy.Location - Location) > GetCollisionRadius() + 64)
 	{
 		return; // enemy too far away to punch it in teh face!
 	}

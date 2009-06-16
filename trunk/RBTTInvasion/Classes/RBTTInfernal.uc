@@ -183,13 +183,15 @@ simulated function InstantFire()
 simulated function DoPound()
 {
 	PlaySound(SoundCue'A_Gameplay_UT3G.Titan.A_Gameplay_UT3G_Titan_TitanMelee01_Cue');
-	HeroGroundPoundEmitter.ActivateSystem();
+	if (HeroGroundPoundEmitter != NONE)
+	{
+		HeroGroundPoundEmitter.ActivateSystem();
+	}
 	bInHeroMelee = true;
 	PlayEmote('MeleeA', -1);
 	AccelRate = 0;
 	SetTimer(2.0, false, 'StopMeleeAttack');
 	SetTimer(0.84, false, 'CauseMeleeDamage');
-
 	//HeroGroundPoundEmitter.SetActive(true);
 	//HeroGroundPoundEmitter.SetHidden(false);
 }

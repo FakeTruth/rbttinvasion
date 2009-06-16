@@ -347,8 +347,6 @@ function bool AddMonster(class<Pawn> P)
 	
 	if ( StartSpot == None )
 		return False;
-
-	
 	
 	//NewMonsterPawnClass = MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass;
 	//NewMonsterPawnClass = MonsterTable[Rand(MonsterTable.Length)].MonsterClass;
@@ -377,7 +375,7 @@ function bool InsertMonster(class<Pawn> P, Vector SpawnLocation, optional Rotato
 // Do all the checks before spawning a monster
 function bool SafeSpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
 {
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SafeSpawnMonster<<<<<<<<<<<<<<<<<<<<");
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.Safe<<<<<<<<<<<<<<<<<<<<");
 
 	if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters) 
 		if ( NumMonsters < 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
@@ -398,60 +396,63 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 	local PlayerReplicationInfo PRI;
 	local string MonsterName;
 	
-	
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
-	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
-	NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
-	
-	if (NewMonster != None)
+	if (P != NONE)
 	{
-		PRI = NewMonster.PlayerReplicationInfo;
-		Game = UTTeamGame(WorldInfo.Game);
+	
+		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
+		//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
+		NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 		
-		if( Game == None )
+		if (NewMonster != None)
 		{
+			PRI = NewMonster.PlayerReplicationInfo;
+			Game = UTTeamGame(WorldInfo.Game);
+			
+			if( Game == None )
+			{
+				return false;
+				NewMonster.Destroy();
+			}
+			
+			NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+			NewMonster.HealthMax = NewMonster.Health;
+			
+			if(UTCTFGame(Game) != None)
+			{
+				NewMonster.bCanPickupInventory = True; // FOR CTF GAMES, OTHERWISE THEY CAN'T PICK UP TEH FLAG
+			}
+			
+			Bot = NewMonster.Controller;
+			
+			if ( NewMonster.IsA('RBTTMonster') )
+			{
+				MonsterName = MonsterTable[MonsterTable.Find('MonsterClass',NewMonster.class)].MonsterName;
+				MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
+				RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
+				RBTTMonster(NewMonster).Initialize();
+				PRI.PlayerName = MonsterName;
+				`log("Setting MonsterName to" @ MonsterName @ "Was Successful");
+				`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+				RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
+			}
+			
+			if(PRI != None)
+			{
+				RBTTMonsterTeamInfo=Game.Teams[1];
+				RBTTMonsterTeamInfo.AddToTeam(Bot);
+				`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
+				RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
+			}
+			
+			NumMonsters++;
+			if(UTPawn(NewMonster) != None)
+				UTPawn(NewMonster).SpawnTransEffect(0);
+			`log("This many monsters in the game now:"@NumMonsters);
+			return True;
+		}
+		else
 			return false;
-			NewMonster.Destroy();
-		}
-		
-		NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
-		NewMonster.HealthMax = NewMonster.Health;
-		
-		if(UTCTFGame(Game) != None)
-		{
-			NewMonster.bCanPickupInventory = True; // FOR CTF GAMES, OTHERWISE THEY CAN'T PICK UP TEH FLAG
-		}
-		
-		Bot = NewMonster.Controller;
-		
-		if ( NewMonster.IsA('RBTTMonster') )
-		{
-			MonsterName = MonsterTable[MonsterTable.Find('MonsterClass',NewMonster.class)].MonsterName;
-			MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
-			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
-			RBTTMonster(NewMonster).Initialize();
-			PRI.PlayerName = MonsterName;
-			`log("Setting MonsterName to" @ MonsterName @ "Was Successful");
-			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
-			RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
-		}
-		
-		if(PRI != None)
-		{
-			RBTTMonsterTeamInfo=Game.Teams[1];
-			RBTTMonsterTeamInfo.AddToTeam(Bot);
-			`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
-			RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
-		}
-		
-		NumMonsters++;
-		if(UTPawn(NewMonster) != None)
-			UTPawn(NewMonster).SpawnTransEffect(0);
-		`log("This many monsters in the game now:"@NumMonsters);
-		return True;
 	}
-	else
-		return false;
 }
 	
 function CreateMonsterTeam()
@@ -623,7 +624,7 @@ function EndInvasionGame(Optional string Reason)
 		Teams[1].Score = 9999;
 		Teams[0].Score = 0;
 	}
-	
+		
 	Reason = (Reason == "")?"triggered":Reason;
 	WorldInfo.Game.EndGame(None,Reason);
 	ClearTimer('InvasionTimer');

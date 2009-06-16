@@ -210,24 +210,15 @@ function bool Died(Controller Killer, class<DamageType> damageType, vector HitLo
 	if (BioGlobSpawn != NONE)
 	{
 		BioGlobSpawn.InitBio(None, 25); //make its strength 25
-	}
-	if (BioGlobSpawn != NONE)
-	{
 		BioGlobSpawn.SetOwner(self);
-	}
-	if (BioGlobSpawn != NONE)
-	{
 		// Slime made it, so it should be the instigator
 		BioGlobSpawn.InstigatorController = controller; 
-	}
-	if (BioGlobSpawn != NONE)
-	{
 		BioGlobSpawn.Velocity = (BioGlobSpawn.GloblingSpeed + FRand()*150.0) * (BioGlobSpawn.SurfaceNormal + VRand()*0.8);
-	}
-	if (BioGlobSpawn.Physics == PHYS_Falling)
-	{
-		VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
-		BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;
+		if (BioGlobSpawn.Physics == PHYS_Falling)
+		{
+			VNorm = (BioGlobSpawn.Velocity dot BioGlobSpawn.SurfaceNormal) * BioGlobSpawn.SurfaceNormal;
+			BioGlobSpawn.Velocity += (-VNorm + (BioGlobSpawn.Velocity - VNorm)) * 0.1;
+		}
 	}
 	
 	Super.Died(Killer, damageType, HitLocation);

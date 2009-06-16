@@ -36,7 +36,8 @@ static function AttachIce(Pawn P, Controller IC, WorldInfo WI, int Time, float D
 	{
 		if(DA.DamageTime < Time)						// Add some fuel
 			DA.DamageTime = Time;
-		if(DA.Damage / DA.DamageInterval < Damage / Interval ) 	// if current fire is weaker than new fire, use new fire
+			
+		if(DA.DamageInterval > 0 && Interval > 0 && DA.Damage / DA.DamageInterval < Damage / Interval ) 	// if current fire is weaker than new fire, use new fire
 		{
 			DA.Damage = Damage;
 			DA.DamageInterval = Interval;

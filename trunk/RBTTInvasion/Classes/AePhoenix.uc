@@ -28,7 +28,7 @@ defaultproperties
 {
 	HitDamage = 10
 	AccelRate=+1000.000000
-
+	HeadBone="joint5"
 	MonsterName = "AePhoenix"
 	
 	//DefaultMonsterWeapon=class'UTGame.UTWeap_LinkGun'

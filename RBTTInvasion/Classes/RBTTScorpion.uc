@@ -31,7 +31,7 @@ defaultproperties
    
    DefaultMesh=SkeletalMesh'RBTTScorpion.Scorpion'
 
-   WalkableFloorZ=0.300000
+   WalkableFloorZ=0.800000
 
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'
@@ -48,8 +48,8 @@ defaultproperties
    Mesh=WPawnSkeletalMeshComponent
    
    Begin Object Name=CollisionCylinder ObjName=CollisionCylinder Archetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
-      CollisionHeight=24.000000
-      CollisionRadius=24.000000
+      CollisionHeight=50.000000
+      CollisionRadius=100.000000
       ObjectArchetype=CylinderComponent'UTGame.Default__UTPawn:CollisionCylinder'
    End Object
    CylinderComponent=CollisionCylinder

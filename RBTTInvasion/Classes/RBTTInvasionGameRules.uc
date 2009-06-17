@@ -665,20 +665,25 @@ function Controller GetPlayerFromQueue(int Index, optional bool bDontRemoveFromQ
 }
 
 /** If PlayerName is not given, ressurect ALL players */
-function ResPlayer(optional string PlayerName)
+function ResPlayer(optional string PlayerName, optional PlayerReplicationInfo ResBy)
 {
 	local Controller C;
 	local int i;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.Resplayer<<<<<<<<<<<<<<<<<<<<");
-
 	if(PlayerName ~= "")
 	{
 		for(i = Queue.length-1; i >= 0; i--)
 		{
 			C = GetPlayerFromQueue(i);
 			if(C != None)
+			{
 				RestartPlayer(C);
+				if(ResBy != None && PlayerController(C) != None)
+				{
+					PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
+				}
+			}
 		}
 	}
 	else
@@ -693,6 +698,10 @@ function ResPlayer(optional string PlayerName)
 				{
 					GetPlayerFromQueue(i);
 					RestartPlayer(C);
+					if(ResBy != None && PlayerController(C) != None)
+					{
+						PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
+					}
 				}
 			}
 		}
@@ -798,6 +807,9 @@ state BetweenWaves
 	{
 		return false; // This function is not allowed to spawn monsters between waves
 	}
+Begin:
+//Wait a couple of seconds before actually starting the countdown and ressurecting players
+Sleep(3);
 }
 
 function BeginWave()
@@ -805,6 +817,16 @@ function BeginWave()
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BeginWave<<<<<<<<<<<<<<<<<<<<");
 
 	SetTimer(InitialRandomKillTime, true, 'KillRandomMonster');
+	
+	// If no monsters are supposed to spawn, end the wave
+	if(WaveConfig[CurrentWave].MonsterNum.length <= 0 || WaveConfig[CurrentWave].WaveLength <= 0)
+	{
+		if(WaveConfig[CurrentWave].BossMonsters.length > 0)
+		{	GotoState('BossWave'); return;	}
+				
+		EndWave();
+		return;	
+	}
 	
 	if(WaveConfig[CurrentWave].bTimedWave == True)
 		GotoState('TimedWave');

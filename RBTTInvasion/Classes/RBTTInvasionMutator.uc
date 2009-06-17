@@ -129,7 +129,7 @@ function Mutate (string MutateString, PlayerController Sender)
 		{
 			`log(">> Mutate "@MutateString@" <<");
 			`log(">> Player to ressurect: "@Right(MutateString, Len(MutateString) - Len("resplayer "))@"<<");
-			RBTTInvasionGameRules(CurrentRules).ResPlayer(Right(MutateString, Len(MutateString) - Len("resplayer ")));
+			RBTTInvasionGameRules(CurrentRules).ResPlayer(Right(MutateString, Len(MutateString) - Len("resplayer ")), Sender.PlayerReplicationInfo);
 			
 		}
 	//} else {

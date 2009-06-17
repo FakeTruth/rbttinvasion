@@ -543,7 +543,7 @@ function ScoreKill(Controller Killer, Controller Other)
 	if(Killer != Other) // reset the timer. It wasn't killed by itself, so a player probably helped it?
 		SetTimer(InitialRandomKillTime, true, 'KillRandomMonster');
 
-	if(PRI != None && PRI.Team != NONE && PRI.Team.TeamIndex != NONE && PRI.Team.TeamIndex != 1)
+	if(PRI != None && PRI.Team != NONE && PRI.Team.TeamIndex != 1)
 	{
 		foreach WorldInfo.AllControllers(class'Controller', C)
 			if((C.IsA('UTPlayerController') || C.class == Class'UTGame.UTBot')

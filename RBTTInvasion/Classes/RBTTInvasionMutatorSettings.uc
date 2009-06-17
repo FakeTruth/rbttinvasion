@@ -54,7 +54,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 	local int i, j;
 	local string NewMonsterClassName;
 	local array<string> AllVars;
-	local string VarKey;
+	//local string VarKey;
 	local string configName;
 	local CustomWaveConfig CWaveConfig;
 	
@@ -63,10 +63,12 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 
 	request.GetVariables(AllVars);
 	
+	/* UNCOMMENT TO SEE WHAT VARIABLES ARE SENT
 	ForEach AllVars(VarKey)
 	{
 		`log(VarKey@"="@request.GetVariable(VarKey));
 	}
+	*/
 
 	if(request.GetVariable("ChangeWaveNum") ~= "True")
 	{

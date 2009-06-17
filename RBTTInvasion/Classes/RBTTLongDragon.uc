@@ -101,7 +101,7 @@ defaultproperties
    Begin Object Name=WPawnSkeletalMeshComponent ObjName=WPawnSkeletalMeshComponent Archetype=SkeletalMeshComponent'UTGame.Default__UTPawn:WPawnSkeletalMeshComponent'
       SkeletalMesh=SkeletalMesh'RBTTLongDragon.LongDragon'
       AnimTreeTemplate=AnimTree'RBTTLongDragon.LongDragonAnimTree'
-      AnimSets(4)=AnimSet'RBTTLongDragon.LongDragonAnims'
+      //AnimSets(4)=AnimSet'RBTTLongDragon.LongDragonAnims' - FIXME IT HAS NO ANIMSET??
       PhysicsAsset=PhysicsAsset'RBTTLongDragon.LongDragon_Physics'
       bHasPhysicsAssetInstance=True
       Name="WPawnSkeletalMeshComponent"

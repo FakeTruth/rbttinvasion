@@ -90,30 +90,22 @@ replication
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.PostBeginPlay<<<<<<<<<<<<<<<<<<<<");
-
-	if(LoadCustomWaveConfig())
-		`log("Custom Wave Configuration has been loaded");
 	
-	
-	//`log(">>>>>>>>>>>>>>>>>>MonsterTable.length:"@MonsterTable.Length);
-	/* DELETEME
-	for(i=0;i < MonsterTable.length;i++)
+	if(WorldInfo.NetMode != NM_Client)
 	{
-		`log("#####Loading monster"@i@": "@MonsterTable[i].MonsterClassName);
-		MonsterTable[i].MonsterClass = class<UTPawn>(DynamicLoadObject(MonsterTable[i].MonsterClassName,class'Class'));
-	}
-	*/
-	
-	WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
-	
-	//#### SET GAME INFORMATION ####\\
-	if(UTTeamGame(WorldInfo.Game) != None)
-		UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
+		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.PostBeginPlay<<<<<<<<<<<<<<<<<<<<");
+
+		if(LoadCustomWaveConfig())
+			`log("Custom Wave Configuration has been loaded");
+		
+		WorldInfo.Game.GoalScore = 0;			// 0 means no goalscore
+		
+		//#### SET GAME INFORMATION ####\\
+		if(UTTeamGame(WorldInfo.Game) != None)
+			UTTeamGame(WorldInfo.Game).bForceAllRed=true;	
 			
-	
-	
-	//SaveConfig();
+		//SaveConfig();
+	}
 }
 
 // So just use it to set the team..
@@ -399,63 +391,59 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 	local PlayerReplicationInfo PRI;
 	local string MonsterName;
 	
-	if (P != NONE)
-	{
+	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
+	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
+	NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 	
-		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
-		//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
-		NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
+	if (NewMonster != None)
+	{
+		PRI = NewMonster.PlayerReplicationInfo;
+		Game = UTTeamGame(WorldInfo.Game);
 		
-		if (NewMonster != None)
+		if( Game == None )
 		{
-			PRI = NewMonster.PlayerReplicationInfo;
-			Game = UTTeamGame(WorldInfo.Game);
-			
-			if( Game == None )
-			{
-				return false;
-				NewMonster.Destroy();
-			}
-			
-			NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
-			NewMonster.HealthMax = NewMonster.Health;
-			
-			if(UTCTFGame(Game) != None)
-			{
-				NewMonster.bCanPickupInventory = True; // FOR CTF GAMES, OTHERWISE THEY CAN'T PICK UP TEH FLAG
-			}
-			
-			Bot = NewMonster.Controller;
-			
-			if ( NewMonster.IsA('RBTTMonster') )
-			{
-				MonsterName = MonsterTable[MonsterTable.Find('MonsterClass',NewMonster.class)].MonsterName;
-				MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
-				RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
-				RBTTMonster(NewMonster).Initialize();
-				PRI.PlayerName = MonsterName;
-				`log("Setting MonsterName to" @ MonsterName @ "Was Successful");
-				`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
-				RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
-			}
-			
-			if(PRI != None)
-			{
-				RBTTMonsterTeamInfo=Game.Teams[1];
-				RBTTMonsterTeamInfo.AddToTeam(Bot);
-				`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
-				RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
-			}
-			
-			NumMonsters++;
-			if(UTPawn(NewMonster) != None)
-				UTPawn(NewMonster).SpawnTransEffect(0);
-			`log("This many monsters in the game now:"@NumMonsters);
-			return True;
-		}
-		else
 			return false;
+			NewMonster.Destroy();
+		}
+		
+		NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
+		NewMonster.HealthMax = NewMonster.Health;
+		
+		if(UTCTFGame(Game) != None)
+		{
+			NewMonster.bCanPickupInventory = True; // FOR CTF GAMES, OTHERWISE THEY CAN'T PICK UP TEH FLAG
+		}
+		
+		Bot = NewMonster.Controller;
+		
+		if ( NewMonster.IsA('RBTTMonster') )
+		{
+			MonsterName = MonsterTable[MonsterTable.Find('MonsterClass',NewMonster.class)].MonsterName;
+			MonsterBotInfo = Game.Teams[1].GetBotInfo(MonsterName);
+			RBTTMonsterController(Bot).Initialize(RBTTMonster(NewMonster).MonsterSkill, MonsterBotInfo);
+			RBTTMonster(NewMonster).Initialize();
+			PRI.PlayerName = MonsterName;
+			`log("Setting MonsterName to" @ MonsterName @ "Was Successful");
+			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
+			RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
+		}
+		
+		if(PRI != None)
+		{
+			RBTTMonsterTeamInfo=Game.Teams[1];
+			RBTTMonsterTeamInfo.AddToTeam(Bot);
+			`log("PRI.Team.TeamIndex = "@PRI.Team.TeamIndex@"");
+			RBTTMonsterTeamInfo.SetBotOrders(UTBot(Bot));
+		}
+		
+		NumMonsters++;
+		if(UTPawn(NewMonster) != None)
+			UTPawn(NewMonster).SpawnTransEffect(0);
+		`log("This many monsters in the game now:"@NumMonsters);
+		return True;
 	}
+	else
+		return false;
 }
 	
 function CreateMonsterTeam()
@@ -885,7 +873,6 @@ state BossWave
 {
 	function BeginState(Name PreviousStateName)
 	{
-		local int i;
 		local int FailedSpawnCount;
 	
 		`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.BossWave.BeginState<<<<<<<<<<<<<<<<<<<<");
@@ -893,19 +880,17 @@ state BossWave
 		WaveConfigBuffer = WaveConfig[CurrentWave].BossMonsters;
 		
 		// Make SURE ALL monsters have been spawned at once
-		for(i = WaveConfigBuffer.length-1; WaveConfigBuffer.length > 0 && FailedSpawnCount < 5; i--)
+		While(WaveConfigBuffer.length > 0)
 		{
-			if(i < 0)
-				i = WaveConfigBuffer.length;
-			if(AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[i])].MonsterClass))
+			if(AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[WaveConfigBuffer.length-1])].MonsterClass))
 			{
-				WaveConfigBuffer.Remove(i, 1);
+				WaveConfigBuffer.Remove(WaveConfigBuffer.length-1, 1);
 				FailedSpawnCount = 0;
 			}
 			else
 			{
 				FailedSpawnCount++;
-				WarnInternal("FAILED TO SPAWN MONSTER. FAILED"@FailedSpawnCount@"TIME(S)");
+				WarnInternal("FAILED TO SPAWN MONSTER (ID:"$WaveConfigBuffer[WaveConfigBuffer.length-1]$") FAILED"@FailedSpawnCount@"TIME(S)");
 			}
 		}
 	}

@@ -40,6 +40,7 @@ struct WaveTable
 	var int					MaxMonsters; 		// Maximum monsters in the level at the same time
 	var bool				bAllowPortals;		// Should this wave have portals
 	var float				MonsterHealthMultiplier;// Monster's health will be multiplied by this
+	var int					FallbackMonster;	// The MonsterID of the FallbackMonster that'll be used to prevent wave hangs
 	
 	structdefaultproperties			// Set the defaultproperties for the struct
 	{
@@ -145,11 +146,9 @@ function MatchStarting()
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.MatchStarting<<<<<<<<<<<<<<<<<<<<");
 	
 	//#### GET SPAWNPOINTS FOR MONSTERS ####\\
-	i = 0;
 	foreach WorldInfo.AllNavigationPoints(class'PathNode', NavPoint)
 	{
-		MonsterSpawnPoints[i] = NavPoint;
-		i++;
+		MonsterSpawnPoints[MonsterSpawnPoints.length] = NavPoint;
 	}
 	
 	//#### GET CURRENT WAVE FROM MUTATOR ####\\
@@ -157,6 +156,24 @@ function MatchStarting()
 	
 	//#### GET MONSTERTABLE FROM MUTATOR ####\\
 	MonsterTable = InvasionMut.default.MonsterTable;
+	
+	// Go through the WaveConfig for this wave and do some FallbackMonster fixin'
+	// It only needs fixin' if there's somethin' to fix
+	if(GetMonsterClass(WaveConfig[i].FallbackMonster) == None)
+	{
+		`log("RBTTInvasionGameRules::PostBeginPlay  Found wave #"$CurrentWave@"without a FallbackMonster! Fixin...");
+		// Go through the MonsterTable in normal order, because easy monsters tend to stay up highest
+		for(i = 0; i < MonsterTable.length-1; i++)
+		{
+			// This may not be pretty, but it should stop waves from hanging!
+			if(GetMonsterClass(MonsterTable[i].MonsterID) != None)
+			{
+				WaveConfig[i].FallbackMonster = MonsterTable[i].MonsterID;
+				`log("RBTTInvasionGameRules::PostBeginPlay  FallbackMonster for wave #"$CurrentWave@"has been set to MonsterID "$MonsterTable[i].MonsterID);
+				break;
+			}
+		}
+	}
 	
 	CreateMonsterTeam();
 	SetTimer(1, true, 'InvasionTimer'); 		// InvasionTimer gets called once every second
@@ -189,11 +206,12 @@ function InvasionTimer()
 				if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
 				{
 					SetTimer(CountMonstersInterval, TRUE, 'CountMonstersLeft');
-					AddMonster(MonsterTable[MonsterTable.Find('MonsterID', WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave].MonsterNum.length)])].MonsterClass);
+					//AddMonster(MonsterTable[MonsterTable.Find('MonsterID', WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave].MonsterNum.length)])].MonsterClass);
+					AddMonster(GetMonsterClass(WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]));
 				}
 			
-			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[0])].MonsterClass))
-			{
+			if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(GetMonsterClass(WaveConfigBuffer[0])))
+			{									
 				WaveConfigBuffer.Remove(0, 1);
 				SetTimer(CountMonstersInterval, TRUE, 'CountMonstersLeft');
 			}
@@ -329,6 +347,17 @@ function bool IsMonster(Pawn P)
 	return false;
 }
 
+function class<Pawn> GetMonsterClass(int MonsterNum)
+{
+	local int index;
+	
+	index = MonsterTable.Find('MonsterID',MonsterNum);
+	if(index == -1)	// Couldn't find the monster!
+		return None;
+	
+	return MonsterTable[index].MonsterClass;
+}
+
 function bool AddMonster(class<Pawn> P)
 {
 	local NavigationPoint StartSpot;
@@ -343,9 +372,21 @@ function bool AddMonster(class<Pawn> P)
 	if ( StartSpot == None )
 		return False;
 	
+	// Use fallback monster here, as this is the only function used by the InvasionTimer
+	if(P == None)
+	{
+		WarnInternal("AddMonster: Can't add monster, because pawn class P is None! Using FallbackMonster, but you should check your INI for errors");
+		P = GetMonsterClass(WaveConfig[CurrentWave].FallbackMonster);
+		if(P == None)
+		{
+			WarnInternal("AddMonster: Couldn't find FallbackMonster, you're in trouble now!");
+			return False;
+		}
+	}
+	
 	//NewMonsterPawnClass = MonsterTable[WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]].MonsterClass;
 	//NewMonsterPawnClass = MonsterTable[Rand(MonsterTable.Length)].MonsterClass;
-	return SpawnMonster(P, StartSpot.Location, StartSpot.Rotation);
+	return (SpawnMonster(P, StartSpot.Location, StartSpot.Rotation) != None);
 }
 
 // This function will force a monster into the game
@@ -358,7 +399,7 @@ function bool InsertMonster(class<Pawn> P, Vector SpawnLocation, optional Rotato
 	   || (NumMonsters >= 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots))))
 		return False;
 
-	if(!SpawnMonster(P, SpawnLocation, SpawnRotation))
+	if(SpawnMonster(P, SpawnLocation, SpawnRotation) == None)
 	{
 		return False;
 	}
@@ -375,13 +416,13 @@ function bool SafeSpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rot
 	if (NumMonsters < WaveConfig[CurrentWave].MaxMonsters) 
 		if ( NumMonsters < 3 * (WorldInfo.Game.NumPlayers + WorldInfo.Game.NumBots) 
 		  && (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength)
-			return SpawnMonster(P, SpawnLocation, SpawnRotation);
+			return (SpawnMonster(P, SpawnLocation, SpawnRotation) != None);
 	
 	return false;
 }
 
-// Spawn a monster of given class at given location
-function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
+// Spawn a monster of given class at given location and return the pawn
+function Pawn SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator SpawnRotation)
 {
 	local Pawn NewMonster;
 	local UTTeamGame Game;
@@ -392,19 +433,16 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 	local string MonsterName;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
-	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
+	
+	Game = UTTeamGame(WorldInfo.Game);
+	if( Game == None ) // Can't use monsters in a NON-TeamGame-Game
+		return None;
+	
 	NewMonster = Spawn(P,,,SpawnLocation+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnRotation);
 	
 	if (NewMonster != None)
 	{
 		PRI = NewMonster.PlayerReplicationInfo;
-		Game = UTTeamGame(WorldInfo.Game);
-		
-		if( Game == None )
-		{
-			return false;
-			NewMonster.Destroy();
-		}
 		
 		NewMonster.Health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
 		NewMonster.HealthMax = NewMonster.Health;
@@ -440,10 +478,10 @@ function bool SpawnMonster(class<Pawn> P, Vector SpawnLocation, optional Rotator
 		if(UTPawn(NewMonster) != None)
 			UTPawn(NewMonster).SpawnTransEffect(0);
 		`log("This many monsters in the game now:"@NumMonsters);
-		return True;
+		return NewMonster;
 	}
 	else
-		return false;
+		return None;
 }
 	
 function CreateMonsterTeam()
@@ -874,10 +912,10 @@ state TimedWave
 			{
 				if (!WaveConfig[CurrentWave].bIsQueue)
 					if ( (NumMonsters + WaveMonsters) < WaveConfig[CurrentWave].WaveLength )
-						AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)])].MonsterClass);
+						AddMonster(GetMonsterClass(WaveConfig[CurrentWave].MonsterNum[Rand(WaveConfig[CurrentWave ].MonsterNum.length)]));
 				
-				if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[0])].MonsterClass))
-				{
+				if(WaveConfig[CurrentWave].bIsQueue && WaveConfigBuffer.length > 0 && AddMonster(GetMonsterClass(WaveConfigBuffer[0])))
+				{									
 					WaveConfigBuffer.Remove(0, 1);
 				}
 			}
@@ -904,15 +942,15 @@ state BossWave
 		// Make SURE ALL monsters have been spawned at once
 		While(WaveConfigBuffer.length > 0)
 		{
-			if(AddMonster(MonsterTable[MonsterTable.Find('MonsterID',WaveConfigBuffer[WaveConfigBuffer.length-1])].MonsterClass))
+			if(AddMonster(GetMonsterClass(WaveConfigBuffer[0])) || FailedSpawnCount >= 5)	// Give monster 5 chances to spawn, otherwise goto next monster
 			{
-				WaveConfigBuffer.Remove(WaveConfigBuffer.length-1, 1);
+				WaveConfigBuffer.Remove(0, 1);
 				FailedSpawnCount = 0;
 			}
 			else
 			{
 				FailedSpawnCount++;
-				WarnInternal("FAILED TO SPAWN MONSTER (ID:"$WaveConfigBuffer[WaveConfigBuffer.length-1]$") FAILED"@FailedSpawnCount@"TIME(S)");
+				WarnInternal("FAILED TO SPAWN MONSTER (ID:"$WaveConfigBuffer[0]$") FAILED"@FailedSpawnCount@"TIME(S)");
 			}
 		}
 	}

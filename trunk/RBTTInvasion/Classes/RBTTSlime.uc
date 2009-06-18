@@ -65,33 +65,27 @@ function SpawnBabySlimes()
 	local RBTTSlime NewSlime;
 	local Vector SpawnLocation;
 	
+	if(InvasionGameRules == None)
+	{
+		Destroy();
+		return;
+	}
+	
 	if(bMotherSlime)
 		for(i=0; i<4; i++)
 		{
 			if(i == 0)
-			{
 				SpawnLocation = self.Location+(Vect(1,1,0)*(GetCollisionRadius()+16));
-				if ( FastTrace(SpawnLocation, Location) )
-					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
-			}
 			if(i == 1)
-			{
 				SpawnLocation = self.Location+(Vect(1,-1,0)*(GetCollisionRadius()+16));
-				if ( FastTrace(SpawnLocation, Location) )
-					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
-			}
 			if(i == 2)
-			{
 				SpawnLocation = self.Location+(Vect(-1,1,0)*(GetCollisionRadius()+16));
-				if ( FastTrace(SpawnLocation, Location) )
-					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
-			}
 			if(i == 3)
-			{
 				SpawnLocation = self.Location+(Vect(-1,-1,0)*(GetCollisionRadius()+16));
-				if ( FastTrace(SpawnLocation, Location) )
-					NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
-			}
+			
+			if ( FastTrace(SpawnLocation, Location) )
+				NewSlime = RBTTSlime(InvasionGameRules.SpawnMonster(self.class,SpawnLocation,self.Rotation));
+			
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
@@ -140,12 +134,12 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 	
 	if(bMotherSlime)
 	{
-		if(DamageAmount > 60 && health > 0)
+		if(DamageAmount > 60 && health > 0 && InvasionGameRules != None)
 		{
-			`log(">>Gonan spawn now!<<");
+			`log(">>Gonna spawn now!<<");
 			SpawnLocation = self.Location+(Vect(0,0,1)*(GetCollisionHeight()+16));
 			if ( FastTrace(SpawnLocation, Location) )
-				NewSlime = self.Spawn(self.class,,,SpawnLocation,self.Rotation);
+				NewSlime = RBTTSlime(InvasionGameRules.SpawnMonster(self.class,SpawnLocation,self.Rotation));
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
@@ -160,17 +154,14 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 		if( Class<UTDmgType_BioGoo>(DamageType) != None )
 			health+= DamageAmount*2;
 	
-		//InitSize(Mesh.Scale3D/((DamageAmount/20)+1));
 		if(float(DefaultHealth) > 0 && float(health) > 0)
 		{
 			NewSize = ((default.MonsterScale-MinMonsterScale) / (float(DefaultHealth) / float(health))) + MinMonsterScale;
 		}
+		
 		if(NewSize != MonsterScale)
 			InitSize(NewSize);
 		
-		//if(Mesh.Scale3D.X < 8)
-		//	Died(EventInstigator, DamageType, HitLocation);
-			//KilledBy(EventInstigator.Pawn);
 	}
 }
 

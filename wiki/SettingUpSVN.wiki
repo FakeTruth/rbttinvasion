@@ -10,7 +10,8 @@ This Tutorial assumes you have UT3 and it's fully updated and at least a basic k
 first off your gonna need a svn client to download the source from our repository. you can get tortoise svn free from 
 
 http://kent.dl.sourceforge.net/sourceforge/tortoisesvn/TortoiseSVN-1.6.1.16129-win32-svn-1.6.1.msi 
-   
+
+
 = Installing TortoiseSVN =
 
 Ok first off you need to install the svn client 
@@ -100,6 +101,29 @@ finally your directory should look like this
 
 http://rbttinvasion.googlecode.com/svn/trunk/Images/TreeMyGames.jpg
 
+= Installing WebAdmin =
+
+Our Mod now has a web interface for server admins to configure their server online. This means you have to install WebAdmin.u, This file is available from 
+
+http://ut3webadmin.elmuerte.com/download.php?t=2008-09-21
+
+Once you've downloaded webadmin.u you need to copy it to 
+
+http://images.allprog.nl/img/3016_1245442894.jpg
+
+just drop the file in there, Now open up an explorer window and browse to  
+
+http://rbttinvasion.googlecode.com/svn/trunk/Images/TreeConfig.jpg
+
+locate and open your UTEngine.ini file with notepad now hit CRTL + F to bring up a search window in the field type "EditPackages"
+
+http://images.allprog.nl/img/7396_1245445805.jpg
+
+now edit the section [EditPackages] and add "EditPackages=WebAdmin" 
+
+http://images.allprog.nl/img/670_1245446022.jpg
+
+now Save and close the file..
 
 = Compiling The Project =
 

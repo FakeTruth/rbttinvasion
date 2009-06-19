@@ -84,7 +84,7 @@ function Mutate (string MutateString, PlayerController Sender)
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.Mutate<<<<<<<<<<<<<<<<<<<<");
 
 	if (Sender.PlayerReplicationInfo.bAdmin || Sender.WorldInfo.NetMode == NM_Standalone) {
-		switch( MutateString )
+		switch( Locs(MutateString) )
 		{
 			case "killallmonsters":
 				RBTTInvasionGameRules(CurrentRules).KillAllMonsters();
@@ -122,6 +122,18 @@ function Mutate (string MutateString, PlayerController Sender)
 				For(i = 0; i < ActorList.length; i++)
 					Sender.ClientMessage (ActorNumber[i]@"  :"@ActorList[i]);
 				LogInternal("######################################");
+				break;
+			case "showserveroptions":
+				if(WorldInfo.Game != None)
+				{
+					Sender.ClientMessage ("ServerOptions:"@WorldInfo.Game.ServerOptions);
+					Sender.ClientMessage ("BotRatio:"@UTGame(WorldInfo.Game).BotRatio);
+					Sender.ClientMessage ("bPlayersVsBots:"@UTGame(WorldInfo.Game).bPlayersVsBots);
+					Sender.ClientMessage ("MinNetPlayers:"@UTGame(WorldInfo.Game).MinNetPlayers);
+					Sender.ClientMessage ("bAutoNumBots:"@UTGame(WorldInfo.Game).bAutoNumBots@" //Match bots to map's recommended bot count");
+					Sender.ClientMessage ("DesiredPlayerCount:"@UTGame(WorldInfo.Game).DesiredPlayerCount@" // bots will fill in to reach this value as needed");
+					
+				}
 				break;
 		}
 		

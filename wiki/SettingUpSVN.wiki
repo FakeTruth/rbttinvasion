@@ -26,7 +26,7 @@ now you've finnished installing tortoise open an explorer window and browse to
 
 C:\Documents and Settings\User Name\My Documents\My Games\Unreal Tournament 3\UTGame\Src
 
-http://rbttinvasion.googlecode.com/svn/trunk/Images/TreeSRC.jpg
+http://rbttinvasion.googlecode.com/svn/trunk/Images/TreeSrc.jpg
 
 Here you'll need to create a folder for your project called RBTTInvasion 
 

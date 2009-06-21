@@ -10,7 +10,9 @@ class RBTTSpiderFamilyInfo extends UTFamilyInfo
 //okie here we need to add new UTGib_HumanAccessories  which will have shoulder pads and other such sweet things
 
 defaultproperties
-{
+{	
+	FamilyID="Spider"
+	Faction="RBTTMonster"
 	LeftFootBone=L_FrontFoot //b_LeftAnkle
 	RightFootBone=R_FrontFoot //b_RightAnkle
 	TakeHitPhysicsFixedBones[0]=L_FrontFoot //b_LeftAnkle 

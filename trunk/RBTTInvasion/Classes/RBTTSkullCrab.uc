@@ -23,7 +23,7 @@ defaultproperties
 	WeaponAmbientSound=AmbientSoundComponent2
 	GroundSpeed=500.000000
    OverlayMesh=OverlayMeshComponent0
-   DefaultFamily=Class'RBTTMonsterFamilyInfo'
+   DefaultFamily=Class'SkullCrabFamilyInfo'
    
    DefaultMesh=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
    

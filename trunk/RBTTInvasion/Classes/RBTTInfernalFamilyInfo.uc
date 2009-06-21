@@ -11,7 +11,7 @@ class RBTTInfernalFamilyInfo extends UTFamilyInfo;
 defaultproperties
 {
 
-   FamilyID="HumanSkeleton"
+   FamilyID="RBTTInfernal"
    Faction="RBTTMonster"
    PhysAsset=PhysicsAsset'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male_Physics'
    MasterSkeleton=SkeletalMesh'CH_Skeletons.Mesh.SK_CH_Skeleton_Human_Male'

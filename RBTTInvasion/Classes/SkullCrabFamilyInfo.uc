@@ -11,15 +11,28 @@ class SkullCrabFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
-	LeftFootBone=L_FrontFoot //b_LeftAnkle
-	RightFootBone=R_FrontFoot //b_RightAnkle
-	TakeHitPhysicsFixedBones[0]=L_FrontFoot //b_LeftAnkle
-	TakeHitPhysicsFixedBones[1]=R_FrontFoot //b_RightAnkle
-
+	FamilyID="SkullCrab"
+   Faction="RBTTMonster"
+   PhysAsset=PhysicsAsset'SkullCrabPKG2.SkullCrabA_Physics'
+   AnimSets(0)=AnimSet'SkullCrabPKG2.SkullCrabAnims'
+   TakeHitPhysicsFixedBones(0)="b_Root"
+   TakeHitPhysicsFixedBones(1)="Spine"
+   TakeHitPhysicsFixedBones(2)="Spine1"
+   TakeHitPhysicsFixedBones(3)="head"
+   TakeHitPhysicsFixedBones(4)="HeadTop"
+   TakeHitPhysicsFixedBones(5)="jaw"
+   TakeHitPhysicsFixedBones(6)="joint2"
+   TakeHitPhysicsFixedBones(7)="R_FrontKnee"
+   TakeHitPhysicsFixedBones(8)="joint1"
+   TakeHitPhysicsFixedBones(9)="R_BackKnee"
+   TakeHitPhysicsFixedBones(10)="joint4"
+   TakeHitPhysicsFixedBones(11)="L_BackKnee"
+   TakeHitPhysicsFixedBones(12)="joint3"
+   TakeHitPhysicsFixedBones(13)="L_BackKnee"
+   MasterSkeleton=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
    DeathMeshSkelMesh=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
    DeathMeshPhysAsset=PhysicsAsset'SkullCrabPKG2.SkullCrabA_Physics'
-   DeathMeshNumMaterialsToSetResident=1
-   SkeletonBurnOutMaterials(0)=MaterialInstanceTimeVarying'CH_Skeletons.Materials.MITV_CH_Skeletons_Human_01_BO'
-   Name="Default__SkullCrabFamilyInfo"
+   DefaultMeshScale=4.000000
+   Name="Default__RBTTSkullCrabFamilyInfo"
    ObjectArchetype=UTFamilyInfo'UTGame.Default__UTFamilyInfo'
 }

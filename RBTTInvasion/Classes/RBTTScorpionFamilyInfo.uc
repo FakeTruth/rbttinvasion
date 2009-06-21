@@ -11,6 +11,8 @@ class RBTTScorpionFamilyInfo extends UTFamilyInfo
 
 defaultproperties
 {
+	FamilyID="Scorpion"
+	Faction="RBTTMonster"
 	LeftFootBone=L_FrontFoot //b_LeftAnkle
 	RightFootBone=R_FrontFoot //b_RightAnkle
 	TakeHitPhysicsFixedBones[0]=L_FrontFoot //b_LeftAnkle 

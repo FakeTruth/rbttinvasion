@@ -8,6 +8,7 @@ var int InvasionVersion;		// Version of the invasion mutator, added in the serve
 var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 var config bool bAllowTranslocator;	// Add translocator ??
 var config bool bForceAllRed;		// Force all players to the red team?
+var bool bThisIsMonsterHunt;		// Whether the ThisIsMonsterHunt actor was found
 
 struct MonsterNames
 {
@@ -70,6 +71,17 @@ function bool CheckReplacement(Actor Other)
 	if(UTCTFBlueFlagBase(Other) != None)	// Replace blue flag by our 'improved' flag.
 		UTCTFBlueFlagBase(Other).FlagType = Class'RBTTCTFMonsterFlag';
 
+	if(ThisIsMonsterHunt(Other) != None)
+	{
+		`log(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<");
+		`log("MONSTERHUNT WAS FOUND!!");
+		`log("MONSTERHUNT WAS FOUND!!");
+		`log("MONSTERHUNT WAS FOUND!!");
+		`log("MONSTERHUNT WAS FOUND!!");
+		`log(">>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<");
+		bThisIsMonsterHunt = True;
+	}
+		
 	return True;
 }
 
@@ -346,7 +358,8 @@ function MatchStarting()
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.MatchStarting<<<<<<<<<<<<<<<<<<<<");
 
 	UpdateMutators();
-	SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
+	if(!bThisIsMonsterHunt)
+		SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
 	bMatchHasStarted = True;	// The match has started, so set the flag
 	super.MatchStarting();		// Let the super handle the rest of the function
 	

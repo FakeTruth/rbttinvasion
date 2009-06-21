@@ -1,24 +1,116 @@
-Class MonsterFactory extends SequenceAction;
+Class MonsterFactory extends SeqAct_Latent;
+
+enum EPointSelection
+{
+	/** Try each spawn point in a linear method */
+	PS_Normal,
+	/** Pick the first available randomly selected point */
+	PS_Random,
+	/** PS_Normal, but in reverse */
+	PS_Reverse,
+};
+
+/** Method of spawn point selection */
+var() EPointSelection		PointSelection;
 
 var() class<Pawn> PawnClass;
-var() NavigationPoint SpawnPoint;
+var() array<Actor> SpawnPoint;
+var Actor SpawnedMonster;
+var() int SpawnCount;
 
+/** Delay applied after creating an actor before creating the next one */
+var() float SpawnDelay;
+
+/** Last index used to spawn at, for PS_Normal/PS_Reverse */
+var int LastSpawnIdx;
+
+/** Number of actors spawned so far */
+var int	SpawnedCount;
+
+/** Remaining time before attempting the next spawn */
+var float RemainingDelay;
 
 /**
  * Called when this event is activated.
  */
 event Activated()
 {
-	SpawnMonster(PawnClass);
+	`log("Activated!");
+	RemainingDelay = 0; // First spawn is immediate, if someone wants to delay this, use a Delay node!
+	SpawnedCount = 0;
+	`log("Activated::DoSpawn");
+	LastSpawnIdx = -1;
+}
+
+/** script tick interface
+ * the action deactivates when this function returns false and LatentActors is empty
+ * @return whether the action needs to keep ticking
+ */
+event bool Update(float DeltaTime)
+{
+	`log("Update!!");
+	RemainingDelay -= DeltaTime;
+	if(SpawnedCount >= SpawnCount)
+	{
+		`log("return false");
+		`log("SpawnedCount:"@SpawnedCount@", SpawnCount:"@SpawnCount);
+		return false;
+	}
+	else if(RemainingDelay <= 0)
+	{
+		`log("Update::DoSpawn");
+		DoSpawn();
+		`log("return true");
+		`log("SpawnedCount:"@SpawnedCount@", SpawnCount:"@SpawnCount);
+		return true;
+	}
+	
+	return true;
+}
+
+function DoSpawn()
+{
+	local int SpawnIdx;
+	
+	Switch (PointSelection)
+	{
+		case PS_Reverse:
+			SpawnIdx = LastSpawnIdx-1;
+			if(SpawnIdx < 0)
+				SpawnIdx = SpawnPoint.Length -1;
+		break;
+	
+		case PS_Random:
+			SpawnIdx = Rand(SpawnPoint.Length);
+		break;
+		
+		Default:
+			SpawnIdx = LastSpawnIdx+1;
+			if(SpawnIdx > SpawnPoint.Length -1)
+				SpawnIdx = 0;
+		break;
+	}
+	
+	if(SpawnMonster(PawnClass, SpawnPoint[SpawnIdx], SpawnPoint[SpawnIdx].Rotation))
+	{
+		LastSpawnIdx = SpawnIdx;
+		SpawnedCount++;
+		RemainingDelay += SpawnDelay;
+		PopulateLinkedVariableValues();
+		OutputLinks[0].bHasImpulse = true;
+	}
 }
 
 /**
  * Called when this event is deactivated.
  */
-event Deactivated();
+event Deactivated()
+{
+	`log("Deactivated");
+}
 
 // Spawn a monster of given class at given location
-function bool SpawnMonster(class<Pawn> P, optional Rotator SpawnRotation)
+function bool SpawnMonster(class<Pawn> P, Actor SpawnLoc, optional Rotator SpawnRotation)
 {
 	local Pawn NewMonster;
 	local UTTeamGame Game;
@@ -30,12 +122,12 @@ function bool SpawnMonster(class<Pawn> P, optional Rotator SpawnRotation)
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.SpawnMonster<<<<<<<<<<<<<<<<<<<<");
 	//`log(">>>>>>>>>>>>>>>>>> NumMonsters("@NumMonsters@") < MaxMonsters("@WaveConfig[CurrentWave].MaxMonsters@") <<<<<<<<<<<<<<<<<<<<<");
-	NewMonster = SpawnPoint.Spawn(P,,,SpawnPoint.Location+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnPoint.Rotation);
+	NewMonster = SpawnLoc.Spawn(P,,,SpawnLoc.Location+(P.Default.CylinderComponent.CollisionHeight)* vect(0,0,1), SpawnLoc.Rotation);
 	
 	if (NewMonster != None)
 	{
 		PRI = NewMonster.PlayerReplicationInfo;
-		Game = UTTeamGame(SpawnPoint.WorldInfo.Game);
+		Game = UTTeamGame(SpawnLoc.WorldInfo.Game);
 		
 		if( Game == None )
 		{
@@ -73,6 +165,8 @@ function bool SpawnMonster(class<Pawn> P, optional Rotator SpawnRotation)
 		
 		if(UTPawn(NewMonster) != None)
 			UTPawn(NewMonster).SpawnTransEffect(0);
+			
+		SpawnedMonster = NewMonster;
 		return True;
 	}
 	else
@@ -83,6 +177,13 @@ defaultproperties
 {
 	ObjName="RBTTMonster Factory"
 	ObjCategory="Actor"
+	
+	bCallHandler=false
+	bAutoActivateOutputLinks=false
+	
+	InputLinks(0)=(LinkDesc="Spawn monster")
 
-
+	VariableLinks(0)=(ExpectedType=class'SeqVar_Object',LinkDesc="SpawnPoint",PropertyName=SpawnPoint)
+	VariableLinks(1)=(ExpectedType=class'SeqVar_Int',LinkDesc="SpawnCount",PropertyName=SpawnCount)
+	VariableLinks(2)=(ExpectedType=class'SeqVar_Object',LinkDesc="Spawned",bWriteable=true,PropertyName=SpawnedMonster)	
 }

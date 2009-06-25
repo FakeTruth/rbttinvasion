@@ -9,6 +9,7 @@ var GameRules CurrentRules;		// The last Invasion GameRules that spawned
 var config bool bAllowTranslocator;	// Add translocator ??
 var config bool bForceAllRed;		// Force all players to the red team?
 var bool bThisIsMonsterHunt;		// Whether the ThisIsMonsterHunt actor was found
+var string MonsterSpawnPoints;		// Is set in the map's INI file, where monsters should spawn
 
 struct MonsterNames
 {
@@ -223,7 +224,47 @@ function InitMutator(string Options, out string ErrorMessage)
 	//UpdateMutators();				// Set the mutators up for the first wave
 	//UTTeamGame(WorldInfo.Game).HUDType=Class'RBTTInvasionHUD';		// Set the HUD to ours for the blurry screen
 	
+	GetMonsterSpawnPoints();
 	`log("##################RBTTInvasionMutator.InitMutator####################");
+}
+
+// Get sum sheet
+function GetMonsterSpawnPoints()
+{
+	local array<UTUIResourceDataProvider> MapProviders;
+	local int i, j;
+	local String Point, MapName;
+
+	Class'UTUIDataStore_MenuItems'.static.GetAllResourceDataProviders(Class'UTUIDataProvider_InvasionMapInfo', MapProviders);
+	i = MapProviders.Length;
+
+	`log("====================================");
+	`log("====GETTING MAP SETTING STUFFS======");
+	for (j=0; j<i; ++j)
+	{
+		Point = UTUIDataProvider_InvasionMapInfo(MapProviders[j]).MonsterSpawnPoints;
+		MapName = String(UTUIDataProvider_MapInfo(MapProviders[j]).name);
+		if(Point != "")
+		{
+			if(MapName != "")
+			{
+				if(MapName == WorldInfo.GetMapName(True))
+				{
+					`log(MapName$":"$Point$"<- Current map");
+					if(Point ~= "PathNode" || Point ~= "NavigationPoint" || Point ~= "PlayerStart" || Point ~= "RedPlayerStart" || Point ~= "BluePlayerStart")
+						MonsterSpawnPoints = Point;
+					else
+					{
+						`log("Unknown value for MonsterSpawnPoints"@Point$", defaulting to"@default.MonsterSpawnPoints);
+						MonsterSpawnPoints = default.MonsterSpawnPoints;
+					}
+				}
+				else
+					`log(MapName$":"$Point);
+			}
+		}
+	}
+	`log("====================================");
 }
 
 // Wave has ended, probably gets called by the gamerules
@@ -419,6 +460,20 @@ simulated static function RBTTPRI GetRBTTPRI(UTPlayerReplicationInfo PRI)
   return None;
 }
 
+function bool AllowChangeTeam(Controller Other, out int num, bool bNewTeam)
+{
+	// You can't go to the monster team!!
+	if(num == 1)
+		return false;
+	else
+		return Super.AllowChangeTeam(Other, num, bNewTeam);
+}
+
+function NotifySetTeam(Controller Other, TeamInfo OldTeam, TeamInfo NewTeam, bool bNewTeam)
+{
+	Super.NotifySetTeam(Other, OldTeam, NewTeam, bNewTeam);
+}
+
 simulated static function RBTTInvasionMutator GetInvasionMutatorFrom(UTGame Game)
 {
 	local Mutator mut;
@@ -465,9 +520,37 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 	`log("##################RBTTInvasionMutator.GetServerDetails####################");
 }
 
+/** called on the server during seamless level transitions to get the list of Actors that should be moved into the new level
+ * PlayerControllers, Role < ROLE_Authority Actors, and any non-Actors that are inside an Actor that is in the list
+ * (i.e. Object.Outer == Actor in the list)
+ * are all automatically moved regardless of whether theyre included here
+ * only dynamic (!bStatic and !bNoDelete) actors in the PersistentLevel may be moved (this includes all actors spawned during gameplay)
+ * this is called for both parts of the transition because actors might change while in the middle (e.g. players might join or leave the game)
+ * @param bToEntry true if we are going from old level -> entry, false if we are going from entry -> new level
+ * @param ActorList (out) list of actors to maintain
+ */
+function GetSeamlessTravelActorList(bool bToEntry, out array<Actor> ActorList)
+{
+	local class ActorClass;
+
+	`log("=============================================");
+	`log("==========GetSeamlessTravelActorList=========");
+	
+	ForEach ActorList(ActorClass)
+	{
+		`log("Class ::"@ActorClass);
+	}
+
+	Super.GetSeamlessTravelActorList(bToEntry, ActorList);
+	`log("=============================================");
+	`log("=============================================");
+}
+
 defaultproperties
 {
    //MutatorConfig(0)=()
+   
+   MonsterSpawnPoints="PathNode"
    
    bForceAllRed=True
    bAllowTranslocator=True

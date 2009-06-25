@@ -140,16 +140,43 @@ function KillAllMonsters()
 
 function MatchStarting()
 {
-	local PathNode NavPoint;
+	local NavigationPoint NP;
+	local PathNode PN;
+	local PlayerStart PS;
+	local UTTeamPlayerStart TPS;
 	local int i;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.MatchStarting<<<<<<<<<<<<<<<<<<<<");
 	
 	//#### GET SPAWNPOINTS FOR MONSTERS ####\\
-	foreach WorldInfo.AllNavigationPoints(class'PathNode', NavPoint)
+	if(InvasionMut.MonsterSpawnPoints ~= "PlayerStart")
 	{
-		MonsterSpawnPoints[MonsterSpawnPoints.length] = NavPoint;
+		foreach WorldInfo.AllNavigationPoints(class'PlayerStart', PS)
+			MonsterSpawnPoints[MonsterSpawnPoints.length] = PS;
 	}
+	else if(InvasionMut.MonsterSpawnPoints ~= "NavigationPoint")
+	{
+		foreach WorldInfo.AllNavigationPoints(class'NavigationPoint', NP)
+			MonsterSpawnPoints[MonsterSpawnPoints.length] = NP;
+	}
+	else if(InvasionMut.MonsterSpawnPoints ~= "RedPlayerStart")
+	{
+		foreach WorldInfo.AllNavigationPoints(class'UTTeamPlayerStart', TPS)
+			if(TPS.TeamNumber == 0)
+				MonsterSpawnPoints[MonsterSpawnPoints.length] = TPS;
+	}
+	else if(InvasionMut.MonsterSpawnPoints ~= "BluePlayerStart")
+	{
+		foreach WorldInfo.AllNavigationPoints(class'UTTeamPlayerStart', TPS)
+			if(TPS.TeamNumber == 1)
+				MonsterSpawnPoints[MonsterSpawnPoints.length] = TPS;
+	}
+	else // Pathnode yo! Fallback!
+	{
+		foreach WorldInfo.AllNavigationPoints(class'PathNode', PN)
+			MonsterSpawnPoints[MonsterSpawnPoints.length] = PN;
+	}
+	
 	
 	//#### GET CURRENT WAVE FROM MUTATOR ####\\
 	CurrentWave = InvasionMut.CurrentWave;

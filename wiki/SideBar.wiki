@@ -3,6 +3,7 @@
   * [HowToInstall How to install]
   * [Configuration Configure Waves]
   * [SettingUpSVN Setting up SVN]
+  * [MakingMaps Making Invasion Maps]
  * Monsters
   * [RBTTSlime Slime]
   * [Infernal Infernal]

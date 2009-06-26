@@ -13,8 +13,8 @@ If you really want to stay up to date with the latest updates on UT3 Invasion, y
 = Installing UT3 Invasion for Offline use =
 
 Extract the contents of the package, overwriting existing files, into <br>
-|| *Windows VISTA*||`C:\Users\Kevin\Documents\My Games\Unreal Tournament 3\`||
-|| *Windows XP*||`C:\Documents and Settings\Kevin\My Documents\My Games\Unreal Tournament 3\`||
+|| *Windows VISTA*||`C:\Users\[UserName]\Documents\My Games\Unreal Tournament 3\`||
+|| *Windows XP*||`C:\Documents and Settings\[UserName]\My Documents\My Games\Unreal Tournament 3\`||
 
 Now follow these steps:
  # Start Unreal Tournament 3

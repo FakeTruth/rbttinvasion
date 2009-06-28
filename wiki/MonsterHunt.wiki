@@ -30,4 +30,8 @@ You'll see a node with 4 signal inputs, 2 signal outputs, 2 variable inputs and 
 
 ||Spawned	||Outputs the monster that has just been spawned||
 
+Here's a somewhat complex example in Kismet:<br>
+[http://images.allprog.nl/img/8395_1246223082.gif http://images.allprog.nl/thumb/8395_1246223082.jpg]<br>
+This example spawns a total of 100 RBTTSkullCrab in 12 different locations, while not allowing more than 10 monsters alive at the same time
+
 This article is not finished yet!

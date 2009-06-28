@@ -1,5 +1,7 @@
 #summary How to create a MonsterHunt map
 
+= <font color="red">ONLY APPLIES TO REVISION 318 AND LATER</font> =
+
 = How to create a MonsterHunt map =
 
 The first thing you do, is load your RBTTInvasion.u file into the editor.

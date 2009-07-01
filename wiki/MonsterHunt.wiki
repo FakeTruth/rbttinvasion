@@ -30,8 +30,11 @@ You'll see a node with 4 signal inputs, 2 signal outputs, 2 variable inputs and 
 
 ||Spawned	||Outputs the monster that has just been spawned||
 
-Here's a somewhat complex example in Kismet:<br>
+Here's an example on how to see whether you have killed all the monsters:<br>
+[http://images.allprog.nl/img/4024_1246478780.gif http://images.allprog.nl/thumb/4024_1246478780.jpg]
+
+This example spawns a total of 100 RBTTSkullCrab in 12 different locations, while not allowing more than 10 monsters alive at the same time:<br>
 [http://images.allprog.nl/img/8395_1246223082.gif http://images.allprog.nl/thumb/8395_1246223082.jpg]<br>
-This example spawns a total of 100 RBTTSkullCrab in 12 different locations, while not allowing more than 10 monsters alive at the same time
+
 
 This article is not finished yet!

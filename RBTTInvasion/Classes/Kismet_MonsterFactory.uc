@@ -230,5 +230,5 @@ defaultproperties
 	VariableLinks(0)=(ExpectedType=class'SeqVar_Object',LinkDesc="SpawnPoint",PropertyName=SpawnPoint)
 	VariableLinks(1)=(ExpectedType=class'SeqVar_Int',LinkDesc="SpawnCount",PropertyName=SpawnCount)
 	VariableLinks(2)=(ExpectedType=class'SeqVar_Object',LinkDesc="Spawned",bWriteable=true,PropertyName=SpawnedMonster)	
-	VariableLinks(4)=(ExpectedType=class'SeqVar_Object',LinkDesc="Pawn Class",PropertyName=PawnClass)
+	VariableLinks(3)=(ExpectedType=class'SeqVar_Object',LinkDesc="Pawn Class",PropertyName=PawnClass)
 }

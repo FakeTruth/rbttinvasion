@@ -1,4 +1,4 @@
-Class MonsterFactory extends SeqAct_Latent;
+Class Kismet_MonsterFactory extends SeqAct_Latent;
 
 enum EPointSelection
 {
@@ -30,16 +30,26 @@ var int	SpawnedCount;
 /** Remaining time before attempting the next spawn */
 var float RemainingDelay;
 
+var bool bPaused;
+
 /**
  * Called when this event is activated.
  */
 event Activated()
 {
 	`log("Activated!");
-	RemainingDelay = 0; // First spawn is immediate, if someone wants to delay this, use a Delay node!
-	SpawnedCount = 0;
-	`log("Activated::DoSpawn");
-	LastSpawnIdx = -1;
+	if(InputLinks[0].bHasImpulse)
+	{
+		`log("Activated::DoSpawn");
+		RemainingDelay = 0; // First spawn is immediate, if someone wants to delay this, use a Delay node!
+		SpawnedCount = 0;
+		LastSpawnIdx = -1;
+	}
+	if(InputLinks[3].bHasImpulse)
+	{
+		`log("Activated::bAborted");
+		bAborted = True;
+	}
 }
 
 /** script tick interface
@@ -49,6 +59,30 @@ event Activated()
 event bool Update(float DeltaTime)
 {
 	`log("Update!!");
+	if(InputLinks[2].bHasImpulse)
+	{
+		`log("Activated::Update Continues");
+		bPaused = False;
+	}
+	if(InputLinks[1].bHasImpulse)
+	{
+		`log("MonsterFactory::Update is paused");
+		bPaused = True;
+	}
+	if(InputLinks[3].bHasImpulse)
+	{
+		`log("MonsterFactory::Update is aborted!");
+		return false;
+	}
+	if(bPaused)
+	{
+		return true;
+	}
+	//if(bAborted)
+	//{
+	//	`log("MonsterFactory::Update is aborted");
+	//	return false;
+	//}
 	RemainingDelay -= DeltaTime;
 	if(SpawnedCount >= SpawnCount)
 	{
@@ -132,10 +166,9 @@ function bool SpawnMonster(class<Pawn> P, Actor SpawnLoc, optional Rotator Spawn
 		if( Game == None )
 		{
 			return false;
+			NewMonster.Died(None, None, NewMonster.Location);
 			NewMonster.Destroy();
 		}
-		
-		//NewMonster.health*=WaveConfig[CurrentWave].MonsterHealthMultiplier;
 		
 		if(UTCTFGame(Game) != None)
 		{
@@ -153,6 +186,7 @@ function bool SpawnMonster(class<Pawn> P, Actor SpawnLoc, optional Rotator Spawn
 			PRI.PlayerName = MonsterName;
 			`log("Setting MonsterName to" @ MonsterBotInfo.CharName @ "Was Successful");
 			RBTTMonsterController(Bot).bUseObjectives = (UTCTFGame(Game) != None); // FOR CTF GAMES
+			RBTTMonsterController(Bot).bNoRandomTeleport = True;
 		}
 		
 		if(PRI != None)
@@ -176,12 +210,15 @@ function bool SpawnMonster(class<Pawn> P, Actor SpawnLoc, optional Rotator Spawn
 defaultproperties
 {
 	ObjName="RBTTMonster Factory"
-	ObjCategory="Actor"
+	ObjCategory="RBTTInvasion"
 	
 	bCallHandler=false
 	bAutoActivateOutputLinks=false
 	
 	InputLinks(0)=(LinkDesc="Spawn monster")
+	InputLinks(1)=(LinkDesc="Pause")
+	InputLinks(2)=(LinkDesc="Continue")
+	InputLinks(3)=(LinkDesc="Abort")
 
 	VariableLinks(0)=(ExpectedType=class'SeqVar_Object',LinkDesc="SpawnPoint",PropertyName=SpawnPoint)
 	VariableLinks(1)=(ExpectedType=class'SeqVar_Int',LinkDesc="SpawnCount",PropertyName=SpawnCount)

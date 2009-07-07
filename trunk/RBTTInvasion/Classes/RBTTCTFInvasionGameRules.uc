@@ -1,4 +1,4 @@
-class RBTTCTFInvasionGameRules extends RBTTInvasionGameRules;
+class RBTTCTFInvasionGameRules extends RBTTInvasionWaveGameRules;
 
 
 function MatchStarting()

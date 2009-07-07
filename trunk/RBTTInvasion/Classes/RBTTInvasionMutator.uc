@@ -379,7 +379,7 @@ function SpawnNewGameRules()
 		if(UTCTFGame(Game) != None)				// Special rules for CTF games
 			G = spawn(class'RBTTCTFInvasionGameRules');	// Spawn the CTF Invasion rules
 		else
-			G = spawn(class'RBTTInvasionGameRules');	// Spawn the regular Invasion rules
+			G = spawn(class'RBTTInvasionWaveGameRules');	// Spawn the regular Invasion rules
 		CurrentRules = G;				// Cache it to a global variable
 		G.InvasionMut = self;				// Quick reference to our mutator
 		if (Game.GameRulesModifiers != None)		// Put the rules in the rules list

@@ -1,9 +1,9 @@
 class CustomWaveConfig extends Object
 	PerObjectConfig
-	DependsOn(RBTTInvasionGameRules)
+	DependsOn(RBTTInvasionWaveGameRules)
 	config(RBTTInvasion);
 
-var config array<RBTTInvasionGameRules.WaveTable> WaveConfig;
+var config array<RBTTInvasionWaveGameRules.WaveTable> WaveConfig;
 
 defaultproperties
 {

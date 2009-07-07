@@ -108,8 +108,8 @@ function DrawMonsterInfo(Canvas Canvas)
 		
 	Canvas.SetPos(0.8500000*Canvas.ClipX,0.1800000*Canvas.ClipY);
 	//Canvas.DrawText("Monsters: "@RBPRI.NumMonsters);
-	if(RBTTInvasionGameRules(InvasionMut.CurrentRules) != None)
-		Canvas.DrawText("Monsters: "@RBTTInvasionGameRules(InvasionMut.CurrentRules).NumMonsters);
+	if(RBTTInvasionWaveGameRules(InvasionMut.CurrentRules) != None)
+		Canvas.DrawText("Monsters: "@RBTTInvasionWaveGameRules(InvasionMut.CurrentRules).NumMonsters);
 }
 function DrawRadar(Canvas Canvas)
 {

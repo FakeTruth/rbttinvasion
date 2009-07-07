@@ -29,7 +29,7 @@ var soundcue ConstructedSound, ActiveSound;
 var AudioComponent AmbientSoundComponent;
 
 var array<Class<UTPawn> > SpawnArray;
-var RBTTInvasionGameRules InvasionGameRules;
+var RBTTInvasionWaveGameRules InvasionGameRules;
 var bool bInitialized;
 
 var	CylinderComponent		CylinderComponent;
@@ -48,7 +48,7 @@ simulated function PostBeginPlay()
 
 	//Get the game rules so we can make it summon monsters
 	if(WorldInfo.NetMode == NM_Standalone || WorldInfo.NetMode == NM_DedicatedServer)
-		InvasionGameRules = RBTTInvasionGameRules(WorldInfo.Game.GameRulesModifiers);
+		InvasionGameRules = RBTTInvasionWaveGameRules(WorldInfo.Game.GameRulesModifiers);
 
 	if (WorldInfo.NetMode != NM_DedicatedServer)
 	{

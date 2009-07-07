@@ -89,12 +89,14 @@ function SpawnBabySlimes()
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
-				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
-				NewSlime.health = 65 * InvasionGameRules.WaveConfig[InvasionGameRules.CurrentWave].MonsterHealthMultiplier;
 				NewSlime.InitSize(Vect(8,8,8));
 				NewSlime.SpawnTransEffect(0);
-				InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+				if(RBTTInvasionWaveGameRules(InvasionGameRules) != None)
+				{
+					RBTTInvasionWaveGameRules(InvasionGameRules).WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+					NewSlime.health = 65 * RBTTInvasionWaveGameRules(InvasionGameRules).WaveConfig[RBTTInvasionWaveGameRules(InvasionGameRules).CurrentWave].MonsterHealthMultiplier;
+				}
 				NewSlime = None;
 			}
 		}
@@ -143,11 +145,13 @@ event TakeDamage(int DamageAmount, Controller EventInstigator, vector HitLocatio
 			if(NewSlime != None)
 			{
 				`log(">>New Slime is: "@NewSlime);
-				InvasionGamerules.NumMonsters++;
 				NewSlime.bMotherSlime = False;
 				NewSlime.InitSize(Vect(8,8,8));
-				NewSlime.health = 65;
-				InvasionGameRules.WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+				if(RBTTInvasionWaveGameRules(InvasionGameRules) != None)
+				{
+					RBTTInvasionWaveGameRules(InvasionGameRules).WaveMonsters--; // Make sure an extra monster has to be killed (this one, that is)
+					NewSlime.health = 65 * RBTTInvasionWaveGameRules(InvasionGameRules).WaveConfig[RBTTInvasionWaveGameRules(InvasionGameRules).CurrentWave].MonsterHealthMultiplier;
+				}
 			}
 		}
 		

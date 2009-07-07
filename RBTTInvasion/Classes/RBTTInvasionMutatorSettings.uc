@@ -1,7 +1,7 @@
-class RBTTInvasionMutatorSettings extends Settings implements(IAdvWebAdminSettings) DependsOn(RBTTInvasionMutator) DependsOn(RBTTInvasionGameRules);
+class RBTTInvasionMutatorSettings extends Settings implements(IAdvWebAdminSettings) DependsOn(RBTTInvasionMutator) DependsOn(RBTTInvasionWaveGameRules);
 
 var Array<RBTTInvasionMutator.MonsterNames> MonsterTable;
-var Array<RBTTInvasionGameRules.WaveTable> WaveConfig;
+var Array<RBTTInvasionWaveGameRules.WaveTable> WaveConfig;
 
 var int ErrorCode;
 
@@ -24,7 +24,7 @@ function LoadWaveConfig(string MapName)
 	local CustomWaveConfig CWaveConfig;
 	
 	CurrentEditMap = MapName;
-	CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(MapName);
+	CWaveConfig = Class'RBTTInvasionWaveGameRules'.static.FindCustomWaveConfig(MapName);
 
 	if (CWaveConfig == None)
 		return;       // no custom wave config
@@ -84,7 +84,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 	if(request.GetVariable("AddNewWave") ~= "True")
 	{
 		configName = CurrentEditMap;
-		CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+		CWaveConfig = Class'RBTTInvasionWaveGameRules'.static.FindCustomWaveConfig(configName);
 		`log("####### ADDING NEW WAVE #######");
 		CWaveConfig.WaveConfig.length = CWaveConfig.WaveConfig.length+1;
 		CurrentEditWave = CWaveConfig.WaveConfig.length;
@@ -101,7 +101,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 			CurrentEditWave = int(TempString);
 			
 			configName = CurrentEditMap;
-			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+			CWaveConfig = Class'RBTTInvasionWaveGameRules'.static.FindCustomWaveConfig(configName);
 			`log("####### INSERTING COPY OF WAVE BEFORE WAVE "$CurrentEditWave$" #######");
 			CWaveConfig.WaveConfig.InsertItem(CurrentEditWave-1, CWaveConfig.WaveConfig[CurrentEditWave-1]);
 			CWaveConfig.SaveConfig();
@@ -123,7 +123,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 			CurrentEditWave = int(TempString);
 			
 			configName = CurrentEditMap;
-			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+			CWaveConfig = Class'RBTTInvasionWaveGameRules'.static.FindCustomWaveConfig(configName);
 			`log("####### DELETING WAVE "$CurrentEditWave$" #######");
 			WaveConfig.length = 0;
 			for(i = 0; i < CWaveConfig.WaveConfig.length; i++)
@@ -156,7 +156,7 @@ function bool saveSettings(WebRequest request, WebAdminMessages messages)
 			CurrentEditWave = int(TempString);
 			
 			configName = CurrentEditMap;
-			CWaveConfig = Class'RBTTInvasionGameRules'.static.FindCustomWaveConfig(configName);
+			CWaveConfig = Class'RBTTInvasionWaveGameRules'.static.FindCustomWaveConfig(configName);
 			if (CWaveConfig == None)
 			{
 				ErrorCode = 2;

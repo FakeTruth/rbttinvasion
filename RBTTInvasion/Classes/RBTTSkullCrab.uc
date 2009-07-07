@@ -1,12 +1,34 @@
 class RBTTSkullCrab extends RBTTMonster placeable;
 
-var() class<UTWeapon> DefaultMonsterWeapon;
+// /////////// WEAPON STUFZZZ ///////////////////////////////// //
+function byte BestMode(){	return 0;	}
 
+simulated function float GetFireInterval( byte FireModeNum ){	return 0.5;	}
+
+simulated function float GetTraceRange()
+{
+	return GetCollisionRadius() + 64;
+}
+
+function float SuggestAttackStyle() {	return 1.00;	}
+
+simulated function InstantFire()
+{
+	if(Controller.Enemy != NONE && VSize(Controller.Enemy.Location - Location) > GetCollisionRadius() + 64)
+	{
+		return; // enemy too far away to punch it in teh face!
+	}
+		
+	super.InstantFire();
+}
 
 defaultproperties
 {
+	HitDamage = 20
+
 	bMeleeMonster = True;
 	bInvisibleWeapon = True;
+	bEmptyHanded = True;
 
 	TorsoBoneName="Spine"
 	HeadBone="HeadTop"
@@ -27,7 +49,7 @@ defaultproperties
    
    DefaultMesh=SkeletalMesh'SkullCrabPKG2.SkullCrabA'
    
-   WalkableFloorZ=0.300000
+   WalkableFloorZ=0.78
    
    ControllerClass=Class'RBTTMonsterControllerMelee'
    InventoryManagerClass=class'RBTTInventoryManager'

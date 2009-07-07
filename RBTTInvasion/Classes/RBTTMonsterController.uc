@@ -2,6 +2,7 @@ Class RBTTMonsterController Extends UTBot;
 
 var bool bNeedWeapon;
 var bool bUseObjectives;
+var bool bNoRandomTeleport;
 
 event PostBeginPlay()
 {
@@ -262,7 +263,7 @@ event WhatToDoNext()
 {
 	local NavigationPoint N;
 
-	if ( Enemy == None && !bUseObjectives)
+	if ( !bNoRandomTeleport && Enemy == None && !bUseObjectives)
 	{
 		if ( ( WorldInfo.TimeSeconds - LastRespawnTime > 5) && ((LastSeenTime == 0) || (WorldInfo.TimeSeconds - LastSeenTime) > 15) && !Pawn.PlayerCanSeeMe() )
 		{

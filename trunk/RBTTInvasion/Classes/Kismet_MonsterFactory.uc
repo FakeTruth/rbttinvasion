@@ -13,7 +13,7 @@ enum EPointSelection
 /** Method of spawn point selection */
 var() EPointSelection		PointSelection;
 
-var() class<Pawn> PawnClass;
+var() array< class<Pawn> > PawnClass;
 var() array<Actor> SpawnPoint;
 var Actor SpawnedMonster;
 var() int SpawnCount;
@@ -23,6 +23,7 @@ var() float SpawnDelay;
 
 /** Last index used to spawn at, for PS_Normal/PS_Reverse */
 var int LastSpawnIdx;
+var int LastMonsterSpawnIdx;
 
 /** Number of actors spawned so far */
 var int	SpawnedCount;
@@ -105,6 +106,7 @@ event bool Update(float DeltaTime)
 function DoSpawn()
 {
 	local int SpawnIdx;
+	local int MonsterSpawnIdx;
 	
 	Switch (PointSelection)
 	{
@@ -125,7 +127,12 @@ function DoSpawn()
 		break;
 	}
 	
-	if(SpawnMonster(PawnClass, SpawnPoint[SpawnIdx], SpawnPoint[SpawnIdx].Rotation))
+	// What monster to select from the array
+	MonsterSpawnIdx = LastMonsterSpawnIdx+1;
+	if(MonsterSpawnIdx > PawnClass.Length -1)
+		MonsterSpawnIdx = 0;
+	
+	if(SpawnMonster(PawnClass[MonsterSpawnIdx], SpawnPoint[SpawnIdx], SpawnPoint[SpawnIdx].Rotation))
 	{
 		LastSpawnIdx = SpawnIdx;
 		SpawnedCount++;
@@ -223,4 +230,5 @@ defaultproperties
 	VariableLinks(0)=(ExpectedType=class'SeqVar_Object',LinkDesc="SpawnPoint",PropertyName=SpawnPoint)
 	VariableLinks(1)=(ExpectedType=class'SeqVar_Int',LinkDesc="SpawnCount",PropertyName=SpawnCount)
 	VariableLinks(2)=(ExpectedType=class'SeqVar_Object',LinkDesc="Spawned",bWriteable=true,PropertyName=SpawnedMonster)	
+	VariableLinks(4)=(ExpectedType=class'SeqVar_Object',LinkDesc="Pawn Class",PropertyName=PawnClass)
 }

@@ -531,14 +531,18 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
  */
 function GetSeamlessTravelActorList(bool bToEntry, out array<Actor> ActorList)
 {
-	local class ActorClass;
+	local int i;
 
 	`log("=============================================");
 	`log("==========GetSeamlessTravelActorList=========");
 	
-	ForEach ActorList(ActorClass)
+	for(i = 0; i < ActorList.Length; i++)
 	{
-		`log("Class ::"@ActorClass);
+		`log("Class ::"@ActorList[i]);
+		if(MonsterReplicationInfo(ActorList[i]) != none)
+			ActorList.Remove(i,1);
+		if(RBTTMonsterController(ActorList[i]) != none)
+			ActorList.Remove(i,1);
 	}
 
 	Super.GetSeamlessTravelActorList(bToEntry, ActorList);
@@ -554,7 +558,7 @@ defaultproperties
    
    bForceAllRed=True
    bAllowTranslocator=True
-   InvasionVersion=292
+   InvasionVersion=333
 
    GroupNames(0)="INVASION"  
    bExportMenuData=True

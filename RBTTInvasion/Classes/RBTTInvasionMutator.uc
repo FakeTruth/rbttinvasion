@@ -11,6 +11,8 @@ var config bool bForceAllRed;		// Force all players to the red team?
 var bool bThisIsMonsterHunt;		// Whether the ThisIsMonsterHunt actor was found
 var string MonsterSpawnPoints;		// Is set in the map's INI file, where monsters should spawn
 
+var int DesiredPlayerCount;         // Track this ourselves, because the gametypes FAIL in doing so
+
 struct MonsterNames
 {
 	var string 				MonsterName;		// The name of the monster, so we can set it's name in the PRI
@@ -138,7 +140,7 @@ function Mutate (string MutateString, PlayerController Sender)
 				break;
 			case "showserveroptions":
 				if(WorldInfo.Game != None)
-				{
+				{   
 					Sender.ClientMessage ("ServerOptions:"@WorldInfo.Game.ServerOptions);
 					Sender.ClientMessage ("BotRatio:"@UTGame(WorldInfo.Game).BotRatio);
 					Sender.ClientMessage ("bPlayersVsBots:"@UTGame(WorldInfo.Game).bPlayersVsBots);
@@ -170,6 +172,9 @@ function InitMutator(string Options, out string ErrorMessage)
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.InitMutator<<<<<<<<<<<<<<<<<<<<");
 	
 	InitMutatorOptionsString = Options; 		// Save it for when initializing other gameinfo/mutators
+
+	// We track this, so gamerules can't screw it up
+	DesiredPlayerCount = Clamp(Class'GameInfo'.static.GetIntOption( Options, "NumPlay", 1 ),1,32);
 
 	Super.InitMutator(Options, ErrorMessage);
 	//SaveConfig();
@@ -408,11 +413,19 @@ function MatchStarting()
 }
 
 
-// Use this function to send NotifyLogin to the Invasion GameRules
-// This is used to spawn the HUD when a player joins mid-game
+/**
+ * Use this function to send NotifyLogin to the Invasion GameRules
+ * This is used to spawn the HUD when a player joins mid-game
+ * 
+ * Also use this, when somebody decides to add a bot, we need to adjust
+ * the DesiredPlayerCount
+ */
 function NotifyLogin(Controller NewPlayer)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.NotifyLogin<<<<<<<<<<<<<<<<<<<<");
+
+	if(UTBot(NewPlayer) != None && UTGame(WorldInfo.Game) != none)
+		DesiredPlayerCount = UTGame(WorldInfo.Game).DesiredPlayerCount;
 
 	super.NotifyLogin(NewPlayer);
 	if(RBTTInvasionGameRules(CurrentRules) != None)
@@ -518,6 +531,25 @@ function GetServerDetails( out GameInfo.ServerResponseLine ServerState )
 	ServerState.ServerInfo[i].Key = "UT3 Invasion";
 	ServerState.ServerInfo[i].Value = "Rev."@InvasionVersion;
 	`log("##################RBTTInvasionMutator.GetServerDetails####################");
+}
+
+/**
+ * Use this function to make sure no friggin bots keep on joining the game when a player leaves
+ */
+function NotifyLogout(Controller Exiting)
+{
+	local UTGame Game;
+
+	Game = UTGame(WorldInfo.Game);
+	if(Game != none)
+	{
+		if(Game.DesiredPlayerCount > DesiredPlayerCount)
+			Game.DesiredPlayerCount = DesiredPlayerCount;
+		else
+			DesiredPlayerCount = Game.DesiredPlayerCount;
+	}
+
+	super.NotifyLogout(Exiting);
 }
 
 /** called on the server during seamless level transitions to get the list of Actors that should be moved into the new level

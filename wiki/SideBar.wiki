@@ -2,6 +2,7 @@
  * Tutorials
   * [HowToInstall How to install]
   * [Configuration Configure Waves]
+  * [MoreSettings More Settings]
   * [SettingUpSVN Setting up SVN]
   * [MakingMaps Making Maps]
    * [MakingMaps Invasion]

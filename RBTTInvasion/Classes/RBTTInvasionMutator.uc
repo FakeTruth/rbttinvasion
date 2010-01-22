@@ -71,8 +71,10 @@ function PostBeginPlay()
 
 function bool CheckReplacement(Actor Other)
 {
+/*
 	if(UTCTFBlueFlagBase(Other) != None)	// Replace blue flag by our 'improved' flag.
 		UTCTFBlueFlagBase(Other).FlagType = Class'RBTTCTFMonsterFlag';
+*/
 
 	if(ThisIsMonsterHunt(Other) != None)
 	{

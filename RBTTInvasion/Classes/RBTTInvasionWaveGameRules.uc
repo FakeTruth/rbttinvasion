@@ -528,7 +528,10 @@ function AddToQueue(UTPlayerReplicationInfo Who)
 		if (PC != None)
 		{
 			PC.ClientGotoState('InQueue');
-		
+		}
+		if( InvasionMut.AllInvasionMutators != None )
+		{
+			InvasionMut.AllInvasionMutators.PlayerOut( Who );
 		}
 	}
 }

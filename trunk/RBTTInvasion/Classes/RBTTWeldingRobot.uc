@@ -13,8 +13,6 @@ function AddDefaultInventory()
     CreateInventory(DefaultMonsterWeapon);
 }
 
-
-
 defaultproperties
 {
 	LeftFootControlName="LeftFrontFootControl"
@@ -47,7 +45,7 @@ defaultproperties
    
    DefaultMesh=SkeletalMesh'WeldingRobot.Mesh.SK_CH_WeldingRobot'
    
-   WalkableFloorZ=0.00000
+   WalkableFloorZ=0.80000
    
    ControllerClass=Class'RBTTMonsterController'
    

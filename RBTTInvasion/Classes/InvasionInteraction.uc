@@ -172,13 +172,12 @@ function DrawRadar(Canvas Canvas)
 	MaxDist = 3000 * RadarPulse;
 	//C.Style = ERenderStyle.STY_Translucent;
 	OffsetY = RadarPosY + RadarWidth/Canvas.ClipY;
-	MinEnemyDist = 3000;
 	ForEach PlayerOwner.DynamicActors(class'Pawn',P)
 		if ( P.Health > 0 )
 		{
 			Dist = VSize(Start - P.Location);
-			if ( Dist < 3000 )
-			{
+			//if ( Dist < 3000 )
+			//{
 				if ( Dist < MaxDist )
 					PulseBrightness = 255 - 255*Abs(Dist*0.00033 - RadarPulse);
 				else
@@ -188,10 +187,8 @@ function DrawRadar(Canvas Canvas)
 				
 				if ( PRI != none)
 				{
-					
 					if ( PRI.Team.TeamIndex == 0)
 					{
-						MinEnemyDist = FMin(MinEnemyDist, Dist);
 						Canvas.DrawColor.R = 0;
 						Canvas.DrawColor.G = PulseBrightness;
 						Canvas.DrawColor.B = 0;
@@ -199,11 +196,11 @@ function DrawRadar(Canvas Canvas)
 					}
 					else
 					{
-						MinEnemyDist = FMin(MinEnemyDist, Dist);
 						Canvas.DrawColor.R = PulseBrightness;
 						Canvas.DrawColor.G = 0;
 						Canvas.DrawColor.B = 0;
 						Canvas.DrawColor.A = PulseBrightness;
+						Dist = FMin(Dist, 2990); // Always show enemies
 					}
 				}
 				else
@@ -213,16 +210,19 @@ function DrawRadar(Canvas Canvas)
 					Canvas.DrawColor.B = PulseBrightness;
 					Canvas.DrawColor.A = PulseBrightness;
 				}
-				Dir = rotator(P.Location - Start);
-				OffsetScale = RadarScale*Dist*0.000167;
-				if ( PlayerOwner.Pawn == None )
-					Angle = ((Dir.Yaw - PlayerOwner.Rotation.Yaw) & 65535) * 6.2832/65536;
-				else
-					Angle = ((Dir.Yaw - PlayerOwner.Pawn.Rotation.Yaw) & 65535) * 6.2832/65536;
-				Canvas.SetPos(RadarPosX * Canvas.ClipX + OffsetScale * Canvas.ClipX * sin(Angle) - 0.5*DotSize,
-						OffsetY * Canvas.ClipY - OffsetScale * Canvas.ClipX * cos(Angle) - 0.5*DotSize);
-				Canvas.DrawTile( Texture2D'RBTTInvasionTex.SkinA',DotSize,DotSize,838,238,144,144);
-			}
+				if ( Dist < 3000)
+				{
+					Dir = rotator(P.Location - Start);
+					OffsetScale = RadarScale*Dist*0.000167;
+					if ( PlayerOwner.Pawn == None )
+						Angle = ((Dir.Yaw - PlayerOwner.Rotation.Yaw) & 65535) * 6.2832/65536;
+					else
+						Angle = ((Dir.Yaw - PlayerOwner.Pawn.Rotation.Yaw) & 65535) * 6.2832/65536;
+					Canvas.SetPos(RadarPosX * Canvas.ClipX + OffsetScale * Canvas.ClipX * sin(Angle) - 0.5*DotSize,
+							OffsetY * Canvas.ClipY - OffsetScale * Canvas.ClipX * cos(Angle) - 0.5*DotSize);
+					Canvas.DrawTile( Texture2D'RBTTInvasionTex.SkinA',DotSize,DotSize,838,238,144,144);
+				}
+			//}
 		}
 }
 

@@ -13,6 +13,9 @@ var string MonsterSpawnPoints;		// Is set in the map's INI file, where monsters 
 
 var int DesiredPlayerCount;         // Track this ourselves, because the gametypes FAIL in doing so
 
+var config Array< string > InvasionMutators;	// Array of InvMut classes we want to use in this game
+var InvMut AllInvasionMutators;		// Makes invasion modular. This is a chain of InvMut's
+
 struct MonsterNames
 {
 	var string 				MonsterName;		// The name of the monster, so we can set it's name in the PRI
@@ -49,9 +52,59 @@ replication
 		CurrentWave, CurrentRules;
 }
 
+function AddInvMut(string mutName)
+{
+	local class<InvMut> mutClass;
+	local InvMut mut;
+	
+	mutClass = class<InvMut>(DynamicLoadObject(mutname, class'Class'));
+	if(mutClass == none)
+		return;
+		
+	// Make sure it's not added already
+	for ( mut=AllInvasionMutators; mut!=None; mut=mut.NextInvMut )
+		if ( mut.Class == mutClass )
+		{
+			`log("Not adding "$mutName$" because this InvMut is already added - "$mut);
+			return;
+		}
+		
+	mut = Spawn(mutClass);
+	if (mut == None)
+		return;
+	
+	if (AllInvasionMutators == None)
+		AllInvasionMutators = mut;
+	else
+		AllInvasionMutators.AddInvMut(mut);
+}
+
+function RemoveInvMut( InvMut InvMutToRemove )
+{
+	local InvMut M;
+
+	// remove from InvMut list
+	if ( AllInvasionMutators == InvMutToRemove )
+	{
+		AllInvasionMutators = InvMutToRemove.NextInvMut;
+	}
+	else if ( AllInvasionMutators != None )
+	{
+		for ( M=AllInvasionMutators; M!=None; M=M.NextInvMut )
+		{
+			if ( M.NextInvMut == InvMutToRemove )
+			{
+				M.NextInvMut = InvMutToRemove.NextInvMut;
+				break;
+			}
+		}
+	}
+}
+
 function PostBeginPlay()
 {
 	local UTGame Game;
+	local int i;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.PostBeginPlay<<<<<<<<<<<<<<<<<<<<");
 
@@ -64,6 +117,11 @@ function PostBeginPlay()
 		if(Game.TranslocatorClass == None)
 			Game.TranslocatorClass = class'UTGameContent.UTWeap_Translocator_Content';
 		Game.bAllowTranslocator = True;
+	}
+	
+	for (i = 0; i < InvasionMutators.length; i++)
+	{
+		AddInvMut( InvasionMutators[i] );
 	}
 	
 	`log("##################RBTTInvasionMutator.PostBeginPlay####################");
@@ -279,6 +337,9 @@ function EndWave(GameRules G)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.EndWave<<<<<<<<<<<<<<<<<<<<");
 
+	if(AllInvasionMutators != None)
+		AllInvasionMutators.EndWave(G);
+	
 	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
 	G.Destroy();						// Destroy the gamerules
 	
@@ -286,6 +347,9 @@ function EndWave(GameRules G)
 	
 	SpawnNewGameRules();					// Spawn the new gamerules
 	UpdateMutators();					// Update the mutators
+	
+	if(AllInvasionMutators != None)
+		AllInvasionMutators.StartWave(G);
 	
 	`log("##################RBTTInvasionMutator.EndWave####################");
 }
@@ -407,7 +471,11 @@ function MatchStarting()
 
 	UpdateMutators();
 	if(!bThisIsMonsterHunt)
+	{
 		SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
+		if(AllInvasionMutators != None)
+			AllInvasionMutators.StartWave(CurrentRules);
+	}
 	bMatchHasStarted = True;	// The match has started, so set the flag
 	super.MatchStarting();		// Let the super handle the rest of the function
 	

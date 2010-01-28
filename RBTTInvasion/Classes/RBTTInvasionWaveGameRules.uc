@@ -131,6 +131,7 @@ function MatchStarting()
 		}
 	}
 	
+	SetTimer(CountMonstersInterval, TRUE, 'CountMonstersLeft');
 	LastPortalTime = WorldInfo.TimeSeconds;	 	// Spawn portal after PortalSpawnInterval seconds
 	GotoState('BetweenWaves'); 			// Initially start counting down for the first wave.
 }

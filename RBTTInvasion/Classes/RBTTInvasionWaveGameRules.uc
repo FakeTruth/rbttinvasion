@@ -402,52 +402,6 @@ function ScoreKill(Controller Killer, Controller Other)
 	}
 }
 
-/** If PlayerName is not given, ressurect ALL players */
-function ResPlayer(optional string PlayerName, optional PlayerReplicationInfo ResBy)
-{
-/*
-	local Controller C;
-	local int i;
-	
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.Resplayer<<<<<<<<<<<<<<<<<<<<");
-	if(PlayerName ~= "")
-	{
-		for(i = Queue.length-1; i >= 0; i--)
-		{
-			C = GetPlayerFromQueue(i);
-			if(C != None)
-			{
-				RestartPlayer(C);
-				if(ResBy != None && PlayerController(C) != None)
-				{
-					PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
-				}
-			}
-		}
-	}
-	else
-	{
-		for(i = Queue.length-1; i >= 0; i--)
-		{
-			C = GetPlayerFromQueue(i, True);
-			if(C != None && C.PlayerReplicationInfo != None)
-			{
-				`log(">> C.PlayerName "@C.PlayerReplicationInfo.PlayerName@"<<");
-				if(Left(C.PlayerReplicationInfo.PlayerName, Len(PlayerName)) ~= PlayerName)
-				{
-					GetPlayerFromQueue(i);
-					RestartPlayer(C);
-					if(ResBy != None && PlayerController(C) != None)
-					{
-						PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
-					}
-				}
-			}
-		}
-	}
-*/
-}
-
 state BetweenWaves
 {
 	function InvasionTimer()

@@ -2,6 +2,63 @@ class InvMod_PlayerQueue extends InvMod;
 
 var array<UTPlayerReplicationInfo> Queue; // This array holds dead players for ressurecting them
 
+
+/** If PlayerName is not given, ressurect ALL players */
+function Mutate (string MutateString, PlayerController Sender)
+{
+	local Controller C;
+	local int i;
+	local string PlayerName;
+	local PlayerReplicationInfo ResBy;
+	
+	if (Sender.PlayerReplicationInfo.bAdmin || Sender.WorldInfo.NetMode == NM_Standalone)
+	{
+		if( Left(MutateString, Len("resplayer")) ~= "resplayer")
+		{
+			PlayerName = Right(MutateString, Len(MutateString) - Len("resplayer "));
+			ResBy = Sender.PlayerReplicationInfo;
+		
+			if(PlayerName ~= "")
+			{
+				for(i = Queue.length-1; i >= 0; i--)
+				{
+					C = GetPlayerFromQueue(i);
+					if(C != None)
+					{
+						WorldInfo.Game.RestartPlayer(C);
+						if(ResBy != None && PlayerController(C) != None)
+						{
+							PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
+						}
+					}
+				}
+			}
+			else
+			{
+				for(i = Queue.length-1; i >= 0; i--)
+				{
+					C = GetPlayerFromQueue(i, True);
+					if(C != None && C.PlayerReplicationInfo != None)
+					{
+						if(Left(C.PlayerReplicationInfo.PlayerName, Len(PlayerName)) ~= PlayerName)
+						{
+							GetPlayerFromQueue(i);
+							WorldInfo.Game.RestartPlayer(C);
+							if(ResBy != None && PlayerController(C) != None)
+							{
+								PlayerController(C).ReceiveLocalizedMessage( Class'ResMessage',, ResBy);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	super.Mutate(MutateString, Sender);
+}
+
+
 /**
  * Find out whether this controller is not a monster, and add it to the queue
  */

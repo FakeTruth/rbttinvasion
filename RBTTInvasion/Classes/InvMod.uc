@@ -6,6 +6,15 @@ var InvMod NextInvMod;
 var RBTTInvasionGameRules InvasionRules;
 
 /**
+ * Called when someone uses a mutate command
+ */
+function Mutate (string MutateString, PlayerController Sender)
+{
+	if( NextInvMod != None )
+		NextInvMod.Mutate(MutateString, Sender);
+}
+
+/**
  * Called when something has been killed
  */
 function ScoreKill(Controller Killer, Controller Other)

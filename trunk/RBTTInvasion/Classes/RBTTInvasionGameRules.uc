@@ -241,6 +241,9 @@ function bool PreventDeath(Pawn KilledPawn, Controller Killer, class<DamageType>
 
 function ScoreKill(Controller Killer, Controller Other)
 {
+	if(InvasionMut.AllInvasionModules != None)
+		InvasionMut.AllInvasionModules.ScoreKill(Killer, Other);
+		
 	Super.ScoreKill(Killer, Other);
 }
 

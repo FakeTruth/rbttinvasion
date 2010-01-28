@@ -12,7 +12,6 @@ static function string GetString(
 {
 	// Just use ResMessage's function to save resources..
 	return Class'ResMessage'.static.ReplaceText(default.OutString, "`name", RelatedPRI_1.GetPlayerAlias());
-	//return RelatedPRI_1.GetPlayerAlias()@default.OutString; // FIXME, OutString must contain %PlayerName% and it'll get replaced by the player's name
 }
 
 defaultproperties

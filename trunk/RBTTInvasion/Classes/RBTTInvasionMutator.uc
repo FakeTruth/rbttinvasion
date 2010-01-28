@@ -211,17 +211,11 @@ function Mutate (string MutateString, PlayerController Sender)
 				}
 				break;
 		}
-		
-		if( Left(MutateString, Len("resplayer")) ~= "resplayer")
-		{
-			`log(">> Mutate "@MutateString@" <<");
-			`log(">> Player to ressurect: "@Right(MutateString, Len(MutateString) - Len("resplayer "))@"<<");
-			RBTTInvasionGameRules(CurrentRules).ResPlayer(Right(MutateString, Len(MutateString) - Len("resplayer ")), Sender.PlayerReplicationInfo);
-			
-		}
-	//} else {
-		//Sender.ClientMessage ("You need to be administrator for that!");
 	}
+	
+	if(AllInvasionModules != None)
+		AllInvasionModules.Mutate(MutateString, Sender);
+	
 	Super.Mutate(MutateString, Sender);
 	`log("##################RBTTInvasionMutator.Mutate####################");
 }

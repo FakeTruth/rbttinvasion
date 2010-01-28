@@ -1,5 +1,6 @@
 // This is an actor that can modify/mutate invasion
-class InvMut extends Actor;
+// InvMod is short of Invasion Module
+class InvMod extends Actor;
 
 var InvMut NextInvMut;
 var RBTTInvasionGameRules InvasionRules;

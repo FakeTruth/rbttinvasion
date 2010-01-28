@@ -2,16 +2,25 @@
 // InvMod is short of Invasion Module
 class InvMod extends Actor;
 
-var InvMut NextInvMut;
+var InvMod NextInvMod;
 var RBTTInvasionGameRules InvasionRules;
+
+/**
+ * Called when something has been killed
+ */
+function ScoreKill(Controller Killer, Controller Other)
+{
+	if( NextInvMod != None)
+		NextInvMod.ScoreKill(Killer, Other);
+}
 
 /**
  * Called after player died and is added to the queue
  */
 function PlayerOut( UTPlayerReplicationInfo Who )
 {
-	if ( NextInvMut != None )
-		NextInvMut.PlayerOut(Who);
+	if ( NextInvMod != None )
+		NextInvMod.PlayerOut(Who);
 }
 
 /**
@@ -20,8 +29,8 @@ function PlayerOut( UTPlayerReplicationInfo Who )
 function StartWave(GameRules G)
 {
 	InvasionRules = RBTTInvasionGameRules(G);
-	if ( NextInvMut != None )
-		NextInvMut.StartWave(G);
+	if ( NextInvMod != None )
+		NextInvMod.StartWave(G);
 }
 
 /**
@@ -29,19 +38,19 @@ function StartWave(GameRules G)
  */
 function EndWave(GameRules G)
 {
-	if ( NextInvMut != None )
-		NextInvMut.EndWave(G);
+	if ( NextInvMod != None )
+		NextInvMod.EndWave(G);
 }
 
 /**
  * Add a mutator to the chain
  */
-function AddInvMut(InvMut IM)
+function AddInvMod(InvMod IM)
 {
-	if ( NextInvMut == None )
-		NextInvMut = IM;
+	if ( NextInvMod == None )
+		NextInvMod = IM;
 	else
-		NextInvMut.AddInvMut(IM);
+		NextInvMod.AddInvMod(IM);
 }
 
 defaultproperties

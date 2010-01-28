@@ -13,8 +13,8 @@ var string MonsterSpawnPoints;		// Is set in the map's INI file, where monsters 
 
 var int DesiredPlayerCount;         // Track this ourselves, because the gametypes FAIL in doing so
 
-var config Array< string > InvasionMutators;	// Array of InvMut classes we want to use in this game
-var InvMut AllInvasionMutators;		// Makes invasion modular. This is a chain of InvMut's
+var config Array< string > InvasionModules;	// Array of InvMod classes we want to use in this game
+var InvMod AllInvasionModules;		// Makes invasion modular. This is a chain of InvMod's
 
 struct MonsterNames
 {
@@ -52,20 +52,20 @@ replication
 		CurrentWave, CurrentRules;
 }
 
-function AddInvMut(string mutName)
+function AddInvMod(string mutName)
 {
-	local class<InvMut> mutClass;
-	local InvMut mut;
+	local class<InvMod> mutClass;
+	local InvMod mut;
 	
-	mutClass = class<InvMut>(DynamicLoadObject(mutname, class'Class'));
+	mutClass = class<InvMod>(DynamicLoadObject(mutname, class'Class'));
 	if(mutClass == none)
 		return;
 		
 	// Make sure it's not added already
-	for ( mut=AllInvasionMutators; mut!=None; mut=mut.NextInvMut )
+	for ( mut=AllInvasionModules; mut!=None; mut=mut.NextInvMod )
 		if ( mut.Class == mutClass )
 		{
-			`log("Not adding "$mutName$" because this InvMut is already added - "$mut);
+			`log("Not adding "$mutName$" because this InvMod is already added - "$mut);
 			return;
 		}
 		
@@ -73,28 +73,28 @@ function AddInvMut(string mutName)
 	if (mut == None)
 		return;
 	
-	if (AllInvasionMutators == None)
-		AllInvasionMutators = mut;
+	if (AllInvasionModules == None)
+		AllInvasionModules = mut;
 	else
-		AllInvasionMutators.AddInvMut(mut);
+		AllInvasionModules.AddInvMod(mut);
 }
 
-function RemoveInvMut( InvMut InvMutToRemove )
+function RemoveInvMod( InvMod InvModToRemove )
 {
-	local InvMut M;
+	local InvMod M;
 
-	// remove from InvMut list
-	if ( AllInvasionMutators == InvMutToRemove )
+	// remove from InvMod list
+	if ( AllInvasionModules == InvModToRemove )
 	{
-		AllInvasionMutators = InvMutToRemove.NextInvMut;
+		AllInvasionModules = InvModToRemove.NextInvMod;
 	}
-	else if ( AllInvasionMutators != None )
+	else if ( AllInvasionModules != None )
 	{
-		for ( M=AllInvasionMutators; M!=None; M=M.NextInvMut )
+		for ( M=AllInvasionModules; M!=None; M=M.NextInvMod )
 		{
-			if ( M.NextInvMut == InvMutToRemove )
+			if ( M.NextInvMod == InvModToRemove )
 			{
-				M.NextInvMut = InvMutToRemove.NextInvMut;
+				M.NextInvMod = InvModToRemove.NextInvMod;
 				break;
 			}
 		}
@@ -119,9 +119,9 @@ function PostBeginPlay()
 		Game.bAllowTranslocator = True;
 	}
 	
-	for (i = 0; i < InvasionMutators.length; i++)
+	for (i = 0; i < InvasionModules.length; i++)
 	{
-		AddInvMut( InvasionMutators[i] );
+		AddInvMod( InvasionModules[i] );
 	}
 	
 	`log("##################RBTTInvasionMutator.PostBeginPlay####################");
@@ -337,8 +337,8 @@ function EndWave(GameRules G)
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionMutator.EndWave<<<<<<<<<<<<<<<<<<<<");
 
-	if(AllInvasionMutators != None)
-		AllInvasionMutators.EndWave(G);
+	if(AllInvasionModules != None)
+		AllInvasionModules.EndWave(G);
 	
 	WorldInfo.Game.GameRulesModifiers = G.NextGameRules;	// Take the gamerules out of the list
 	G.Destroy();						// Destroy the gamerules
@@ -348,8 +348,8 @@ function EndWave(GameRules G)
 	SpawnNewGameRules();					// Spawn the new gamerules
 	UpdateMutators();					// Update the mutators
 	
-	if(AllInvasionMutators != None)
-		AllInvasionMutators.StartWave(G);
+	if(AllInvasionModules != None)
+		AllInvasionModules.StartWave(G);
 	
 	`log("##################RBTTInvasionMutator.EndWave####################");
 }
@@ -473,8 +473,8 @@ function MatchStarting()
 	if(!bThisIsMonsterHunt)
 	{
 		SpawnNewGameRules(); 		// Spawn before super, in case it needs to do something fancy..
-		if(AllInvasionMutators != None)
-			AllInvasionMutators.StartWave(CurrentRules);
+		if(AllInvasionModules != None)
+			AllInvasionModules.StartWave(CurrentRules);
 	}
 	bMatchHasStarted = True;	// The match has started, so set the flag
 	super.MatchStarting();		// Let the super handle the rest of the function

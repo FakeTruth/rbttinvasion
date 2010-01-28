@@ -45,8 +45,6 @@ var bool 					bTimedWaveOver;		// For timed waves only, see if the wave is over
 
 var array<NavigationPoint> 			MonsterSpawnPoints;	// Holds the spots where monsters can spawn
 
-var array<UTPlayerReplicationInfo> 		Queue; 			// This array holds dead players for ressurecting them
-
 var int 					BetweenWavesCountdown;	// Goes from 10 to 0 every wave begin
 
 var config int					InitialRandomKillTime;	// The initial time before random monster killing happens!
@@ -185,7 +183,6 @@ function EndWave()
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndWave<<<<<<<<<<<<<<<<<<<<");
 	`log("Wave "@CurrentWave@" over!!");
-	RespawnPlayersFromQueue();
 	ReplenishAmmo();
 	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
 	{
@@ -196,22 +193,6 @@ function EndWave()
 	Super.EndWave();
 }
 
-function RespawnPlayersFromQueue()
-{
-	local Controller C;
-	local int i;
-	
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.RespawnPlayersFromQueue<<<<<<<<<<<<<<<<<<<<");
-	
-	for(i = Queue.length-1; i >= 0; i--)
-	{
-		C = GetPlayerFromQueue(i);
-		if(C != None)
-			RestartPlayer(C);
-	}
-	
-	BetweenWavesCountdown = WaveConfig[CurrentWave].WaveCountdown;
-}
 
 function SpawnPortal()
 {
@@ -372,7 +353,7 @@ function ScoreKill(Controller Killer, Controller Other)
 {
 	local UTPlayerReplicationInfo PRI;
 	local Controller C;
-	local int AlivePlayerCount, i;
+	local int AlivePlayerCount;
 	
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.ScoreKill<<<<<<<<<<<<<<<<<<<<");
 
@@ -385,18 +366,20 @@ function ScoreKill(Controller Killer, Controller Other)
 
 	if(PRI != None && PRI.Team != NONE && PRI.Team.TeamIndex != 1)
 	{
+		AlivePlayerCount = 0;
 		foreach WorldInfo.AllControllers(class'Controller', C)
 			if((C.IsA('UTPlayerController') || C.class == Class'UTGame.UTBot')
 				&& C != Other)
 			{
-				for(i=Queue.length-1;i >= 0; i--)
-					if(Queue[i] == UTPlayerReplicationInfo(C.PlayerReplicationInfo))
-						break;
-						
-				if(i >= 0 && Queue[i] == UTPlayerReplicationInfo(C.PlayerReplicationInfo))
-					continue;
-						
-				AlivePlayerCount++;
+				if( !C.IsInState('InQueue') )
+				{
+					if( C.PlayerReplicationInfo != None )
+					{
+						if( !C.PlayerReplicationInfo.bIsSpectator )
+							AlivePlayerCount++;
+					}
+				}
+	
 			}
 				
 		`log(">>>>>>AlivePlayerCount="@AlivePlayerCount@"<<<<<<<");
@@ -404,9 +387,6 @@ function ScoreKill(Controller Killer, Controller Other)
 		{
 			EndInvasionGame("TimeLimit"); // you lost actually..
 		}
-		
-		`log(">>>>>>>>>>>>>> ADDING PLAYER TO QUEUE <<<<<<<<<<<<<");
-		AddToQueue(PRI);
 	}	
 	else
 	{
@@ -422,45 +402,10 @@ function ScoreKill(Controller Killer, Controller Other)
 	}
 }
 
-/** removes a player from the queue, sets it up to play, and returns the Controller
- * @note: doesn't spawn the player in (i.e. doesn't call RestartPlayer()), calling code is responsible for that
- */
-
-function Controller GetPlayerFromQueue(int Index, optional bool bDontRemoveFromQueue)
-{
-	local Controller C;
-	local UTPlayerReplicationInfo PRI;
-	local UTTeamInfo NewTeam;
-	
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.GetPlayerFromQueue<<<<<<<<<<<<<<<<<<<<");
-
-	PRI = Queue[Index];
-	if(!bDontRemoveFromQueue)
-		Queue.Remove(Index, 1);
-		
-	if(PRI == None)
-		return None;
-
-	// after a seamless travel some players might still have the old TeamInfo from the previous level
-	// so we need to manually count instead of using Size
-
-	NewTeam = UTTeamGame(WorldInfo.Game).Teams[0];
-	C = Controller(PRI.Owner);
-	//SetTeam(C, NewTeam, false);
-	if( C != None )
-	{
-		if (C.IsA('UTBot'))
-			NewTeam.SetBotOrders(UTBot(C));
-		return C;
-	}
-	
-	return None;
-	
-}
-
 /** If PlayerName is not given, ressurect ALL players */
 function ResPlayer(optional string PlayerName, optional PlayerReplicationInfo ResBy)
 {
+/*
 	local Controller C;
 	local int i;
 	
@@ -500,40 +445,7 @@ function ResPlayer(optional string PlayerName, optional PlayerReplicationInfo Re
 			}
 		}
 	}
-}
-
-
-function AddToQueue(UTPlayerReplicationInfo Who)
-{
-	local PlayerController PC;
-	//local int i;
-
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.AddToQueue<<<<<<<<<<<<<<<<<<<<");
-	
-	// Add the player to the end of the queue
-	//i = Queue.Length;
-	//`log(">>>>>>>>>>Queue.Length = "@i@"<<<<<<<<<<<");
-	//Queue.Length = i + 1;
-	Queue.AddItem(Who);
-	`log(">>>>>>>>>>>>Player"@Who@" Added to Queue[]<<<<<<<<<<");
-	//`log(">>>>>>>>>>>Queue["@i@"] = "@Queue[i]@"<<<<<<<<<<");
-	//Queue[i].QueuePosition = i;
-
-	//WorldInfo.Game.GameReplicationInfo.SetTeam(Controller(Who.Owner), None, false);
-	if (!WorldInfo.Game.bGameEnded)
-	{
-		Who.Owner.GotoState('InQueue');
-		WorldInfo.Game.BroadcastLocalized(self, class'OutMessage',,Who);
-		PC = PlayerController(Who.Owner);
-		if (PC != None)
-		{
-			PC.ClientGotoState('InQueue');
-		}
-		if( InvasionMut.AllInvasionMutators != None )
-		{
-			InvasionMut.AllInvasionMutators.PlayerOut( Who );
-		}
-	}
+*/
 }
 
 state BetweenWaves

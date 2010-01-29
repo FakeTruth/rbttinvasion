@@ -115,7 +115,7 @@ function MatchStarting()
 
 	// Go through the WaveConfig for this wave and do some FallbackMonster fixin'
 	// It only needs fixin' if there's somethin' to fix
-	if(GetMonsterClass(WaveConfig[i].FallbackMonster) == None)
+	if(GetMonsterClass(WaveConfig[CurrentWave].FallbackMonster) == None)
 	{
 		`log("RBTTInvasionGameRules::PostBeginPlay  Found wave #"$CurrentWave@"without a FallbackMonster! Fixin...");
 		// Go through the MonsterTable in normal order, because easy monsters tend to stay up highest
@@ -124,7 +124,7 @@ function MatchStarting()
 			// This may not be pretty, but it should stop waves from hanging!
 			if(GetMonsterClass(MonsterTable[i].MonsterID) != None)
 			{
-				WaveConfig[i].FallbackMonster = MonsterTable[i].MonsterID;
+				WaveConfig[CurrentWave].FallbackMonster = MonsterTable[i].MonsterID;
 				`log("RBTTInvasionGameRules::PostBeginPlay  FallbackMonster for wave #"$CurrentWave@"has been set to MonsterID "$MonsterTable[i].MonsterID);
 				break;
 			}
@@ -251,16 +251,20 @@ function bool AddMonster(class<Pawn> P)
 	//StartSpot = ChooseMonsterStart();
 	
 	if ( StartSpot == None )
-		return False;
+	{
+		LogInternal("RBTTInvasionWaveGameRules::AddMonster: Could not spawn monster"@P$". Because no spawn point was found");
+		return false;
+	}
 	
 	// Use fallback monster here, as this is the only function used by the InvasionTimer
 	if(P == None)
 	{
-		WarnInternal("AddMonster: Can't add monster, because pawn class P is None! Using FallbackMonster, but you should check your INI for errors");
+		LogInternal("RBTTInvasionWaveGameRules::AddMonster: Can't add monster, because pawn class P is"@P@"! Using FallbackMonster, but you should check your INI for errors");
 		P = GetMonsterClass(WaveConfig[CurrentWave].FallbackMonster);
 		if(P == None)
 		{
-			WarnInternal("AddMonster: Couldn't find FallbackMonster, you're in trouble now!");
+			LogInternal("RBTTInvasionWaveGameRules::AddMonster: Couldn't find FallbackMonster class of ID" @ WaveConfig[CurrentWave].FallbackMonster @ "!");
+			//WarnInternal("AddMonster: Couldn't find FallbackMonster, you're in trouble now!");
 			return False;
 		}
 	}

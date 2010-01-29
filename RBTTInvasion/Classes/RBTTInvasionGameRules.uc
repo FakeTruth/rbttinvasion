@@ -134,7 +134,14 @@ function class<Pawn> GetMonsterClass(int MonsterNum)
 	
 	index = MonsterTable.Find('MonsterID',MonsterNum);
 	if(index == -1)	// Couldn't find the monster!
+	{
+		LogInternal("RBTTInvasionGameRules::GetMonsterClass couldn't find monster with ID:"@MonsterNum);
 		return None;
+	}
+	if( MonsterTable[index].MonsterClass == None )
+	{
+		LogInternal("RBTTInvasionGameRules::GetMonsterClass Monster with ID:\'"@MonsterNum@"\' and ClassName \'"@MonsterTable[index].MonsterClassName@"\' has Class None");
+	}
 	
 	return MonsterTable[index].MonsterClass;
 }

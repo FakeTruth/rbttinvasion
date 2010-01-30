@@ -13,10 +13,6 @@ var		localized string			PickupMessage;			// Human readable description when pick
 
 var int MiscOption1, MiscOption2; // Additional parameters for dynamically assigning values
 
-native final function AddToNavigation();			// cache dropped inventory in navigation network
-native final function RemoveFromNavigation();
-
-
 replication
 {
 	if( Role==ROLE_Authority )

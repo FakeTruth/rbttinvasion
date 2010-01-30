@@ -83,40 +83,6 @@ function EndWave()
 	InvasionMut.EndWave(self);
 }
 
-function ReplenishAmmo()
-{
-	local Inventory Item;
-	local UTInventoryManager InvManager;
-	local UTPlayerController PC;
-	local int AmmoToAdd;
-	local UTWeapon W;
-	
-	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.ReplenishAmmo<<<<<<<<<<<<<<<<<<<<");
-
-	foreach WorldInfo.AllControllers(class'UTPlayerController', PC)
-	{
-		if(PC != NONE && PC.Pawn != NONE && PC.Pawn.InvManager != NONE)
-		{
-			InvManager = UTInventoryManager(PC.Pawn.InvManager);
-			
-			for (Item = InvManager.InventoryChain; Item != None; Item = Item.Inventory)
-			{
-				if(!Item.IsA('UTWeap_Redeemer'))
-				{
-					W = UTWeapon(Item);
-					if(W != None)
-					{
-						AmmoToAdd = W.default.AmmoCount - W.AmmoCount;
-						
-						if(AmmoToAdd > 0)
-							InvManager.AddAmmoToWeapon(AmmoToAdd, W.class);
-					}
-				}
-			}
-		}
-	}
-}
-
 function bool IsMonster(Pawn P)
 {
 	local int i;

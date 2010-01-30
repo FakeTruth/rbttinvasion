@@ -184,7 +184,6 @@ function EndWave()
 {
 	`log(">>>>>>>>>>>>>>>>>>RBTTInvasionGameRules.EndWave<<<<<<<<<<<<<<<<<<<<");
 	`log("Wave "@CurrentWave@" over!!");
-	ReplenishAmmo();
 	if( CurrentWave >= WaveConfig.length ) // You beat the last wave!
 	{
 		ClearTimer('InvasionTimer'); // Stop this timer, game's over anyway...

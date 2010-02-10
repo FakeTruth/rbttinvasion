@@ -89,12 +89,13 @@ function bool AssignSquadResponsibility(UTBot B)
 	{
 		return true;
 	}
-	if(RBTTMonster(B.Pawn).default.bCanDrive)
+	if(RBTTMonster(B.Pawn).default.bCanDrive && B != None)
 	{
-		if (B.Skill > 1.25)
+		if (B.Skill > 1.25 && B != None)
 		{
 			// search for powerups
-			B.RespawnPredictionTime = (B.Skill > 5.0) ? 2.0 : 0.0;
+			if(B != None)
+				B.RespawnPredictionTime = (B.Skill > 5.0) ? 2.0 : 0.0;
 			// consider vehicles as powerups in DM
 			foreach WorldInfo.AllNavigationPoints(class'UTVehicleFactory', VFactory)
 			{
